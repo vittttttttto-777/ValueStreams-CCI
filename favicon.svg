@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Потоки создания ценности · Coral Club</title>
+  <rect width="64" height="64" fill="#004643"/>
+  <path d="M10 16 H30 L42 32 L30 48 H10 L22 32 Z" fill="#E5ECEC"/>
+  <path d="M32 16 H40 L52 32 L40 48 H32 L44 32 Z" fill="#7FA2A1"/>
+  <rect x="0" y="58" width="16" height="6" fill="#E84B8A"/>
+  <rect x="16" y="58" width="16" height="6" fill="#2BB8B0"/>
+  <rect x="32" y="58" width="16" height="6" fill="#2C8FD6"/>
+  <rect x="48" y="58" width="16" height="6" fill="#C9D33A"/>
+</svg>

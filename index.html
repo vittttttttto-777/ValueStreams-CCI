@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Потоки создания ценности — Coral Club</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#004643">
 <script src="config.js"></script>
+<script src="i18n-en.js"></script>
 <script src="vendor/supabase.js"></script>
 <style>
 /* Coral Club Design System 1.0: Suisse Int'l (300/400/500) + Newton italic, self-hosted */
@@ -68,6 +73,8 @@ em.acc{font-family:var(--accent); font-style:italic; font-weight:400; font-size:
 .sync{margin-left:auto; font-size:12px; color:#BFD1D0; display:flex; align-items:center; gap:6px;}
 .sync i{width:8px; height:8px; border-radius:50%; background:#7FA2A1; display:inline-block;}
 .sync.live i{background:#2BB8B0;}
+.lang-btn{border:1px solid #7FA2A1; background:transparent; color:#E5ECEC; padding:4px 10px; font-size:13px; font-weight:500; letter-spacing:.04em; border-radius:0;}
+.lang-btn:hover{background:#013634;}
 .who{display:flex; align-items:center; gap:8px; font-size:13px; color:#E5ECEC;}
 .who b{font-weight:500;}
 .who button{border:1px solid #7FA2A1; background:transparent; color:#E5ECEC; padding:4px 10px; font-size:13px; border-radius:0;}
@@ -421,9 +428,10 @@ table.matrix td.fnname{cursor:pointer;}
   <div class="top-in">
     <div class="brand">
       <svg class="logo" viewBox="0 0 640 112.12" role="img" aria-label="Coral Club" fill="currentColor"><g> <g id="_2437341851632"> <path d="M600.84 29.41c-11.95,0 -21.07,4.4 -27.52,13.21l0 -42.62 -16.98 0 0 110.08 16.98 0 0 -11.32c6.45,8.96 15.57,13.36 27.52,13.36 10.85,0 19.97,-3.93 27.68,-11.95 7.71,-8.02 11.48,-17.93 11.48,-29.41 0,-11.63 -3.77,-21.38 -11.48,-29.4 -7.71,-8.02 -16.83,-11.95 -27.68,-11.95zm-20.44 59.44c-4.72,-4.88 -7.08,-10.85 -7.08,-18.09 0,-7.23 2.36,-13.21 7.08,-17.92 4.72,-4.88 10.69,-7.24 17.77,-7.24 7.08,0 13.05,2.36 17.77,7.24 4.72,4.71 7.08,10.69 7.08,17.92 0,7.24 -2.36,13.21 -7.08,18.09 -4.72,4.72 -10.69,7.08 -17.77,7.08 -7.08,0 -13.05,-2.36 -17.77,-7.08z"></path> <polygon points="455.23,110.08 455.23,0 438.24,0 438.24,110.08 "></polygon> <path d="M541.56 110.08l0 -78.63 -16.98 0 0 45.45c0,10.93 -7.79,19.03 -18.8,19.03 -11.88,0 -18.79,-7.06 -18.79,-18.8l0 -45.68 -16.98 0 0 48.63c0,20.02 11.78,32.04 32.04,32.04 9.32,0 17.01,-3.26 22.53,-10.94l0 8.9 16.98 0z"></path> <path d="M392.24 29.41c-11.48,0 -21.38,3.93 -29.4,11.95 -8.02,8.02 -12.12,17.77 -12.12,29.4 0,11.64 4.1,21.39 12.12,29.41 8.02,8.02 17.92,11.95 29.4,11.95 11.3,0 20.77,-3.93 28.56,-11.95 2.72,-2.79 4.97,-5.8 6.75,-9.02l-13.83 -7.98c-1.08,1.96 -2.45,3.78 -4.1,5.49 -4.74,4.87 -10.5,7.27 -17.38,7.27 -14.17,0 -24.53,-10.97 -24.53,-25.17 0,-14.19 10.36,-25.16 24.53,-25.16 6.88,0 12.64,2.4 17.38,7.28 1.65,1.7 3.02,3.52 4.1,5.48l13.83 -7.98c-1.78,-3.22 -4.03,-6.23 -6.75,-9.02 -7.79,-8.02 -17.26,-11.95 -28.56,-11.95z"></path> <polygon points="339.09,110.08 339.09,0 322.11,0 322.11,110.08 "></polygon> <path d="M262.83 29.41c11.95,0 21.07,4.4 27.52,13.21l0 -11.17 16.98 0 0 78.63 -16.98 0 0 -11.32c-6.45,8.96 -15.57,13.36 -27.52,13.36 -10.85,0 -19.97,-3.93 -27.68,-11.95 -7.71,-8.02 -11.48,-17.93 -11.48,-29.41 0,-11.63 3.77,-21.38 11.48,-29.4 7.71,-8.02 16.83,-11.95 27.68,-11.95zm20.44 59.44c4.72,-4.88 7.08,-10.85 7.08,-18.09 0,-7.23 -2.36,-13.21 -7.08,-17.92 -4.72,-4.88 -10.69,-7.24 -17.77,-7.24 -7.08,0 -13.05,2.36 -17.77,7.24 -4.72,4.71 -7.08,10.69 -7.08,17.92 0,7.24 2.36,13.21 7.08,18.09 4.72,4.72 10.69,7.08 17.77,7.08 7.08,0 13.05,-2.36 17.77,-7.08z"></path> <path d="M125.73 29.41c-11.48,0 -21.39,3.93 -29.41,11.95 -8.02,8.02 -12.11,17.77 -12.11,29.4 0,11.64 4.09,21.39 12.11,29.41 8.02,8.02 17.93,11.95 29.41,11.95 11.48,0 21.38,-3.93 29.4,-11.95 8.02,-8.02 12.11,-17.77 12.11,-29.41 0,-11.63 -4.09,-21.38 -12.11,-29.4 -8.02,-8.02 -17.92,-11.95 -29.4,-11.95zm0 66.52c-14.17,0 -24.53,-10.97 -24.53,-25.17 0,-14.19 10.36,-25.16 24.53,-25.16 14.16,0 24.53,10.97 24.53,25.16 0,14.2 -10.36,25.17 -24.53,25.17z"></path> <path d="M195.86 110.08l0 -40.3c0,-13.51 6.19,-23.35 23.34,-23.2l0 -16.98c-9.92,0.92 -17.67,5.27 -23.34,13.02l0 -11.17 -16.99 0 0 78.63 16.99 0z"></path> <path d="M41.52 29.41c-11.48,0 -21.39,3.93 -29.41,11.95 -8.02,8.02 -12.11,17.77 -12.11,29.4 0,11.64 4.09,21.39 12.11,29.41 8.02,8.02 17.93,11.95 29.41,11.95 11.3,0 20.77,-3.93 28.56,-11.95 2.71,-2.79 4.96,-5.8 6.74,-9.02l-13.82 -7.98c-1.09,1.96 -2.46,3.78 -4.11,5.49 -4.74,4.87 -10.5,7.27 -17.37,7.27 -14.17,0 -24.54,-10.97 -24.54,-25.17 0,-14.19 10.37,-25.16 24.54,-25.16 6.87,0 12.63,2.4 17.37,7.28 1.65,1.7 3.02,3.52 4.1,5.48l13.83 -7.98c-1.78,-3.22 -4.03,-6.23 -6.74,-9.02 -7.79,-8.02 -17.26,-11.95 -28.56,-11.95z"></path> </g> </g></svg><span class="sep" aria-hidden="true"></span>
-      <h1>Потоки <em class="acc">создания ценности</em></h1>
+      <h1 data-notr data-en="Value <em class=&quot;acc&quot;>streams</em>">Потоки <em class="acc">создания ценности</em></h1>
       <span>Стратсессия №3. Кто владелец шага, кто помощник</span>
       <div class="sync" id="sync"><i></i><span id="syncTxt">Подключение…</span></div>
+      <button class="lang-btn" id="langBtn" type="button" data-notr>EN</button>
       <div class="who" id="who"></div>
     </div>
     <nav class="tabs" role="tablist">
@@ -445,7 +453,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- PORTFOLIO -->
   <section class="view on" id="v-portfolio">
-    <h2>Пять потоков, <em class="acc">одна ценность</em> для клиента</h2>
+    <h2 data-notr data-en="Five streams, <em class=&quot;acc&quot;>one value</em> for the customer">Пять потоков, <em class="acc">одна ценность</em> для клиента</h2>
     <p class="northstar">Помочь клиенту осознанно выбрать, своевременно получить и безопасно использовать качественный wellness-продукт при поддержке компетентного партнёра.</p>
     <div class="legend">
       <span><i style="background:var(--line)"></i>Шаг без владельца</span>
@@ -476,7 +484,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- MAP -->
   <section class="view" id="v-map">
-    <h2>Как потоки проходят <em class="acc">через компанию</em></h2>
+    <h2 data-notr data-en="How the streams run <em class=&quot;acc&quot;>through the company</em>">Как потоки проходят <em class="acc">через компанию</em></h2>
     <p class="lede">VS1 и VS5 создают готовность параллельно, сходятся в контрольной точке, после неё VS2–VS4 идут последовательно, а обратная связь возвращается в продукт, сеть и supply chain. Нажмите на поток, чтобы открыть его профиль.</p>
     <div class="map-bar">
       <div class="seg" id="modeSeg">
@@ -511,7 +519,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- CHAIN -->
   <section class="view" id="v-chain">
-    <h2>Цепочка <em class="acc">создания ценности</em></h2>
+    <h2 data-notr data-en="Value <em class=&quot;acc&quot;>chain</em>">Цепочка <em class="acc">создания ценности</em></h2>
     <p class="lede">Все пять потоков как одна последовательность шагов. Тёмные шаги отвечают выбранному фильтру. Нажмите на шаг, чтобы открыть его карточку.</p>
     <div class="chain-bar">
       <label for="chainHl">Выделить</label>
@@ -538,7 +546,7 @@ table.matrix td.fnname{cursor:pointer;}
   <!-- GUIDE -->
   <section class="view" id="v-guide">
     <div class="guide">
-      <h2>Памятка <em class="acc">по ролям</em></h2>
+      <h2 data-notr data-en="Role <em class=&quot;acc&quot;>guide</em>">Памятка <em class="acc">по ролям</em></h2>
       <p class="lede">На каждом шаге потока команда выбирает каждой функции одну из ролей. Цель: у каждого шага один владелец, который отвечает за его результат.</p>
       <div class="role-cards">
         <div class="role-card" style="--rc:var(--navy)"><span class="chip owner" style="display:inline-block;padding:1px 9px;font-size:12px">Владелец</span>
@@ -581,7 +589,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- DICTIONARY -->
   <section class="view" id="v-dict">
-    <h2>Справочник <em class="acc">функций</em></h2>
+    <h2 data-notr data-en="Function <em class=&quot;acc&quot;>directory</em>">Справочник <em class="acc">функций</em></h2>
     <p class="lede">Единый список функций для всех потоков. Новая функция сразу появляется в выборе «+ Функция» на шагах, а новое название — везде, где функция уже стоит: в шагах, матрице, цепочке и сводных таблицах.</p>
     <form class="dict-add" id="dictAdd" autocomplete="off">
       <div class="field"><label for="dAddName">Название</label><input id="dAddName" required maxlength="90" placeholder="например, Департамент R&amp;D"></div>
@@ -595,7 +603,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- FUNCTIONS -->
   <section class="view" id="v-functions">
-    <h2>Где каждая функция <em class="acc">находит себя</em></h2>
+    <h2 data-notr data-en="Where each function <em class=&quot;acc&quot;>finds its place</em>">Где каждая функция <em class="acc">находит себя</em></h2>
     <p class="lede">Матрица пересечений: сколько шагов каждого потока функция ведёт как владелец (В), поддерживает как помощник (П), оспаривает (С) или участвует без назначенной роли (У). Пунктиром отмечено участие по гипотезе из свода анкет от 17.09 — его нужно подтвердить.</p>
     <div class="fn-layout">
       <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
@@ -883,7 +891,7 @@ function groupOrder(rows){ const m = {}; rows.forEach(x=>{ m[x.grp] = Math.min(m
 function sortFnRows(rows){ const gm = groupOrder(rows); return rows.slice().sort((a,b)=>(gm[a.grp]-gm[b.grp]) || a.grp.localeCompare(b.grp) || (a.sort-b.sort) || a.name.localeCompare(b.name)); }
 function allFns(){
   initFnRows();
-  return sortFnRows(FN_ROWS.filter(x=>x.active!==false)).map(x=>({id:x.id, name:x.name, who:x.name_en||"", group:x.grp}));
+  return sortFnRows(FN_ROWS.filter(x=>x.active!==false)).map(x=>({id:x.id, name:(LANG==="en"&&x.name_en)?x.name_en:x.name, who:LANG==="en"?x.name:(x.name_en||""), group:x.grp}));
 }
 const ROLE_RANK = {owner:3, claimant:2, helper:1, none:0};
 function normId(id){ return Object.prototype.hasOwnProperty.call(FN_ALIAS, id) ? FN_ALIAS[id] : id; }
@@ -899,7 +907,7 @@ function normalizeRoleDoc(d){
   return out;
 }
 function normalizeRoles(obj){ const o = {}; Object.keys(obj||{}).forEach(k=>{ o[k] = normalizeRoleDoc(obj[k]); }); return o; }
-function fnName(id){ initFnRows(); const x = FN_ROWS.find(r=>r.id===id); return x ? x.name : id; }
+function fnName(id){ initFnRows(); const x = FN_ROWS.find(r=>r.id===id); return x ? ((LANG==="en"&&x.name_en)?x.name_en:x.name) : id; }
 function blankDoc(){ return {fns:{}, metric:"", target:"", until:"", successor:"", rule:"", note:"", history:[]}; }
 function getDoc(code){ return roles[code] || blankDoc(); }
 function ownerOf(d){ return Object.keys(d.fns).find(k=>d.fns[k]==="owner")||""; }
@@ -922,7 +930,7 @@ function status(code){
 function kpiParts(d){
   if(!d || !d.metric) return null;
   const over = !!(d.until && d.until < today());
-  return {metric:d.metric, target:d.target||"", until:d.until ? new Date(d.until+"T00:00:00").toLocaleDateString("ru-RU") : "", over};
+  return {metric:d.metric, target:d.target||"", until:d.until ? new Date(d.until+"T00:00:00").toLocaleDateString(LANG==="en"?"en-GB":"ru-RU") : "", over};
 }
 function kpiLine(d){
   const k = kpiParts(d); if(!k) return "";
@@ -1085,7 +1093,7 @@ async function loadAll(){
       nextRoles[x.id] = d;
     });
   });
-  streamDocs = nextDocs; roles = nextRoles; rebuildSteps();
+  streamDocs = nextDocs; roles = nextRoles; rebuildSteps(); rebuildFnNameMap();
   if(openStep && !STEPMAP[openStep]) closeDrawer();
 }
 function scheduleReload(delay){
@@ -1123,12 +1131,104 @@ async function initCaps(){
   document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) scheduleReload(0); });
 }
 
+/* ---------------- I18N ----------------
+   Язык интерфейса RU/EN. Весь текст на странице переводится по словарю i18n-en.js
+   (точные фразы + шаблоны с {0}); названия функций берутся из поля name_en справочника.
+   Текст, введённый командами, показывается как введён. */
+let LANG = (()=>{ try{ return localStorage.getItem("vs-lang")==="en" ? "en" : "ru"; }catch(e){ return "ru"; } })();
+const I18N = window.I18N_EN || {exact:{}, patterns:[]};
+const CYR = /[А-Яа-яЁё]/;
+const I18N_PATS = (I18N.patterns||[]).map(([ru,en])=>{
+  const src = ru.replace(/[.*+?^$()|[\]\\]/g, "\\$&").replace(/\\?\{(\d)\\?\}/g, "(.+?)").replace(/\{(\d)\}/g, "(.+?)");
+  return [new RegExp("^" + src + "$"), en];
+});
+window.__i18nMissing = new Set();
+let fnNameMap = {};
+function rebuildFnNameMap(){ fnNameMap = {}; (FN_ROWS||[]).forEach(x=>{ if(x.name_en) fnNameMap[x.name] = x.name_en; }); }
+function trCore(c, depth){
+  depth = depth||0;
+  if(!c || !CYR.test(c)) return c;
+  if(I18N.exact[c] != null) return I18N.exact[c];
+  if(fnNameMap[c]) return fnNameMap[c];
+  if(/^[ВПСУ]\d+( [ВПСУ]\d+)*$/.test(c)) return c.replace(/[ВПСУ]/g, x=>({"В":"O","П":"H","С":"C","У":"N"})[x]);
+  for(const [re, out] of I18N_PATS){ const m = c.match(re); if(m) return out.replace(/\{(\d)\}/g, (_,i)=>trCore(m[+i+1], depth+1)).replace(/№\s?/g, "No. "); }
+  if(depth < 4){
+    let m = c.match(/^((?:VS\d(?:\.[\dn][\w]*)?|№\s?\d+)[.,:]?\s+)([\s\S]+)$/);
+    if(m) return m[1].replace("№","No. ") + trCore(m[2], depth+1);
+    m = c.match(/^([\s\S]+?)([.:,;!?…]+)$/);
+    if(m && (I18N.exact[m[1]]!=null || fnNameMap[m[1]])) return trCore(m[1], depth+1) + m[2];
+    for(const sep of [" · ", " → ", " — ", "; ", ": ", ", "]){
+      if(c.includes(sep)){ const parts = c.split(sep), tp = parts.map(p=>trCore(p, depth+1)); if(tp.some((x,i)=>x!==parts[i])) return tp.join(sep); }
+    }
+  }
+  if(depth===0) window.__i18nMissing.add(c);
+  return c;
+}
+function tr(s){
+  if(LANG!=="en" || !s || !CYR.test(s)) return s;
+  const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/);
+  return m[1] + trCore(m[2]) + m[3];
+}
+const TR_ATTRS = ["title","aria-label","placeholder","label"];
+function trNode(n){
+  if(n.nodeType===3){
+    const p = n.parentNode; if(!p || p.nodeName==="SCRIPT" || p.nodeName==="STYLE" || p.nodeName==="TEXTAREA") return;
+    if(p.closest && p.closest("[data-notr]")) return;
+    if(n.__out !== undefined && n.nodeValue !== n.__out) n.__ru = undefined;   // код поменял текст
+    if(n.__ru === undefined){ if(!CYR.test(n.nodeValue)) return; n.__ru = n.nodeValue; }
+    const v = LANG==="en" ? tr(n.__ru) : n.__ru;
+    if(n.nodeValue !== v) n.nodeValue = v;
+    n.__out = v;
+    return;
+  }
+  if(n.nodeType!==1 || n.closest && n.closest("[data-notr]")) return;
+  TR_ATTRS.forEach(a=>{
+    if(!n.hasAttribute(a)) return;
+    const cur = n.getAttribute(a), key = "__ru_"+a, okey = "__out_"+a;
+    if(n[okey] !== undefined && cur !== n[okey]) n[key] = undefined;
+    if(n[key] === undefined){ if(!CYR.test(cur)) return; n[key] = cur; }
+    const v = LANG==="en" ? tr(n[key]) : n[key];
+    if(cur !== v) n.setAttribute(a, v);
+    n[okey] = v;
+  });
+}
+function trTree(root){
+  trNode(root);
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+  let n; while((n = w.nextNode())) trNode(n);
+}
+let trObserver = null;
+function startTranslator(){
+  if(trObserver) return;
+  trObserver = new MutationObserver(ms=>{
+    if(LANG!=="en") return;
+    ms.forEach(m=>{
+      if(m.type==="childList") m.addedNodes.forEach(n=>{ if(n.nodeType===1) trTree(n); else trNode(n); });
+      else trNode(m.target);
+    });
+  });
+  trObserver.observe(document.body, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:TR_ATTRS});
+}
+function applyLang(){
+  document.documentElement.lang = LANG;
+  document.title = LANG==="en" ? "Value Streams · Coral Club" : "Потоки создания ценности · Coral Club";
+  const b = document.getElementById("langBtn"); if(b){ b.textContent = LANG==="en" ? "RU" : "EN"; b.setAttribute("aria-label", LANG==="en" ? "Переключить на русский" : "Switch to English"); b.dataset.notr = ""; }
+  rebuildFnNameMap();
+  document.querySelectorAll("[data-en]").forEach(el=>{ if(el.__ruHTML===undefined) el.__ruHTML = el.innerHTML; el.innerHTML = LANG==="en" ? el.dataset.en : el.__ruHTML; });
+  trTree(document.body);
+}
+function setLang(l){
+  LANG = l; try{ localStorage.setItem("vs-lang", l); }catch(e){}
+  renderAll(); if(openStep) renderDrawer();
+  applyLang();
+}
+
 /* ---------------- HELPERS ---------------- */
 const $ = s=>document.querySelector(s);
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("on"),2600); }
 function today(){ return new Date().toISOString().slice(0,10); }
-function stamp(){ const d=new Date(); return d.toLocaleDateString("ru-RU")+" "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}); }
+function stamp(){ const d=new Date(); return d.toLocaleDateString(LANG==="en"?"en-GB":"ru-RU")+" "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}); }
 
 function setView(v){
   if(!canSeeTab(v)) v = "portfolio";
@@ -1723,7 +1823,7 @@ function renderRegister(){
     const d=getDoc(st.code); const o=ownerOf(d);
     const second = regFilter==="dispute" ? byRole(d,"claimant") : byRole(d,"helper");
     const over = d.until && d.until < t;
-    h += `<tr data-step="${st.code}"><td><b style="color:${st.stream.c}">${st.disp}</b> ${esc(st.name)}</td><td>${esc(st.stream.short)}</td><td>${o?esc(fnName(o)):'<span class="faint">нет</span>'}</td><td>${second.map(x=>esc(fnName(x))).join(", ")||'<span class="faint">—</span>'}</td><td>${esc(d.metric)}${d.target?` → ${esc(d.target)}`:""}</td><td class="${over?"overdue":""}">${d.until?esc(new Date(d.until).toLocaleDateString("ru-RU"))+(over?" пересмотреть":""):""}</td><td style="max-width:320px">${regFilter==="hyp"?(st.conf.map(n=>"№"+n+". "+esc(CONFLICTS[n])).join("<br>")+(st.gap?esc(st.gap):"")):esc(d.note)}</td></tr>`;
+    h += `<tr data-step="${st.code}"><td><b style="color:${st.stream.c}">${st.disp}</b> ${esc(st.name)}</td><td>${esc(st.stream.short)}</td><td>${o?esc(fnName(o)):'<span class="faint">нет</span>'}</td><td>${second.map(x=>esc(fnName(x))).join(", ")||'<span class="faint">—</span>'}</td><td>${esc(d.metric)}${d.target?` → ${esc(d.target)}`:""}</td><td class="${over?"overdue":""}">${d.until?esc(new Date(d.until).toLocaleDateString(LANG==="en"?"en-GB":"ru-RU"))+(over?" пересмотреть":""):""}</td><td style="max-width:320px">${regFilter==="hyp"?(st.conf.map(n=>"№"+n+". "+esc(CONFLICTS[n])).join("<br>")+(st.gap?esc(st.gap):"")):esc(d.note)}</td></tr>`;
   });
   $("#regTable").innerHTML = h + "</tbody></table>";
   $("#regTable").querySelectorAll("tr[data-step]").forEach(r=>r.onclick=()=>openDrawer(r.dataset.step));
@@ -1731,8 +1831,8 @@ function renderRegister(){
 async function exportCsv(){
   if(!dlCap) return;
   const q = v=>`"${String(v||"").replace(/"/g,'""')}"`;
-  const rows = [["Поток","Код","Шаг","Статус","Владелец","Помощники","Претенденты","Метрика","Цель","Закреплено до","Сменщик","Условие смены","Заметка"]];
-  ALLSTEPS.forEach(st=>{ const d=getDoc(st.code); rows.push([st.stream.id+" "+st.stream.name, st.disp, st.name, STATUS_TXT[status(st.code)], fnName(ownerOf(d)), byRole(d,"helper").map(fnName).join(", "), byRole(d,"claimant").map(fnName).join(", "), d.metric, d.target, d.until, d.successor?fnName(d.successor):"", d.rule, d.note]); });
+  const rows = [["Поток","Код","Шаг","Статус","Владелец","Помощники","Претенденты","Метрика","Цель","Закреплено до","Сменщик","Условие смены","Заметка"].map(tr)];
+  ALLSTEPS.forEach(st=>{ const d=getDoc(st.code); rows.push([st.stream.id+" "+st.stream.name, st.disp, st.name, tr(STATUS_TXT[status(st.code)]), fnName(ownerOf(d)), byRole(d,"helper").map(fnName).join(", "), byRole(d,"claimant").map(fnName).join(", "), d.metric, d.target, d.until, d.successor?fnName(d.successor):"", d.rule, d.note]); });
   const csv = "\ufeff" + rows.map(r=>r.map(q).join(";")).join("\r\n");
   try{ await dlCap.save({filename:`роли_в_потоках_${today()}.csv`, data:new Blob([csv],{type:"text/csv"})}); }
   catch(e){ toast("Файл не сохранён"); }
@@ -1845,6 +1945,8 @@ $("#addFnBtn").onclick = ()=>{
 };
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", ()=>{ if(curView()==="map") renderMap(); });
 
+$("#langBtn").onclick = ()=>setLang(LANG==="en" ? "ru" : "en");
+startTranslator(); applyLang();
 initCaps();
 </script>
 </body>
