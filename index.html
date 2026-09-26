@@ -68,8 +68,37 @@ em.acc{font-family:var(--accent); font-style:italic; font-weight:400; font-size:
 .sync{margin-left:auto; font-size:12px; color:#BFD1D0; display:flex; align-items:center; gap:6px;}
 .sync i{width:8px; height:8px; border-radius:50%; background:#7FA2A1; display:inline-block;}
 .sync.live i{background:#2BB8B0;}
+.who{display:flex; align-items:center; gap:8px; font-size:13px; color:#E5ECEC;}
+.who b{font-weight:500;}
+.who button{border:1px solid #7FA2A1; background:transparent; color:#E5ECEC; padding:4px 10px; font-size:13px; border-radius:0;}
+.who button:hover{background:#013634;}
+.login-dlg{border:1px solid var(--line); padding:0; width:min(420px, calc(100% - 32px)); background:var(--surface); color:var(--ink); border-radius:0;}
+.login-dlg::backdrop{background:rgba(0,43,41,.55);}
+.login-dlg form{padding:24px;}
+.login-dlg h3{font-weight:300; font-size:24px; letter-spacing:-0.02em; margin:0 0 6px;}
+.login-dlg .err{color:var(--coral); font-size:13px; min-height:18px; margin:4px 0 8px;}
+.ro-note{display:flex; gap:12px; align-items:center; flex-wrap:wrap; border:1px solid var(--line); background:var(--surface-2); padding:10px 14px; font-size:14px; color:var(--muted); margin:0 0 14px;}
+.ro-note.mine{border-color:var(--ok); background:var(--ok-soft); color:var(--ink);}
+.roles .chip.static{padding:2px 9px; font-size:12.5px; display:inline-block;}
+.help-link{border:none; background:none; color:var(--ink); text-decoration:underline; padding:0; font-size:13px;}
+/* памятка по ролям */
+.guide{max-width:980px;}
+.role-cards{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:18px 0 26px;}
+@media (max-width:760px){ .role-cards{grid-template-columns:1fr;} }
+.role-card{background:var(--surface); border:1px solid var(--line); border-top:4px solid var(--rc); padding:18px 20px;}
+.role-card h3{font-weight:500; font-size:18px; margin:6px 0 8px;}
+.role-card p{margin:0 0 8px; font-size:14.5px; line-height:1.55;}
+.role-card .when{border-top:1px solid var(--line); padding-top:8px; margin-top:10px; font-size:14px; color:var(--muted);}
+.role-card .when b{color:var(--ink); font-weight:500;}
+.role-card .qty{font-size:12.5px; color:var(--faint);}
+.guide-sec{background:var(--surface); border:1px solid var(--line); padding:18px 20px; margin-bottom:16px;}
+.guide-sec h3{font-weight:500; font-size:17px; margin:0 0 8px;}
+.guide-sec p, .guide-sec li{font-size:14.5px; line-height:1.55;}
+.guide-sec ol{margin:6px 0 0; padding-left:20px;}
+.guide-sec li{margin-bottom:4px;}
+.rule-q{font-size:18px; font-weight:300; border-left:3px solid var(--ink); padding-left:14px; margin:8px 0;}
 .tabs{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none;}
-.tabs button{background:none; border:none; color:#BFD1D0; padding:10px 14px; border-bottom:2px solid transparent; white-space:nowrap; font-weight:400; transition:color 240ms var(--ease);}
+.tabs button{background:none; border:none; color:#BFD1D0; padding:10px 11px; font-size:14.5px; border-bottom:2px solid transparent; white-space:nowrap; font-weight:400; transition:color 240ms var(--ease);}
 .tabs button[aria-selected="true"]{color:#FFFFFF; border-bottom-color:#E5ECEC;}
 .tabs button:hover{color:#FFFFFF;}
 
@@ -244,6 +273,25 @@ table.plain tr:last-child td{border-bottom:none;}
 .chev:hover{background:#C9D8D8;}
 .chev .n{display:block; font-size:11px; color:var(--faint); margin-bottom:3px; font-weight:500;}
 .chev .o{display:block; margin-top:6px; font-size:11px; color:var(--muted);}
+.chev .own{display:inline-block; margin-top:8px; background:#FFFFFF; color:var(--coral); border:1.5px solid var(--coral); border-radius:9999px; padding:1px 9px; font-size:11px; font-weight:500; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; vertical-align:top;}
+.chev .own.none{border-style:dashed; color:var(--faint); border-color:var(--faint); background:transparent;}
+.chev.dark .own.none{color:#BFD1D0; border-color:#7FA2A1;}
+.chain-one .chev{flex:1 0 190px; max-width:260px; min-height:118px; font-size:15px; padding:14px 26px 14px 30px;}
+.chain-one .chev:first-child{padding-left:18px;}
+.chain-one .chev .n{font-size:12.5px;}
+.chain-one .chev .own{font-size:12.5px; padding:2px 11px;}
+.chain-one .band{font-size:22px; min-height:72px;}
+#v-chain.present{background:var(--bg); padding:32px 40px; overflow:auto;}
+#v-chain.present .chain-bar, #v-chain.present > h2, #v-chain.present > .lede, #v-chain.present #chainCount{display:none;}
+#v-chain.present .present-exit{display:inline-flex;}
+.present-exit{display:none; position:fixed; top:16px; right:16px; z-index:5;}
+#v-chain.present .chain-one .chev{min-height:150px; font-size:19px; flex-basis:230px; max-width:320px; padding:18px 30px 18px 34px;}
+#v-chain.present .chain-one .chev .n{font-size:14px;}
+#v-chain.present .chain-one .chev .own{font-size:14px; padding:3px 12px;}
+#v-chain.present .chain-one .band{font-size:28px; min-height:86px;}
+#v-chain.present .chain-one .band .team{font-size:16px;}
+#v-chain.present .chain-tag{font-size:16px;}
+@media (max-width:1560px){ .brand > span{display:none;} }
 .chev.dark{background:var(--navy); color:#E5ECEC;}
 .chev.dark .n, .chev.dark .o{color:#BFD1D0;}
 .chev.dark:hover{background:#013634;}
@@ -273,6 +321,34 @@ table.matrix th{font-weight:600; font-size:12px; text-align:center; position:sti
 table.matrix th:first-child, table.matrix td:first-child{text-align:left;}
 table.matrix td.cell{text-align:center; cursor:pointer; min-width:64px;}
 table.matrix td.cell span{display:inline-block; min-width:44px; border-radius:0; padding:2px 6px;}
+table.matrix td.cell span.kpi-all{background:var(--ok) !important; color:#FFFFFF !important;}
+table.matrix td.cell .kmark{display:block; font-style:normal; font-size:10.5px; font-weight:500; margin-top:3px; color:var(--ok); letter-spacing:.02em;}
+.dict-add{display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.4fr) auto; gap:10px; align-items:end; background:var(--surface); border:1px solid var(--line); padding:14px 16px; margin-bottom:18px;}
+.dict-add .field{margin:0;}
+@media (max-width:860px){ .dict-add{grid-template-columns:1fr;} }
+.dict-wrap{background:var(--surface); border:1px solid var(--line); overflow-x:auto;}
+table.dict{width:100%; border-collapse:collapse; min-width:760px; font-size:14px;}
+table.dict th{font-weight:500; font-size:12.5px; color:var(--faint); text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+table.dict td{padding:5px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+table.dict tr.grp td{background:var(--surface-2); font-size:12.5px; color:var(--muted); font-weight:500; padding:8px 10px;}
+table.dict input{width:100%; border:1px solid transparent; background:transparent; padding:6px 8px; color:var(--ink); border-radius:0;}
+table.dict input:hover{border-color:var(--line);}
+table.dict input:focus{border-color:var(--faint); background:var(--surface);}
+table.dict td.num{text-align:center; color:var(--muted); width:70px;}
+table.dict td.acts{white-space:nowrap; width:1%;}
+table.dict td.acts .btn{padding:3px 9px; font-size:13px;}
+table.dict tr.off td{opacity:.55;}
+.dict-tag{font-size:11px; border:1px solid var(--line); padding:0 6px; color:var(--muted); margin-left:6px; white-space:nowrap;}
+.matrix-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); padding:10px 12px; border-top:1px solid var(--line);}
+.matrix-legend i{display:inline-block; width:22px; height:14px; vertical-align:-2px; margin-right:5px; border:1px solid var(--line);}
+.kpi-line{flex-basis:100%; display:flex; gap:6px; align-items:baseline; font-size:12.5px; color:var(--ink); margin-top:4px;}
+.kpi-line b{background:var(--ok); color:#FFFFFF; font-weight:500; font-size:11px; padding:1px 6px; letter-spacing:.03em;}
+.kpi-line .due{color:var(--muted);}
+.kpi-line .due.over{color:var(--coral); font-weight:500;}
+.chev .kpi-mini{display:block; margin-top:5px; font-size:10.5px; font-weight:500; color:var(--ok); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.chev.dark .kpi-mini{color:#9FE3C9;}
+#v-chain.present .chain-one .chev .kpi-mini{font-size:13px;}
+.fn-row .kpi-sub{display:block; font-size:12px; color:var(--ok); margin-top:2px;}
 table.matrix tr.grp td{background:var(--surface-2); font-size:12px; color:var(--faint); font-weight:600;}
 table.matrix tr.sel td{background:var(--ice-soft);}
 table.matrix td.fnname{cursor:pointer;}
@@ -348,13 +424,16 @@ table.matrix td.fnname{cursor:pointer;}
       <h1>Потоки <em class="acc">создания ценности</em></h1>
       <span>Стратсессия №3. Кто владелец шага, кто помощник</span>
       <div class="sync" id="sync"><i></i><span id="syncTxt">Подключение…</span></div>
+      <div class="who" id="who"></div>
     </div>
     <nav class="tabs" role="tablist">
       <button role="tab" data-view="portfolio" aria-selected="true">Портфель потоков</button>
       <button role="tab" data-view="stream" aria-selected="false">Профиль потока</button>
       <button role="tab" data-view="map" aria-selected="false">Карта связей</button>
       <button role="tab" data-view="chain" aria-selected="false">Цепочка ценности</button>
+      <button role="tab" data-view="guide" aria-selected="false">Памятка по ролям</button>
       <button role="tab" data-view="functions" aria-selected="false">Функции в потоках</button>
+      <button role="tab" data-view="dict" aria-selected="false">Справочник функций</button>
       <button role="tab" data-view="register" aria-selected="false">Споры и закрепления</button>
     </nav>
   </div>
@@ -440,14 +519,78 @@ table.matrix td.fnname{cursor:pointer;}
         <option value="hot">Точки накала из свода</option>
         <option value="dispute">Споры за владение</option>
         <option value="empty">Шаги без владельца</option>
+        <option value="kpi">Владелец и KPI назначены</option>
+        <option value="nokpi">Владелец есть, KPI нет</option>
         <option value="custom">Шаги, добавленные командами</option>
         <option value="fn">Шаги функции…</option>
         <option value="none">Ничего</option>
       </select>
       <select id="chainFn" hidden aria-label="Функция"></select>
       <label class="chk"><input type="checkbox" id="chainOwner" checked> Показывать владельца</label>
+      <label for="chainStream" style="margin-left:10px">Поток</label>
+      <select id="chainStream"><option value="">Все потоки</option></select>
+      <button class="btn primary" id="presentBtn" type="button">Показать на весь экран</button>
     </div>
+    <button class="btn present-exit" id="presentExit" type="button">Закрыть показ</button>
     <div id="chainBody"></div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="view" id="v-guide">
+    <div class="guide">
+      <h2>Памятка <em class="acc">по ролям</em></h2>
+      <p class="lede">На каждом шаге потока команда выбирает каждой функции одну из ролей. Цель: у каждого шага один владелец, который отвечает за его результат.</p>
+      <div class="role-cards">
+        <div class="role-card" style="--rc:var(--navy)"><span class="chip owner" style="display:inline-block;padding:1px 9px;font-size:12px">Владелец</span>
+          <h3>Отвечает за результат шага</h3>
+          <p>Результат должен быть получен вовремя, в нужном качестве и передан следующему шагу. Владелец решает, как выполняется шаг, привлекает помощников и отвечает за метрику шага. Если на шаге что-то пошло не так, спрашивают с него.</p>
+          <p class="qty">На шаге только один владелец.</p>
+          <div class="when"><b>Когда выбирать:</b> функция реально управляет результатом шага, а не просто участвует в работе.</div></div>
+        <div class="role-card" style="--rc:var(--ice)"><span class="chip" style="display:inline-block;padding:1px 9px;font-size:12px">Помощник</span>
+          <h3>Даёт ресурс, экспертизу или часть работы</h3>
+          <p>Без помощника шаг не выполнить, но за итоговый результат шага он не отвечает. Помощник обязан вовремя дать владельцу то, что от него требуется.</p>
+          <p class="qty">Помощников может быть сколько угодно.</p>
+          <div class="when"><b>Когда выбирать:</b> без функции шаг не получится, но решения на нём принимает не она.</div></div>
+        <div class="role-card" style="--rc:var(--coral)"><span class="chip claimant" style="display:inline-block;padding:1px 9px;font-size:12px">Претендент</span>
+          <h3>Заявляет право на владение</h3>
+          <p>Это не решение, а фиксация спора. Шаг сразу получает статус «Спор» и попадает в реестр «на дорешение». Спор закрывается, когда одну из сторон назначают владельцем: остальные претенденты автоматически становятся помощниками.</p>
+          <div class="when"><b>Когда выбирать:</b> на шаг претендуют две функции или больше, либо функция не согласна с уже назначенным владельцем.</div></div>
+        <div class="role-card" style="--rc:var(--faint)"><span class="chip member" style="display:inline-block;padding:1px 9px;font-size:12px">Без роли</span>
+          <h3>Участвует, роль пока не определена</h3>
+          <p>Промежуточное состояние. До конца работы с потоком каждой функции на шаге нужно дать одну из трёх ролей выше или убрать её с шага.</p>
+          <div class="when"><b>Когда выбирать:</b> функцию точно нужно оставить на шаге, но роль ещё обсуждается.</div></div>
+      </div>
+      <div class="guide-sec"><h3>Если нельзя однозначно назвать владельца</h3>
+        <p>Задайте вопрос:</p>
+        <p class="rule-q">Чья функция первой почувствует последствия, если результат шага не будет получен?</p>
+        <p>Обычно именно она и должна быть владельцем.</p></div>
+      <div class="guide-sec"><h3>Пунктирные функции — это не роль</h3>
+        <p>Функции, обведённые пунктиром, — гипотеза из свода анкет от 17.09, а не решение. Команда проверяет состав: лишние функции убирает крестиком, недостающие добавляет кнопкой «+ Функция», затем распределяет роли. Если состав верный без правок, нажмите «Состав верный».</p></div>
+      <div class="guide-sec"><h3>Закрепление роли на время</h3>
+        <p>Если владельца назначили на пробу, в карточке шага задайте метрику владельца, целевое значение и дату пересмотра, а среди помощников выберите сменщика. Если к дате метрика не выполнена, владелец и сменщик меняются местами.</p></div>
+      <div class="guide-sec"><h3>Порядок работы команды</h3>
+        <ol>
+          <li>Интегратор команды входит по своему паролю (кнопка «Войти» справа вверху) и открывает свой поток во вкладке «Профиль потока».</li>
+          <li>Если нужно, во «Редактировать шаги» команда меняет порядок и названия шагов, удаляет лишние и добавляет недостающие.</li>
+          <li>На каждом шаге команда проверяет состав функций: убирает лишние, добавляет недостающие.</li>
+          <li>Каждой функции назначается роль. Спорные шаги отмечаются претендентами.</li>
+          <li>Когда у шагов появились владельцы, они видны прямо на шагах во вкладке «Цепочка ценности». Выберите свой поток и нажмите «Показать на весь экран» — по этому слайду команда представляет поток залу.</li>
+        </ol></div>
+    </div>
+  </section>
+
+  <!-- DICTIONARY -->
+  <section class="view" id="v-dict">
+    <h2>Справочник <em class="acc">функций</em></h2>
+    <p class="lede">Единый список функций для всех потоков. Новая функция сразу появляется в выборе «+ Функция» на шагах, а новое название — везде, где функция уже стоит: в шагах, матрице, цепочке и сводных таблицах.</p>
+    <form class="dict-add" id="dictAdd" autocomplete="off">
+      <div class="field"><label for="dAddName">Название</label><input id="dAddName" required maxlength="90" placeholder="например, Департамент R&amp;D"></div>
+      <div class="field"><label for="dAddEn">English</label><input id="dAddEn" maxlength="90" placeholder="R&amp;D Department"></div>
+      <div class="field"><label for="dAddGrp">Группа</label><input id="dAddGrp" list="dictGroups" maxlength="60" placeholder="выберите или введите новую"></div>
+      <button class="btn primary" type="submit">Добавить функцию</button>
+    </form>
+    <datalist id="dictGroups"></datalist>
+    <div class="dict-wrap" id="dictBody"></div>
   </section>
 
   <!-- FUNCTIONS -->
@@ -487,6 +630,15 @@ table.matrix td.fnname{cursor:pointer;}
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-hidden="true"></aside>
 <div class="toast" id="toast"></div>
+<dialog class="login-dlg" id="loginDlg">
+  <form method="dialog" id="loginForm">
+    <h3>Вход интегратора</h3>
+    <p class="muted" style="font-size:14px;margin:0 0 14px">Интегратор команды редактирует шаги и роли своего потока. Остальные потоки открываются для просмотра.</p>
+    <div class="field"><label for="loginPass">Пароль</label><input id="loginPass" type="password" autocomplete="current-password" required></div>
+    <div class="err" id="loginErr" role="alert"></div>
+    <div style="display:flex; gap:8px"><button class="btn primary" type="submit" id="loginGo">Войти</button><button class="btn" type="button" id="loginCancel">Отмена</button></div>
+  </form>
+</dialog>
 <div class="role-menu" id="roleMenu" role="menu"></div>
 
 <script>
@@ -721,9 +873,17 @@ const LS_KEY = "vs-tool-v1";
 let editMode = false, stepForm = null, confirmDel = null, dragId = null;
 let currentStream = "VS1", currentFn = "distr", openStep = null, regFilter = "dispute", mapMode = "run";
 
+let FN_ROWS = null;   // справочник функций: {id,name,name_en,grp,sort,is_custom,active}
+function initFnRows(){
+  if(FN_ROWS) return;
+  FN_ROWS = FN_GROUPS.flatMap(([g,l],gi)=>l.map(([id,name,en],i)=>({id, name, name_en:en||"", grp:g, sort:gi*100+i, is_custom:false, active:true})))
+    .concat(customFns.map((x,i)=>({id:x.id, name:x.name, name_en:"", grp:"Добавлено на сессии", sort:9000+i, is_custom:true, active:true})));
+}
+function groupOrder(rows){ const m = {}; rows.forEach(x=>{ m[x.grp] = Math.min(m[x.grp]==null ? 1e9 : m[x.grp], x.sort); }); return m; }
+function sortFnRows(rows){ const gm = groupOrder(rows); return rows.slice().sort((a,b)=>(gm[a.grp]-gm[b.grp]) || a.grp.localeCompare(b.grp) || (a.sort-b.sort) || a.name.localeCompare(b.name)); }
 function allFns(){
-  const base = FN_GROUPS.flatMap(([g,l])=>l.map(([id,name,who])=>({id,name,who,group:g})));
-  return base.concat(customFns.map(f=>({id:f.id,name:f.name,who:"",group:"Добавлено на сессии"})));
+  initFnRows();
+  return sortFnRows(FN_ROWS.filter(x=>x.active!==false)).map(x=>({id:x.id, name:x.name, who:x.name_en||"", group:x.grp}));
 }
 const ROLE_RANK = {owner:3, claimant:2, helper:1, none:0};
 function normId(id){ return Object.prototype.hasOwnProperty.call(FN_ALIAS, id) ? FN_ALIAS[id] : id; }
@@ -739,7 +899,7 @@ function normalizeRoleDoc(d){
   return out;
 }
 function normalizeRoles(obj){ const o = {}; Object.keys(obj||{}).forEach(k=>{ o[k] = normalizeRoleDoc(obj[k]); }); return o; }
-function fnName(id){ const f = allFns().find(x=>x.id===id); return f? f.name : id; }
+function fnName(id){ initFnRows(); const x = FN_ROWS.find(r=>r.id===id); return x ? x.name : id; }
 function blankDoc(){ return {fns:{}, metric:"", target:"", until:"", successor:"", rule:"", note:"", history:[]}; }
 function getDoc(code){ return roles[code] || blankDoc(); }
 function ownerOf(d){ return Object.keys(d.fns).find(k=>d.fns[k]==="owner")||""; }
@@ -759,6 +919,15 @@ function status(code){
   if(d.metric && d.until) return "fixed";
   return "assigned";
 }
+function kpiParts(d){
+  if(!d || !d.metric) return null;
+  const over = !!(d.until && d.until < today());
+  return {metric:d.metric, target:d.target||"", until:d.until ? new Date(d.until+"T00:00:00").toLocaleDateString("ru-RU") : "", over};
+}
+function kpiLine(d){
+  const k = kpiParts(d); if(!k) return "";
+  return `<span class="kpi-line" title="Метрика владельца шага"><b>KPI</b><span>${esc(k.metric)}${k.target?` → ${esc(k.target)}`:""}</span>${k.until?`<span class="due${k.over?" over":""}">${k.over?"пересмотр просрочен ":"пересмотр до "}${k.until}</span>`:""}</span>`;
+}
 const STATUS_TXT = {empty:"Нет владельца", assigned:"Владелец назначен", fixed:"Закреплено", dispute:"Спор"};
 
 /* ---------------- PERSISTENCE ----------------
@@ -766,6 +935,40 @@ const STATUS_TXT = {empty:"Нет владельца", assigned:"Владеле�
    по каждому потоку vsN_steps (шаги) и vsN_roles (функции на шагах).
    Без config.js — локальный режим (localStorage в браузере). */
 let sb = null;                                 // клиент Supabase
+let me = null;                                 // вошедший пользователь {id,label,stream_id,is_admin}
+let authToken = ""; try{ authToken = localStorage.getItem("vs-token") || ""; }catch(e){}
+const TAB_ADMIN_ONLY = ["functions","register","dict"];   // ролевая матрица: интеграторы и гости эти вкладки не видят
+function isAdmin(){ return !sb || !!(me && me.is_admin); }
+function canEdit(sid){ return !sb || !!(me && (me.is_admin || me.stream_id===sid)); }
+function canSeeTab(v){ return !TAB_ADMIN_ONLY.includes(v) || isAdmin(); }
+function denyEdit(sid){
+  if(!me) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
+  else toast(`Вы можете редактировать только свой поток ${me.stream_id}`);
+}
+function saveToken(t){ authToken = t || ""; try{ if(t) localStorage.setItem("vs-token", t); else localStorage.removeItem("vs-token"); }catch(e){} }
+async function whoami(){
+  if(!sb || !authToken){ me = null; return; }
+  const {data, error} = await sb.rpc("vs_whoami");
+  me = (!error && data && data[0]) ? data[0] : null;
+  if(!me) saveToken("");
+}
+async function login(pass){
+  const {data, error} = await sb.rpc("vs_login", {p_pass: pass});
+  if(error) throw error;
+  if(!data || !data[0]) return false;
+  const r = data[0]; saveToken(r.token); me = {id:r.id, label:r.label, stream_id:r.stream_id, is_admin:r.is_admin};
+  return true;
+}
+async function logout(){ try{ if(sb && authToken) await sb.rpc("vs_logout"); }catch(e){} saveToken(""); me = null; }
+function renderWho(){
+  const w = document.getElementById("who"); if(!w) return;
+  if(!sb){ w.innerHTML = ""; return; }
+  w.innerHTML = me ? `<span><b>${esc(me.label)}</b></span><button type="button" id="logoutBtn">Выйти</button>` : `<span>Просмотр</span><button type="button" id="loginBtn">Войти</button>`;
+}
+function applyTabAccess(){
+  document.querySelectorAll(".tabs button").forEach(b=>{ b.hidden = !canSeeTab(b.dataset.view); });
+  if(!canSeeTab(curView())) setView("portfolio");
+}
 const dbSteps = {};                            // sid -> Set(id шагов, которые есть в базе)
 let writeChain = Promise.resolve(), pendingWrites = 0, reloadTimer = null;
 const T = sid=>sid.toLowerCase();
@@ -815,18 +1018,35 @@ function saveStream(sid){
   });
 }
 function mutateSteps(sid, fn, log){
+  if(!canEdit(sid)){ denyEdit(sid); return; }
   const cur = streamDocs[sid] && Array.isArray(streamDocs[sid].steps) ? JSON.parse(JSON.stringify(streamDocs[sid])) : {steps: DEFAULTS[sid].map(x=>({id:x.id,name:x.name,content:x.content,result:x.result})), log: (streamDocs[sid]&&streamDocs[sid].log)||[]};
   fn(cur.steps);
   if(log) cur.log = [{t:stamp(), text:log}].concat(cur.log||[]).slice(0,40);
   streamDocs[sid] = cur; rebuildSteps(); saveStream(sid); renderAll();
 }
-function saveFns(){
+function saveFunctions(changed, msg){
+  if(!isAdmin()){ toast("Справочник функций меняет администратор"); return; }
+  initFnRows();
+  changed.forEach(row=>{ const i = FN_ROWS.findIndex(x=>x.id===row.id); if(i>=0) FN_ROWS[i] = Object.assign({}, FN_ROWS[i], row); else FN_ROWS.push(row); });
+  renderAll();
+  if(msg) toast(msg);
   if(!sb){ saveLocal(); return; }
-  const rows = customFns.map((f,i)=>({id:f.id, name:f.name, grp:"Добавлено на сессии", sort:9000+i, is_custom:true}));
-  if(rows.length) enqueue("функции", async ()=>check(await sb.from("vs_functions").upsert(rows, {onConflict:"id"})));
+  const rows = changed.map(c=>{ const x = FN_ROWS.find(r=>r.id===c.id); return {id:x.id, name:x.name, name_en:x.name_en||null, grp:x.grp, sort:x.sort, is_custom:!!x.is_custom, active:x.active!==false}; });
+  enqueue("справочник функций", async ()=>check(await sb.from("vs_functions").upsert(rows, {onConflict:"id"})));
 }
-function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({roles,customFns,streamDocs})); }catch(e){} }
-function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(j){ roles=normalizeRoles(j.roles||{}); customFns=j.customFns||[]; streamDocs=j.streamDocs||{}; rebuildSteps(); } }catch(e){} }
+function addFunction(name, en, grp){
+  name = (name||"").trim(); en = (en||"").trim(); grp = (grp||"").trim() || "Добавлено на сессии";
+  if(!name){ toast("Укажите название функции"); return null; }
+  initFnRows();
+  if(FN_ROWS.some(x=>x.name.trim().toLowerCase()===name.toLowerCase())){ toast("Функция с таким названием уже есть"); return null; }
+  const inGrp = FN_ROWS.filter(x=>x.grp===grp);
+  const sort = inGrp.length ? Math.max(...inGrp.map(x=>x.sort)) + 1 : (Math.floor(Math.max(0, ...FN_ROWS.filter(x=>x.sort<9000).map(x=>x.sort))/100)+1)*100;
+  const id = "f" + Date.now().toString(36);
+  saveFunctions([{id, name, name_en:en, grp, sort, is_custom:true, active:true}], `Функция «${name}» добавлена в справочник`);
+  return id;
+}
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({roles,customFns,streamDocs,fnRows:FN_ROWS})); }catch(e){} }
+function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(j){ roles=normalizeRoles(j.roles||{}); customFns=j.customFns||[]; streamDocs=j.streamDocs||{}; if(Array.isArray(j.fnRows)) FN_ROWS=j.fnRows; rebuildSteps(); } }catch(e){} }
 
 async function loadAll(){
   const sel = t=>sb.from(t).select("*");
@@ -843,6 +1063,7 @@ async function loadAll(){
   });
   FN_GROUPS.splice(0, FN_GROUPS.length, ...groups);
   customFns = fns.filter(f=>f.is_custom && f.active).sort((a,b)=>a.sort-b.sort).map(f=>({id:f.id, name:f.name}));
+  FN_ROWS = fns.map(f=>({id:f.id, name:f.name, name_en:f.name_en||"", grp:f.grp, sort:f.sort, is_custom:f.is_custom, active:f.active}));
   // точки накала
   hps.forEach(h=>{ CONFLICTS[h.id] = h.description; });
   // потоки, шаги, роли
@@ -883,11 +1104,13 @@ async function initCaps(){
   const cfg = window.APP_CONFIG || {};
   if(!cfg.supabaseUrl || !cfg.supabaseKey || !window.supabase || !window.supabase.createClient){ loadLocal(); renderAll(); goLocal(); return; }
   renderAll(); setSync(false, "Подключение к базе…");
-  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}});
-  try{ await loadAll(); }
+  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}, global:{fetch:(u, o={})=>{ const hd = new Headers(o.headers||{}); if(authToken) hd.set("x-vs-token", authToken); return fetch(u, Object.assign({}, o, {headers:hd})); }}});
+  try{ await loadAll(); await whoami(); }
   catch(e){ console.error(e); sb = null; loadLocal(); renderAll(); goLocal("Нет связи с базой, локальный режим"); toast("Supabase недоступен: " + (e.message||e)); return; }
   document.getElementById("localNote").classList.remove("on");
   setSync(true, "Общая доска, изменения видны всем");
+  renderWho(); applyTabAccess();
+  if(me && me.stream_id){ currentStream = me.stream_id; chainStream = me.stream_id; }
   renderAll(true);
   const ch = sb.channel("vs-sync");
   ["vs_functions","vs_streams", ...STREAMS.flatMap(s=>[T(s.id)+"_steps", T(s.id)+"_roles"])].forEach(t=>{
@@ -908,6 +1131,8 @@ function today(){ return new Date().toISOString().slice(0,10); }
 function stamp(){ const d=new Date(); return d.toLocaleDateString("ru-RU")+" "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}); }
 
 function setView(v){
+  if(!canSeeTab(v)) v = "portfolio";
+  renderWho();
   document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.view===v));
   document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on", s.id==="v-"+v));
   window.scrollTo({top:0});
@@ -919,12 +1144,15 @@ function renderView(v){
   if(v==="stream") renderStream();
   if(v==="map") renderMap();
   if(v==="chain") renderChain();
+  if(v==="guide") {}
+  if(v==="dict") renderDict();
   if(v==="functions") renderFunctions();
   if(v==="register") renderRegister();
 }
 function renderAll(fromSync){
+  renderWho();
   const ae = document.activeElement;
-  const busy = fromSync && ae && ((ae.classList && ae.classList.contains("addsel")) || $("#roleMenu").classList.contains("on") || (ae.closest && ae.closest(".stepform")));
+  const busy = fromSync && ae && ((ae.closest && ae.closest("#v-dict") && ae.tagName==="INPUT") || (ae.classList && ae.classList.contains("addsel")) || $("#roleMenu").classList.contains("on") || (ae.closest && ae.closest(".stepform")));
   if(!busy) renderView(curView());
   if(openStep) renderDrawer(fromSync);
 }
@@ -932,7 +1160,7 @@ function renderAll(fromSync){
 /* ---------------- PORTFOLIO ---------------- */
 function streamStats(s){
   const st = s.steps.map(x=>status(x.code));
-  return {st, owners: st.filter(x=>x!=="empty" && x!=="dispute").length, disputes: st.filter(x=>x==="dispute").length, fixed: st.filter(x=>x==="fixed").length, hot: s.steps.filter(x=>x.conf.length).length};
+  return {st, owners: st.filter(x=>x!=="empty" && x!=="dispute").length, disputes: st.filter(x=>x==="dispute").length, fixed: st.filter(x=>x==="fixed").length, hot: s.steps.filter(x=>x.conf.length).length, kpi: s.steps.filter(x=>{ const d=getDoc(x.code); return !!ownerOf(d) && !!d.metric; }).length};
 }
 function vcard(s){
   const k = streamStats(s);
@@ -941,7 +1169,7 @@ function vcard(s){
     <span class="vname">${esc(s.name)}</span>
     <span class="flowline"><span><b>Триггер</b>${esc(s.trigger)}</span><span class="arr">→</span><span><b>Ценность на выходе</b>${esc(s.out)}</span></span>
     <span class="strip" title="Шаги потока">${k.st.map((x,i)=>`<i class="${x}" title="${s.steps[i].disp} ${esc(s.steps[i].name)}"></i>`).join("")}</span>
-    <span class="vstats"><span><b>${s.steps.length}</b> шагов</span><span>Владельцы: <b>${k.owners}/${s.steps.length}</b></span><span>Споры: <b>${k.disputes}</b></span><span>Точки накала из свода: <b>${k.hot}</b></span></span>
+    <span class="vstats"><span><b>${s.steps.length}</b> шагов</span><span>Владельцы: <b>${k.owners}/${s.steps.length}</b></span><span>Споры: <b>${k.disputes}</b></span><span>С KPI: <b>${k.kpi}/${k.owners}</b></span><span>Точки накала из свода: <b>${k.hot}</b></span></span>
     <span class="kpis">${s.kpi.slice(0,4).map(x=>`<span>${esc(x)}</span>`).join("")}</span>
   </button>`;
 }
@@ -956,6 +1184,10 @@ let hlFn = "";
 function renderStream(){
   $("#streamPick").innerHTML = STREAMS.map(s=>`<button style="--c:${s.c}" data-pick="${s.id}" aria-pressed="${s.id===currentStream}">${s.id}. ${esc(s.name)} · ${s.team}</button>`).join("");
   const s = SMAP[currentStream]; const k = streamStats(s);
+  const ro = !canEdit(s.id); if(ro) editMode = false;
+  const roNote = !sb ? "" : ro
+    ? `<div class="ro-note">Просмотр. Редактировать поток ${s.id} может интегратор команды ${esc(s.team)}${me?"":" после входа"}. ${me?"":`<button class="help-link" data-login>Войти</button>`}</div>`
+    : `<div class="ro-note mine">${me&&me.is_admin?"Режим администратора: можно редактировать все потоки.":`Это поток вашей команды: вы можете менять шаги, функции и роли.`} <button class="help-link" data-guide>Что означают роли</button></div>`;
   const fnOpts = `<option value="">Подсветить шаги функции…</option>` + allFns().map(f=>`<option value="${f.id}" ${hlFn===f.id?"selected":""}>${esc(f.name)}</option>`).join("");
   let html = `<div class="profile" style="--c:${s.c}">
     <div>
@@ -971,14 +1203,15 @@ function renderStream(){
       <dt>Результат</dt><dd>${esc(s.out)}</dd>
       <dt>Функции по отраслевой модели</dt><dd>${esc(s.fns)}</dd>
       <dt>Ключевые передачи</dt><dd>${esc(s.handoff)}</dd>
-      <dt>Состояние ролей</dt><dd>Владельцы на ${k.owners} из ${s.steps.length} шагов, споров ${k.disputes}, закреплено ${k.fixed}</dd>
+      <dt>Состояние ролей</dt><dd>Владельцы на ${k.owners} из ${s.steps.length} шагов, KPI задан на ${k.kpi}, споров ${k.disputes}, закреплено ${k.fixed}</dd>
     </dl>
   </div>
+  ${roNote}
   <div class="steps-head"><h3>Шаги потока</h3>
-    <div class="seg" role="group" aria-label="Режим"><button data-emode="roles" aria-pressed="${!editMode}">Функции и роли</button><button data-emode="edit" aria-pressed="${editMode}">Редактировать шаги</button></div>
+    ${ro?"":`<div class="seg" role="group" aria-label="Режим"><button data-emode="roles" aria-pressed="${!editMode}">Функции и роли</button><button data-emode="edit" aria-pressed="${editMode}">Редактировать шаги</button></div>`}
     ${editMode?"":`<select id="hlSel" aria-label="Подсветить функцию">${fnOpts}</select>`}</div>
-  <p class="faint" style="font-size:13px;margin:-4px 0 10px">${editMode?"Перетащите шаг за ручку ⋮⋮ или используйте стрелки. Названия, содержание и результат меняются кнопкой «Изменить». Новый шаг вставляется в любое место по шаблону.":"Сначала соберите состав функций (× убрать, + добавить), затем нажмите на функцию и назначьте роль"}</p>
-  ${editMode?"":`<div class="step-legend"><span class="chip owner">Владелец</span><span class="chip claimant">Претендент</span><span class="chip">Помощник</span><span class="chip member">Без роли</span><span class="chip hyp">Гипотеза из свода</span><span>Метрики и закрепление роли открываются по нажатию на шаг</span></div>`}
+  <p class="faint" style="font-size:13px;margin:-4px 0 10px">${editMode?"Перетащите шаг за ручку ⋮⋮ или используйте стрелки. Названия, содержание и результат меняются кнопкой «Изменить». Новый шаг вставляется в любое место по шаблону.":(ro?"Функции на шагах и их роли. Карточка шага открывается по нажатию.":"Сначала соберите состав функций (× убрать, + добавить), затем нажмите на функцию и назначьте роль")}</p>
+  ${editMode?"":`<div class="step-legend"><span class="chip owner">Владелец</span><span class="chip claimant">Претендент</span><span class="chip">Помощник</span><span class="chip member">Без роли</span><span class="chip hyp">Гипотеза из свода</span><button class="help-link" data-guide>Что означают роли</button></div>`}
   <ol class="steps${editMode?" editing":""}" style="--c:${s.c}">`;
   if(editMode){ html += renderEditSteps(s); }
   else s.steps.forEach((st,i)=>{
@@ -990,10 +1223,12 @@ function renderStream(){
     let chips = mem.map(fid=>{
       const r = roleOf(d,fid);
       const cls = r==="owner"?"owner":r==="claimant"?"claimant":r==="helper"?"":(conf?"member":"hyp");
+      if(ro) return `<span class="chip static ${cls}" title="${rTitle[r]}">${esc(fnName(fid))}</span>`;
       return `<span class="chip ${cls}"><button class="cn" data-menu="${fid}" data-code="${st.code}" title="${rTitle[r]}${conf||r!=="none"?"":", гипотеза из свода"}. Нажмите, чтобы назначить роль">${esc(fnName(fid))}</button><button class="x" data-rm="${fid}" data-code="${st.code}" aria-label="Убрать ${esc(fnName(fid))} с шага" title="Убрать с шага">×</button></span>`;
     }).join("");
-    chips += `<span class="addwrap" data-addwrap="${st.code}"><button class="addfn" data-add="${st.code}">+ Функция</button></span>`;
-    if(!conf) chips += `<span class="comp-note">${mem.length?"Состав из свода, гипотеза":"Функций нет"}${mem.length?`<button data-confirm="${st.code}">Состав верный</button>`:""}</span>`;
+    if(!ro) chips += `<span class="addwrap" data-addwrap="${st.code}"><button class="addfn" data-add="${st.code}">+ Функция</button></span>`;
+    if(!conf) chips += `<span class="comp-note">${mem.length?"Состав из свода, гипотеза":"Функций нет"}${mem.length&&!ro?`<button data-confirm="${st.code}">Состав верный</button>`:""}</span>`;
+    chips += kpiLine(d);
     const dim = hlFn && !mem.includes(hlFn) ? " dim":"";
     html += `<li><div class="step${dim}" data-step="${st.code}" tabindex="0" role="button" aria-label="${st.disp} ${esc(st.name)}">
       <span class="dot"><b>${i+1}</b></span>
@@ -1121,6 +1356,8 @@ function shiftStep(sid, id, dir){
 function openDrawer(code){ openStep = code; renderDrawer(); $("#drawer").classList.add("on"); $("#scrim").classList.add("on"); $("#drawer").setAttribute("aria-hidden","false"); setTimeout(()=>{ const c=$("#drawer .close"); c&&c.focus(); },50); }
 function closeDrawer(){ openStep = null; $("#drawer").classList.remove("on"); $("#scrim").classList.remove("on"); $("#drawer").setAttribute("aria-hidden","true"); }
 function mutate(code, fn, log){
+  const sidM = STEPMAP[code] && STEPMAP[code].stream.id;
+  if(!canEdit(sidM)){ denyEdit(sidM); renderAll(); return; }
   const d = JSON.parse(JSON.stringify(getDoc(code)));
   if(!Array.isArray(d.members)) d.members = memberList(code, d);
   delete d.cand;
@@ -1158,6 +1395,7 @@ function renderDrawer(fromSync){
   const active = document.activeElement;
   if(fromSync && dr.contains(active) && (active.tagName==="INPUT"||active.tagName==="TEXTAREA")) return; // don't clobber typing
   const d = getDoc(openStep); const s = st.stream; const stt = status(openStep);
+  const ro = !canEdit(s.id); const dis = ro ? " disabled" : "";
   const o = ownerOf(d); const cl = byRole(d,"claimant"); const helpers = byRole(d,"helper");
   const rows = memberList(openStep, d); const conf = isConfirmed(openStep);
   const others = allFns().filter(f=>!rows.includes(f.id));
@@ -1166,7 +1404,7 @@ function renderDrawer(fromSync){
   if(stt==="dispute"){
     const parties = (o?[o]:[]).concat(cl);
     disp = `<div class="d-sec dispute-box"><b>Спор за владение шагом.</b> Претендуют: ${parties.map(x=>esc(fnName(x))).join(", ")}. Назначьте владельца, остальные станут помощниками. Если решение временное, закрепите роль с метрикой и сроком ниже.
-      <div class="actions">${parties.map(x=>`<button class="btn warn" data-resolve="${x}">Владелец: ${esc(fnName(x))}</button>`).join("")}</div></div>`;
+      ${ro?"":`<div class="actions">${parties.map(x=>`<button class="btn warn" data-resolve="${x}">Владелец: ${esc(fnName(x))}</button>`).join("")}</div>`}</div>`;
   }
   dr.innerHTML = `<div class="d-head" style="--c:${s.c}">
       <button class="close" aria-label="Закрыть">×</button>
@@ -1178,24 +1416,25 @@ function renderDrawer(fromSync){
       <div class="d-sec"><p>${esc(st.content)}</p><p class="muted">Результат шага: <b style="color:var(--ink)">${esc(st.result)}</b></p></div>
       ${disp}
       <div class="d-sec"><h4>Роли функций на шаге</h4>
-        <p class="faint" style="font-size:13px">Один владелец отвечает за результат шага. Помощники дают ресурс и экспертизу. Претендент заявляет право на владение, и это фиксируется как спор. Лишнюю функцию уберите крестиком, недостающую добавьте из списка.</p>
+        <p class="faint" style="font-size:13px">${ro?`Просмотр. Роли на этом шаге назначает интегратор команды ${esc(s.team)}.`:"Один владелец отвечает за результат шага. Помощники дают ресурс и экспертизу. Претендент заявляет право на владение, и это фиксируется как спор. Лишнюю функцию уберите крестиком, недостающую добавьте из списка."} <button class="help-link" data-guide>Памятка по ролям</button></p>
         ${rows.length?"":`<p class="faint" style="font-size:13px">На шаге нет функций. Добавьте их ниже.</p>`}
-        ${rows.map(fid=>`<div class="rolerow"><span class="nm">${esc(fnName(fid))}${!conf&&roleOf(d,fid)==="none"?"<small>гипотеза из свода 17.09</small>":""}</span><span style="display:inline-flex;gap:6px;align-items:center">${seg(fid)}<button class="btn" data-drm="${fid}" aria-label="Убрать с шага" title="Убрать с шага" style="padding:4px 9px">×</button></span></div>`).join("")}
-        <div class="addrow"><select id="addFnSel" aria-label="Добавить функцию"><option value="">Добавить другую функцию на шаг…</option>${others.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}</select></div>
+        ${ro ? rows.map(fid=>{ const r=roleOf(d,fid); return `<div class="rolerow"><span class="nm">${esc(fnName(fid))}</span><span class="chip static ${r==="owner"?"owner":r==="claimant"?"claimant":r==="helper"?"":(conf?"member":"hyp")}">${({owner:"Владелец",claimant:"Претендент",helper:"Помощник",none:conf?"Без роли":"Гипотеза"})[r]}</span></div>`; }).join("")
+          : rows.map(fid=>`<div class="rolerow"><span class="nm">${esc(fnName(fid))}${!conf&&roleOf(d,fid)==="none"?"<small>гипотеза из свода 17.09</small>":""}</span><span style="display:inline-flex;gap:6px;align-items:center">${seg(fid)}<button class="btn" data-drm="${fid}" aria-label="Убрать с шага" title="Убрать с шага" style="padding:4px 9px">×</button></span></div>`).join("")}
+        <div class="addrow" ${ro?"hidden":""}><select id="addFnSel" aria-label="Добавить функцию"><option value="">Добавить другую функцию на шаг…</option>${others.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}</select></div>
       </div>
       <div class="d-sec"><h4>Закрепление роли на время</h4>
         <p class="faint" style="font-size:13px">Роль владельца закрепляется до даты пересмотра. Если метрика не выполнена, владение переходит к сменщику, а текущий владелец становится помощником.</p>
-        <div class="field"><label for="f-metric">Метрика владельца</label><input id="f-metric" value="${esc(d.metric)}" placeholder="${esc(s.kpi[0])}"></div>
+        <div class="field"><label for="f-metric">Метрика владельца</label><input id="f-metric"${dis} value="${esc(d.metric)}" placeholder="${esc(s.kpi[0])}"></div>
         <div class="two-f">
-          <div class="field"><label for="f-target">Целевое значение</label><input id="f-target" value="${esc(d.target)}" placeholder="например, 95%"></div>
-          <div class="field"><label for="f-until">Закреплено до</label><input id="f-until" type="date" value="${esc(d.until)}"></div>
+          <div class="field"><label for="f-target">Целевое значение</label><input id="f-target"${dis} value="${esc(d.target)}" placeholder="например, 95%"></div>
+          <div class="field"><label for="f-until">Закреплено до</label><input id="f-until" type="date"${dis} value="${esc(d.until)}"></div>
         </div>
-        <div class="field"><label for="f-succ">Сменщик (из помощников)</label><select id="f-succ"><option value="">Не выбран</option>${helpers.map(x=>`<option value="${x}" ${d.successor===x?"selected":""}>${esc(fnName(x))}</option>`).join("")}</select></div>
-        <div class="field"><label for="f-rule">Условие смены ролей</label><input id="f-rule" value="${esc(d.rule)}" placeholder="например, два месяца подряд ниже цели"></div>
-        <button class="btn primary" id="swapBtn" ${o&&d.successor?"":"disabled"}>Метрика не выполнена: передать владение сменщику</button>
+        <div class="field"><label for="f-succ">Сменщик (из помощников)</label><select id="f-succ"${dis}><option value="">Не выбран</option>${helpers.map(x=>`<option value="${x}" ${d.successor===x?"selected":""}>${esc(fnName(x))}</option>`).join("")}</select></div>
+        <div class="field"><label for="f-rule">Условие смены ролей</label><input id="f-rule"${dis} value="${esc(d.rule)}" placeholder="например, два месяца подряд ниже цели"></div>
+        <button class="btn primary" id="swapBtn" ${o&&d.successor&&!ro?"":"disabled"} ${ro?"hidden":""}>Метрика не выполнена: передать владение сменщику</button>
       </div>
       ${st.conf.length||st.gap?`<div class="d-sec"><h4>Что известно из свода анкет</h4>${st.conf.map(n=>`<div class="conf"><b>№${n}.</b> ${esc(CONFLICTS[n]||"")}</div>`).join("")}${st.gap?`<div class="conf">${esc(st.gap)}</div>`:""}</div>`:""}
-      <div class="d-sec"><h4>Заметка для реестра «на дорешение»</h4><div class="field"><textarea id="f-note" placeholder="Аргументы сторон, договорённости, кто эскалирует">${esc(d.note)}</textarea></div></div>
+      <div class="d-sec"><h4>Заметка для реестра «на дорешение»</h4><div class="field"><textarea id="f-note"${dis} placeholder="Аргументы сторон, договорённости, кто эскалирует">${esc(d.note)}</textarea></div></div>
       <div class="d-sec"><h4>История</h4>${(d.history||[]).length?`<ul class="hist">${d.history.map(h=>`<li>${esc(h.t)}: ${esc(h.text)}</li>`).join("")}</ul>`:`<p class="faint" style="font-size:13px">Изменений пока нет.</p>`}</div>
     </div>`;
   dr.querySelector(".close").onclick = closeDrawer;
@@ -1322,12 +1561,14 @@ function applyMode(){
 }
 
 /* ---------------- CHAIN ---------------- */
-let chainHl = "hot", chainFnId = "", chainOwner = true;
+let chainHl = "hot", chainFnId = "", chainOwner = true, chainStream = "";
 function chainMatch(st){
   const stt = status(st.code);
   if(chainHl==="hot") return st.conf.length>0 || !!st.gap;
   if(chainHl==="dispute") return stt==="dispute";
   if(chainHl==="empty") return stt==="empty";
+  if(chainHl==="kpi"){ const d=getDoc(st.code); return !!ownerOf(d) && !!d.metric && stt!=="dispute"; }
+  if(chainHl==="nokpi"){ const d=getDoc(st.code); return !!ownerOf(d) && !d.metric; }
   if(chainHl==="custom") return st.custom;
   if(chainHl==="fn") return !!chainFnId && memberList(st.code).includes(chainFnId);
   return false;
@@ -1338,7 +1579,7 @@ function chevs(s){
     const alert = dark && (chainHl==="dispute");
     const tip = `${st.disp} ${st.name}. Результат: ${st.result}${stt==="dispute"?". Спор за владение":""}`;
     return `<li class="chev${dark?" dark":""}${alert?" alert":""}" role="button" tabindex="0" data-chev="${st.code}" title="${esc(tip)}">
-      <span class="n">${st.disp}</span>${esc(st.name)}${chainOwner&&o?`<span class="o">${esc(fnName(o))}</span>`:""}
+      <span class="n">${st.disp}</span>${esc(st.name)}${chainOwner?(o?`<br><span class="own" title="Владелец шага">${esc(fnName(o))}</span>${d.metric?`<span class="kpi-mini" title="KPI владельца">KPI: ${esc(d.metric)}${d.target?` → ${esc(d.target)}`:""}</span>`:""}`:(stt==="dispute"?`<br><span class="own none">Спор</span>`:"")):""}
       ${!dark&&stt==="dispute"?`<span class="mark" style="background:var(--coral)" aria-label="Спор"></span>`:""}</li>`;
   }).join("")}</ol>`;
 }
@@ -1352,8 +1593,17 @@ function renderChain(){
   fsel.innerHTML = `<option value="">Выберите функцию…</option>` + allFns().map(f=>`<option value="${f.id}" ${f.id===chainFnId?"selected":""}>${esc(f.name)}</option>`).join("");
   $("#chainOwner").checked = chainOwner;
   const S = SMAP;
+  const cs = $("#chainStream");
+  cs.innerHTML = `<option value="">Все потоки</option>` + STREAMS.map(s=>`<option value="${s.id}" ${s.id===chainStream?"selected":""}>${s.id} · ${esc(s.team)}</option>`).join("");
+  if(chainStream && SMAP[chainStream]){
+    const s = SMAP[chainStream]; const k = streamStats(s);
+    const cnt = s.steps.filter(chainMatch).length;
+    $("#chainBody").innerHTML = `<p class="faint" id="chainCount" style="font-size:13px;margin:-10px 0 18px">Владельцы назначены на ${k.owners} из ${s.steps.length} шагов${chainHl==="none"?"":`, выделено ${cnt}`}</p>
+      <div class="chain-frame chain-one"><span class="chain-tag"><b>Уровень ${s.tier}.</b> ${s.tier===1?"Создать готовность":"Реализовать ценность"}</span>${band(s)}${chevs(s)}</div>`;
+    return;
+  }
   const count = ALLSTEPS.filter(chainMatch).length;
-  let html = `<p class="faint" style="font-size:13px;margin:-10px 0 18px">${chainHl==="none"?"":`Выделено шагов: ${count} из ${ALLSTEPS.length}`}</p>`;
+  let html = `<p class="faint" id="chainCount" style="font-size:13px;margin:-10px 0 18px">${chainHl==="none"?"":`Выделено шагов: ${count} из ${ALLSTEPS.length}`}</p>`;
   html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 1.</b> Создать готовность</span>
     <div class="chain-cols"><div>${band(S.VS1)}${chevs(S.VS1)}</div><div>${band(S.VS5)}${chevs(S.VS5)}</div></div></div>`;
   html += `<div class="gate-band" role="button" tabindex="0" data-gate><b>Коммерческая готовность</b><span class="muted">Продукт + партнёр + контент + запас</span></div>`;
@@ -1367,7 +1617,7 @@ function renderChain(){
 /* ---------------- FUNCTIONS ---------------- */
 function fnInvolvement(fid){
   return ALLSTEPS.map(st=>{ const d=getDoc(st.code); if(!memberList(st.code,d).includes(fid)) return null;
-    const r = roleOf(d,fid); if(r!=="none") return {st, r}; return {st, r: isConfirmed(st.code)?"member":"hyp"}; }).filter(Boolean);
+    const r = roleOf(d,fid); if(r!=="none") return {st, r, kpi: r==="owner" && !!d.metric, d}; return {st, r: isConfirmed(st.code)?"member":"hyp", d}; }).filter(Boolean);
 }
 function renderFunctions(){
   const fns = allFns();
@@ -1380,25 +1630,82 @@ function renderFunctions(){
     STREAMS.forEach(s=>{
       const x = inv.filter(i=>i.st.stream.id===s.id);
       const O=x.filter(i=>i.r==="owner").length, H=x.filter(i=>i.r==="helper").length, C=x.filter(i=>i.r==="claimant").length, Y=x.filter(i=>i.r==="hyp").length, M=x.filter(i=>i.r==="member").length;
+      const K = x.filter(i=>i.kpi).length;
       let txt = [O?`В${O}`:"",H?`П${H}`:"",C?`С${C}`:"",M?`У${M}`:""].filter(Boolean).join(" ");
-      let style = "";
+      let style = "", kcls = (O && K===O && !C) ? "kpi-all" : "";
       if(C) style = "background:var(--coral-soft)"; else if(O) style="background:var(--navy);color:#fff"; else if(H) style="background:var(--ice-soft)"; else if(M) style="border:1px solid var(--faint)";
       if(!txt && Y){ txt = `${Y}`; style="border:1px dashed var(--faint);color:var(--muted)"; }
-      rows += `<td class="cell" data-fn="${f.id}" data-s="${s.id}">${txt?`<span style="${style}">${txt}</span>`:""}</td>`;
+      const title = O ? `Владелец на ${O} шаг.; KPI задан на ${K}` : "";
+      rows += `<td class="cell" data-fn="${f.id}" data-s="${s.id}" ${title?`title="${title}"`:""}>${txt?`<span class="${kcls}" style="${style}">${txt}</span>${O&&K&&K<O?`<i class="kmark">KPI ${K}/${O}</i>`:(O&&K===O?`<i class="kmark">KPI ✓</i>`:"")}`:""}</td>`;
     });
     rows += `</tr>`;
   });
   $("#matrix").innerHTML = rows + "</tbody>";
+  if(!document.getElementById("matrixLegend")) $("#matrix").insertAdjacentHTML("afterend", `<div class="matrix-legend" id="matrixLegend">
+    <span><i style="background:var(--navy)"></i>Владелец, KPI не задан</span>
+    <span><i style="background:var(--ok)"></i>Владелец, KPI задан на всех его шагах</span>
+    <span><b style="color:var(--ok);font-weight:500">KPI 1/3</b> KPI задан на части шагов</span>
+    <span><i style="background:var(--coral-soft)"></i>Есть спор</span>
+    <span><i style="background:var(--ice-soft)"></i>Помощник</span>
+    <span><i style="border:1px dashed var(--faint)"></i>Гипотеза из свода</span></div>`);
   $("#matrix").querySelectorAll("[data-fn]").forEach(td=>td.onclick=()=>{ currentFn = td.dataset.fn; if(td.dataset.s){ currentStream=td.dataset.s; hlFn=currentFn; setView("stream"); } else renderFunctions(); });
   $("#fnSelect").innerHTML = fns.map(f=>`<option value="${f.id}" ${f.id===currentFn?"selected":""}>${esc(f.name)}</option>`).join("");
   $("#fnSelect").onchange = e=>{ currentFn=e.target.value; renderFunctions(); };
   const inv = fnInvolvement(currentFn);
   const lbl = {owner:"Владелец",helper:"Помощник",claimant:"Претендент",hyp:"Гипотеза",member:"Без роли"};
   const cls = {owner:"owner",helper:"",claimant:"claimant",hyp:"hyp",member:"member"};
-  $("#fnSteps").innerHTML = inv.length ? `<p class="muted" style="font-size:14px;margin:0 0 6px">Шагов с участием: ${inv.length}. Владелец: ${inv.filter(i=>i.r==="owner").length}, помощник: ${inv.filter(i=>i.r==="helper").length}, спорит: ${inv.filter(i=>i.r==="claimant").length}.</p>` +
-    inv.map(i=>`<div class="fn-row" data-step="${i.st.code}"><span class="code" style="color:${i.st.stream.c}">${i.st.disp}</span><span>${esc(i.st.name)}<br><span class="faint" style="font-size:12.5px">${esc(i.st.stream.name)}</span></span><span class="chip ${cls[i.r]}">${lbl[i.r]}</span></div>`).join("")
+  $("#fnSteps").innerHTML = inv.length ? `<p class="muted" style="font-size:14px;margin:0 0 6px">Шагов с участием: ${inv.length}. Владелец: ${inv.filter(i=>i.r==="owner").length} (с KPI: ${inv.filter(i=>i.kpi).length}), помощник: ${inv.filter(i=>i.r==="helper").length}, спорит: ${inv.filter(i=>i.r==="claimant").length}.</p>` +
+    inv.map(i=>`<div class="fn-row" data-step="${i.st.code}"><span class="code" style="color:${i.st.stream.c}">${i.st.disp}</span><span>${esc(i.st.name)}<br><span class="faint" style="font-size:12.5px">${esc(i.st.stream.name)}</span></span><span class="chip ${cls[i.r]}">${lbl[i.r]}</span>${i.r==="owner"&&i.d&&i.d.metric?`<span class="kpi-sub" style="grid-column:2">KPI: ${esc(i.d.metric)}${i.d.target?` → ${esc(i.d.target)}`:""}</span>`:""}</div>`).join("")
     : `<div class="empty-state">Функция пока не найдена ни в одном шаге. Откройте поток и добавьте её на шаг, где она создаёт результат.</div>`;
   $("#fnSteps").querySelectorAll("[data-step]").forEach(r=>r.onclick=()=>openDrawer(r.dataset.step));
+}
+
+/* ---------------- DICTIONARY ---------------- */
+function fnUsage(){
+  const u = {};
+  ALLSTEPS.forEach(st=>{ memberList(st.code).forEach(fid=>{ u[fid] = (u[fid]||0) + 1; }); });
+  return u;
+}
+function renderDict(){
+  initFnRows();
+  const rows = sortFnRows(FN_ROWS), usage = fnUsage();
+  const groups = [...new Set(rows.map(x=>x.grp))];
+  $("#dictGroups").innerHTML = groups.map(g=>`<option value="${esc(g)}">`).join("");
+  let html = `<table class="dict"><thead><tr><th>Название</th><th>English</th><th>Группа</th><th style="text-align:center">На шагах</th><th></th></tr></thead><tbody>`;
+  let grp = null;
+  const active = rows.filter(x=>x.active!==false), hidden = rows.filter(x=>x.active===false);
+  const row = (x, i, list)=>{
+    const n = usage[x.id]||0, sib = list.filter(y=>y.grp===x.grp), k = sib.findIndex(y=>y.id===x.id);
+    return `<tr class="${x.active===false?"off":""}" data-fid="${x.id}">
+      <td><input data-dk="name" value="${esc(x.name)}" aria-label="Название" maxlength="90"></td>
+      <td><input data-dk="name_en" value="${esc(x.name_en||"")}" aria-label="English" maxlength="90"></td>
+      <td><input data-dk="grp" value="${esc(x.grp)}" list="dictGroups" aria-label="Группа" maxlength="60"></td>
+      <td class="num">${n}</td>
+      <td class="acts">${x.active===false ? `<button class="btn" data-dshow="${x.id}">Вернуть</button>` :
+        `<button class="btn" data-dmv="-1" data-did="${x.id}" ${k<=0?"disabled":""} aria-label="Выше">↑</button> <button class="btn" data-dmv="1" data-did="${x.id}" ${k>=sib.length-1?"disabled":""} aria-label="Ниже">↓</button> <button class="btn" data-dhide="${x.id}" ${n?`disabled title="Функция стоит на ${n} шаг., сначала уберите её с шагов"`:""}>Скрыть</button>`}</td></tr>`;
+  };
+  active.forEach((x,i)=>{ if(x.grp!==grp){ grp = x.grp; html += `<tr class="grp"><td colspan="5">${esc(grp)}</td></tr>`; } html += row(x,i,active); });
+  if(hidden.length){ html += `<tr class="grp"><td colspan="5">Скрытые функции: не предлагаются при выборе на шагах</td></tr>`; hidden.forEach((x,i)=>{ html += row(x,i,hidden); }); }
+  html += `</tbody></table>`;
+  $("#dictBody").innerHTML = html;
+  $("#dictBody").querySelectorAll("input[data-dk]").forEach(inp=>{
+    inp.onchange = ()=>{
+      const fid = inp.closest("tr").dataset.fid, key = inp.dataset.dk, val = inp.value.trim(), cur = FN_ROWS.find(x=>x.id===fid);
+      if(!cur || (cur[key]||"")===val) return;
+      if(key!=="name_en" && !val){ toast("Поле не может быть пустым"); inp.value = cur[key]; return; }
+      if(key==="name" && FN_ROWS.some(x=>x.id!==fid && x.name.trim().toLowerCase()===val.toLowerCase())){ toast("Функция с таким названием уже есть"); inp.value = cur.name; return; }
+      const ch = {id:fid}; ch[key] = val;
+      if(key==="grp"){ const inGrp = FN_ROWS.filter(x=>x.grp===val); if(inGrp.length) ch.sort = Math.max(...inGrp.map(x=>x.sort)) + 1; }
+      saveFunctions([ch], key==="name" ? `Переименовано: «${cur.name}» → «${val}»` : "Сохранено");
+    };
+    inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); inp.blur(); } };
+  });
+}
+function moveFunction(fid, dir){
+  const list = sortFnRows(FN_ROWS.filter(x=>x.active!==false)); const x = list.find(r=>r.id===fid); if(!x) return;
+  const sib = list.filter(r=>r.grp===x.grp); const k = sib.indexOf(x), j = k + dir; if(j<0 || j>=sib.length) return;
+  const y = sib[j]; let a = x.sort, b = y.sort; if(a===b){ b = a + dir; }
+  saveFunctions([{id:x.id, sort:b}, {id:y.id, sort:a}]);
 }
 
 /* ---------------- REGISTER ---------------- */
@@ -1434,6 +1741,12 @@ async function exportCsv(){
 /* ---------------- EVENTS ---------------- */
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.addEventListener("click", e=>{
+  if(e.target.closest("#loginBtn") || e.target.closest("[data-login]")){ openLogin(); return; }
+  if(e.target.closest("#logoutBtn")){ (async()=>{ await logout(); editMode=false; applyTabAccess(); renderAll(); toast("Вы вышли. Доска открыта для просмотра"); })(); return; }
+  const dmv = e.target.closest("[data-dmv]"); if(dmv){ moveFunction(dmv.dataset.did, +dmv.dataset.dmv); return; }
+  const dhide = e.target.closest("[data-dhide]"); if(dhide){ const x = FN_ROWS.find(r=>r.id===dhide.dataset.dhide); saveFunctions([{id:x.id, active:false}], `Функция «${x.name}» скрыта`); return; }
+  const dshow = e.target.closest("[data-dshow]"); if(dshow){ const x = FN_ROWS.find(r=>r.id===dshow.dataset.dshow); saveFunctions([{id:x.id, active:true}], `Функция «${x.name}» снова доступна`); return; }
+  if(e.target.closest("[data-guide]")){ closeDrawer(); setView("guide"); return; }
   const c = e.target.closest("[data-open-stream]"); if(c){ currentStream=c.dataset.openStream; hlFn=""; setView("stream"); return; }
   const p = e.target.closest("[data-pick]"); if(p){ currentStream=p.dataset.pick; stepForm=null; confirmDel=null; renderStream(); return; }
   const cv = e.target.closest("[data-chev]"); if(cv){ openDrawer(cv.dataset.chev); return; }
@@ -1497,12 +1810,38 @@ $("#exportBtn").onclick = exportCsv;
 $("#chainHl").onchange = e=>{ chainHl = e.target.value; renderChain(); };
 $("#chainFn").onchange = e=>{ chainFnId = e.target.value; renderChain(); };
 $("#chainOwner").onchange = e=>{ chainOwner = e.target.checked; renderChain(); };
+$("#dictAdd").onsubmit = e=>{ e.preventDefault(); const id = addFunction($("#dAddName").value, $("#dAddEn").value, $("#dAddGrp").value); if(id){ $("#dAddName").value=""; $("#dAddEn").value=""; setTimeout(()=>$("#dAddName").focus(), 30); } };
+$("#chainStream").onchange = e=>{ chainStream = e.target.value; renderChain(); };
+$("#presentBtn").onclick = async ()=>{
+  const v = document.getElementById("v-chain"); v.classList.add("present");
+  try{ if(v.requestFullscreen) await v.requestFullscreen(); }catch(err){}
+};
+$("#presentExit").onclick = ()=>{ if(document.fullscreenElement) document.exitFullscreen(); else document.getElementById("v-chain").classList.remove("present"); };
+document.addEventListener("fullscreenchange", ()=>{ if(!document.fullscreenElement) document.getElementById("v-chain").classList.remove("present"); });
+function openLogin(){
+  if(!sb){ toast("Вход работает, когда подключена база Supabase"); return; }
+  const d = $("#loginDlg"); $("#loginErr").textContent = ""; $("#loginPass").value = "";
+  if(d.showModal) d.showModal(); else d.setAttribute("open","");
+  setTimeout(()=>$("#loginPass").focus(), 30);
+}
+$("#loginCancel").onclick = ()=>$("#loginDlg").close();
+$("#loginForm").onsubmit = async e=>{
+  e.preventDefault();
+  const p = $("#loginPass").value; if(!p.trim()) return;
+  $("#loginGo").disabled = true; $("#loginErr").textContent = "";
+  try{
+    const ok = await login(p);
+    if(!ok){ $("#loginErr").textContent = "Пароль не подошёл. Проверьте раскладку клавиатуры."; return; }
+    $("#loginDlg").close(); applyTabAccess();
+    if(me.stream_id){ currentStream = me.stream_id; chainStream = me.stream_id; hlFn=""; setView("stream"); } else renderAll();
+    toast(me.is_admin ? "Вы вошли как администратор" : `Вы вошли: ${me.label}`);
+  }catch(err){ $("#loginErr").textContent = "Нет связи с базой: " + (err.message||err); }
+  finally{ $("#loginGo").disabled = false; }
+};
 $("#addFnBtn").onclick = ()=>{
-  const name = $("#newFnName").value.trim(); if(!name) return;
-  if(allFns().some(f=>f.name.toLowerCase()===name.toLowerCase())){ toast("Такая функция уже есть"); return; }
-  const id = "c"+Date.now().toString(36);
-  customFns = customFns.concat([{id,name}]); currentFn=id; $("#newFnName").value="";
-  saveFns(); renderFunctions(); toast("Функция добавлена, назначьте её на шаги");
+  if(!isAdmin()){ toast("Добавлять функции в справочник может администратор"); return; }
+  const id = addFunction($("#newFnName").value, "", "Добавлено на сессии");
+  if(id){ currentFn = id; $("#newFnName").value = ""; renderFunctions(); }
 };
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", ()=>{ if(curView()==="map") renderMap(); });
 

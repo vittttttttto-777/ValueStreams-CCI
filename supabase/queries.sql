@@ -1,7 +1,7 @@
 -- Полезные запросы (Supabase → SQL Editor)
 
 -- 1. Сводная матрица «функция × поток»
-select grp, function, stream_id, team, owner_steps, helper_steps, claimant_steps, no_role_steps, hypothesis_steps
+select grp, function, stream_id, team, owner_steps, owner_kpi_steps, helper_steps, claimant_steps, no_role_steps, hypothesis_steps
 from vs_matrix order by sort, stream_id;
 
 -- 2. Матрица в развороте: одна строка на функцию, владение по потокам
