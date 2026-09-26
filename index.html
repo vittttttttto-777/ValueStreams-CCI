@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Потоки создания ценности — Coral Club</title>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<style>
+/* Coral Club Design System 1.0: Suisse Int'l (300/400/500) + Newton italic, self-hosted */
+@font-face{font-family:'Suisse Intl';font-style:normal;font-weight:300;src:url(fonts/SuisseIntl-Light.woff2) format('woff2');font-display:swap;}
+@font-face{font-family:'Suisse Intl';font-style:normal;font-weight:400;src:url(fonts/SuisseIntl-Regular.woff2) format('woff2');font-display:swap;}
+@font-face{font-family:'Suisse Intl';font-style:normal;font-weight:500;src:url(fonts/SuisseIntl-Medium.woff2) format('woff2');font-display:swap;}
+@font-face{font-family:'Newton';font-style:italic;font-weight:400;src:url(fonts/Newton-Italic.woff2) format('woff2');font-display:swap;}
+
+:root{
+  /* Coral Club DS: deep teal = accent/priority, mist = surface, sage = captions and hairlines */
+  --navy:#004643; --navy-2:#013634;
+  --bg:#E5ECEC; --surface:#FFFFFF; --surface-2:#F2F6F6;
+  --ink:#004643; --muted:#4F7472; --faint:#7FA2A1; --line:#BFD1D0;
+  /* out-of-system alert, used only for disputes (DS has no alert token by design) */
+  --coral:#B8325A; --coral-soft:#F6DCE4;
+  --ice:#7FA9D0; --ice-soft:#DEF1FF;
+  --ok:#20927B; --ok-soft:#D6E9B4;
+  --focus:#264FD6; --on-c:#FFFFFF;
+  --vs1:#20927B; --vs2:#264FD6; --vs3:#C1905C; --vs4:#2C1492; --vs5:#004643;
+  --rainbow:linear-gradient(90deg,#E84B8A 0%,#2BB8B0 33%,#2C8FD6 66%,#C9D33A 100%);
+  --shadow:0 0 0 1px var(--line);
+  --ease:cubic-bezier(0.2,0.8,0.2,1);
+  --sans:"Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+  --serif:"Suisse Intl", "Helvetica Neue", Arial, sans-serif;
+  --accent:"Newton", "Times New Roman", serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#002B29; --surface:#003633; --surface-2:#06413E; --navy:#004643;
+    --ink:#E5ECEC; --muted:#BFD1D0; --faint:#7FA2A1; --line:#1E5A56;
+    --coral:#E0698C; --coral-soft:#4A2332; --ice:#7FA9D0; --ice-soft:#123E55; --ok:#3DB395; --ok-soft:#1F4A38;
+    --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#002B29; --surface:#003633; --surface-2:#06413E; --navy:#004643;
+  --ink:#E5ECEC; --muted:#BFD1D0; --faint:#7FA2A1; --line:#1E5A56;
+  --coral:#E0698C; --coral-soft:#4A2332; --ice:#7FA9D0; --ice-soft:#123E55; --ok:#3DB395; --ok-soft:#1F4A38;
+  --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;}
+button, select, input, textarea{font:inherit; color:inherit;}
+button{cursor:pointer;}
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px;}
+em.acc{font-family:var(--accent); font-style:italic; font-weight:400; font-size:.98em; letter-spacing:0;}
+.rainbow{display:block; height:3px; background:var(--rainbow); border:0;}
+
+/* header */
+.top{background:var(--navy); color:#E5ECEC; position:sticky; top:env(safe-area-inset-top,0px); z-index:20;}
+.top-in{max-width:1320px; margin:0 auto; padding:14px 24px 0; display:flex; flex-direction:column; gap:10px;}
+.brand{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;}
+.brand h1{font-family:var(--sans); font-weight:300; font-size:22px; letter-spacing:-0.02em; margin:0;}
+.brand .logo{height:18px; width:auto; color:#E5ECEC; align-self:center; margin-right:6px; display:block;}
+.brand .sep{width:1px; height:22px; background:#7FA2A1; align-self:center;}
+.brand > span{color:#BFD1D0; font-size:13px; font-weight:300;}
+.sync{margin-left:auto; font-size:12px; color:#BFD1D0; display:flex; align-items:center; gap:6px;}
+.sync i{width:8px; height:8px; border-radius:50%; background:#7FA2A1; display:inline-block;}
+.sync.live i{background:#2BB8B0;}
+.tabs{display:flex; gap:2px; overflow-x:auto; scrollbar-width:none;}
+.tabs button{background:none; border:none; color:#BFD1D0; padding:10px 14px; border-bottom:2px solid transparent; white-space:nowrap; font-weight:400; transition:color 240ms var(--ease);}
+.tabs button[aria-selected="true"]{color:#FFFFFF; border-bottom-color:#E5ECEC;}
+.tabs button:hover{color:#FFFFFF;}
+
+main{max-width:1320px; margin:0 auto; padding:28px 24px 80px;}
+.view{display:none;} .view.on{display:block;}
+h2{font-family:var(--sans); font-weight:300; font-size:34px; line-height:1.15; letter-spacing:-0.02em; margin:0 0 10px;}
+h3{font-weight:500;}
+h3{font-size:17px; margin:0 0 6px; font-weight:600;}
+.muted{color:var(--muted);} .faint{color:var(--faint);}
+.lede{font-size:16px; color:var(--muted); max-width:760px; margin:0 0 24px;}
+
+/* portfolio */
+.northstar{font-family:var(--sans); font-weight:300; font-size:26px; letter-spacing:-0.01em; line-height:1.35; max-width:900px; margin:6px 0 28px;}
+.tier{margin-bottom:30px;}
+.tier-head{display:flex; align-items:baseline; gap:12px; margin-bottom:12px; border-bottom:1px solid var(--line); padding-bottom:8px;}
+.tier-head h3{margin:0; font-size:15px;}
+.tier-head p{margin:0; color:var(--muted); font-size:14px;}
+.grid{display:grid; gap:16px;}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr));}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media (max-width:980px){ .grid.three{grid-template-columns:1fr 1fr;} }
+@media (max-width:700px){ .grid.two, .grid.three{grid-template-columns:1fr;} }
+.vcard{background:var(--surface); border-radius:0; box-shadow:var(--shadow); padding:20px 20px 16px; text-align:left; border:none; border-top:4px solid var(--c); display:flex; flex-direction:column; gap:12px; width:100%;}
+.vcard{transition:box-shadow 240ms var(--ease);}
+.vcard:hover{box-shadow:0 0 0 1px var(--c);}
+.vcode{font-weight:700; color:var(--c); font-size:13px;}
+.team{display:inline-block; background:var(--c); color:var(--on-c); border-radius:9999px; padding:1px 8px; font-size:12.5px; font-weight:600; margin-left:8px;}
+.vname{font-family:var(--sans); font-weight:300; font-size:24px; letter-spacing:-0.02em; line-height:1.15;}
+.flowline{display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:start; font-size:13.5px;}
+.flowline b{display:block; font-size:12px; color:var(--faint); font-weight:500;}
+.flowline .arr{color:var(--c); font-size:18px; padding-top:10px;}
+.strip{display:flex; gap:3px;}
+.strip i{flex:1; height:10px; border-radius:0; background:var(--line);}
+.strip i.assigned{background:var(--ice);}
+.strip i.fixed{background:var(--ok);}
+.strip i.dispute{background:var(--coral);}
+.vstats{display:flex; gap:16px; font-size:13px; color:var(--muted); flex-wrap:wrap;}
+.vstats b{color:var(--ink);}
+.kpis{display:flex; flex-wrap:wrap; gap:6px;}
+.kpis span{font-size:12px; background:var(--surface-2); border:1px solid var(--line); border-radius:9999px; padding:2px 9px; color:var(--muted);}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin:6px 0 20px;}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.legend i{width:14px; height:10px; border-radius:0; display:inline-block;}
+.xcut{background:var(--surface); border-radius:0; padding:18px 20px; box-shadow:var(--shadow);}
+.xcut-list{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+.xcut-list span{border:1px dashed var(--faint); border-radius:0; padding:6px 10px; font-size:13px;}
+.xcut-list span b{font-weight:600;}
+
+/* stream view */
+.stream-pick{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
+.stream-pick button{border:1px solid var(--line); background:var(--surface); border-radius:9999px; padding:6px 14px; font-size:14px;}
+.stream-pick button[aria-pressed="true"]{background:var(--c); border-color:var(--c); color:var(--on-c);}
+.profile{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:24px; background:var(--surface); border-radius:0; box-shadow:var(--shadow); padding:26px; border-left:6px solid var(--c); margin-bottom:26px;}
+@media (max-width:860px){ .profile{grid-template-columns:1fr;} }
+.profile dl{margin:0; display:grid; grid-template-columns:150px 1fr; gap:10px 16px; font-size:14px;}
+.profile dt{color:var(--faint);}
+.profile dd{margin:0;}
+.quote{font-family:var(--sans); font-weight:300; font-size:20px; line-height:1.5; border-left:3px solid var(--c); padding-left:16px; margin:12px 0 16px;}
+.steps-head{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
+.steps-head h3{margin:0;}
+.steps-head select{margin-left:auto; padding:6px 10px; border-radius:0; border:1px solid var(--line); background:var(--surface);}
+.steps{list-style:none; margin:0; padding:0; position:relative;}
+.steps::before{content:""; position:absolute; left:27px; top:8px; bottom:8px; width:2px; background:var(--line);}
+.step{position:relative; display:grid; grid-template-columns:56px minmax(0,1.3fr) minmax(0,1fr) 120px; gap:14px; align-items:start; padding:12px 12px 12px 0; border-radius:0; cursor:pointer; background:none; border:none; width:100%; text-align:left;}
+.step:hover{background:var(--surface);}
+.step .roles{cursor:default;}
+.step.dim{opacity:.35;}
+.step .dot{width:56px; display:flex; justify-content:center;}
+.step .dot b{width:38px; height:38px; border-radius:50%; background:var(--surface); border:2px solid var(--c); color:var(--c); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; position:relative; z-index:1;}
+.step .t{font-weight:600;}
+.step .r{font-size:13px; color:var(--muted);}
+.roles{display:flex; flex-wrap:wrap; gap:5px; font-size:12.5px;}
+.chip{border-radius:9999px; padding:2px 8px; border:1px solid var(--line); background:var(--surface-2); white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis;}
+.chip.owner{background:var(--navy); color:#fff; border-color:var(--navy);}
+:root[data-theme="dark"] .chip.owner{background:#E5ECEC; color:#004643;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip.owner{background:#E5ECEC; color:#004643; border-color:#E5ECEC;} :root:not([data-theme="light"]) .seg button[aria-pressed="true"], :root:not([data-theme="light"]) .btn.primary{background:#E5ECEC; color:#004643; border-color:#E5ECEC;} }
+:root[data-theme="dark"] .seg button[aria-pressed="true"], :root[data-theme="dark"] .btn.primary{background:#E5ECEC; color:#004643; border-color:#E5ECEC;}
+.chip.claimant{background:var(--coral-soft); border-color:var(--coral); color:var(--ink);}
+.chip.hyp{border-style:dashed; color:var(--muted); background:transparent;}
+.chip.member{background:var(--surface); border-color:var(--faint);}
+.roles .chip{display:inline-flex; align-items:center; padding:0; overflow:visible;}
+.roles .chip .cn{border:none; background:none; color:inherit; padding:2px 4px 2px 8px; font-size:12.5px; max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.roles .chip .x{border:none; background:none; color:inherit; opacity:.55; padding:2px 7px 2px 3px; font-size:14px; line-height:1;}
+.roles .chip .x:hover{opacity:1;}
+.addfn{border:1px dashed var(--c); color:var(--c); background:none; border-radius:0; padding:2px 9px; font-size:12.5px; font-weight:600;}
+.addsel{font-size:12.5px; padding:3px 6px; border-radius:0; border:1px solid var(--c); background:var(--surface); max-width:260px;}
+.comp-note{width:100%; font-size:12px; color:var(--faint); display:flex; flex-wrap:wrap; gap:4px 10px; align-items:center; margin-top:2px;}
+.comp-note button{white-space:nowrap;}
+.steps.editing::before{display:none;}
+.erow{display:grid; grid-template-columns:28px 44px minmax(0,1fr) auto; gap:12px; align-items:start; background:var(--surface); border:1px solid var(--line); border-radius:0; padding:12px 14px; margin-bottom:6px;}
+.erow.dragging{opacity:.4;}
+.erow.over-top{box-shadow:inset 0 3px 0 var(--c);}
+.erow.over-bot{box-shadow:inset 0 -3px 0 var(--c);}
+.handle{cursor:grab; color:var(--faint); font-size:18px; line-height:1; padding-top:8px; user-select:none; text-align:center;}
+.erow .num{width:36px; height:36px; border-radius:50%; border:2px solid var(--c); color:var(--c); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700;}
+.erow .t{font-weight:600;} .erow .r{font-size:13px; color:var(--muted);}
+.erow .tag{font-size:11.5px; border-radius:0; padding:1px 6px; margin-left:6px; background:var(--surface-2); border:1px solid var(--line); color:var(--muted); font-weight:500;}
+.eacts{display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end;}
+.eacts .btn{padding:4px 9px; font-size:13px;}
+.ins{display:flex; justify-content:center; margin:0 0 6px;}
+.ins button{border:1px dashed var(--c); color:var(--c); background:none; border-radius:0; padding:3px 12px; font-size:12.5px; font-weight:600; opacity:.55;}
+.ins button:hover, .ins button:focus-visible{opacity:1;}
+.stepform{background:var(--surface); border:2px solid var(--c); border-radius:0; padding:16px; margin-bottom:8px;}
+.stepform h4{margin:0 0 10px; font-size:15px;}
+.stepform .field small{color:var(--faint); font-size:12px;}
+.stepform .acts{display:flex; gap:8px; margin-top:6px;}
+@media (max-width:760px){ .erow{grid-template-columns:24px 1fr; } .erow .num{display:none;} .eacts{grid-column:1 / -1; justify-content:flex-start;} }
+.comp-note button{border:none; background:none; color:var(--ok); font-weight:600; font-size:12px; padding:0; text-decoration:underline;}
+.role-menu{position:fixed; z-index:50; background:var(--surface); border:1px solid var(--line); border-radius:0; box-shadow:var(--shadow); padding:6px; display:none; min-width:210px;}
+.role-menu.on{display:block;}
+.role-menu .h{font-size:12px; color:var(--faint); padding:4px 8px 6px;}
+.role-menu button{display:flex; width:100%; gap:8px; align-items:center; border:none; background:none; text-align:left; padding:7px 8px; border-radius:0; font-size:14px;}
+.role-menu button:hover, .role-menu button[aria-pressed="true"]{background:var(--surface-2);}
+.role-menu button i{width:12px; height:12px; border-radius:0; display:inline-block; border:1px solid var(--line);}
+.role-menu hr{border:none; border-top:1px solid var(--line); margin:4px 0;}
+.step-legend{display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin:-4px 0 10px;}
+.step-legend .chip{padding:1px 7px; font-size:12px;}
+.badge{font-size:12px; border-radius:0; padding:3px 8px; font-weight:600; display:inline-block; white-space:nowrap;}
+.badge.empty{background:var(--surface-2); color:var(--faint); border:1px solid var(--line);}
+.badge.assigned{background:var(--ice-soft); color:var(--ink);}
+.badge.fixed{background:var(--ok-soft); color:var(--ok);}
+.badge.dispute{background:var(--coral); color:#fff;}
+.flag{font-size:12px; color:var(--coral); margin-top:4px;}
+@media (max-width:760px){
+  .step{grid-template-columns:44px 1fr; }
+  .step .dot{width:44px;} .steps::before{left:21px;}
+  .step .roles, .step .st{grid-column:2;}
+}
+.aside-box{background:var(--surface); border-radius:0; box-shadow:var(--shadow); padding:18px 20px; margin-top:26px;}
+table.plain{width:100%; border-collapse:collapse; font-size:14px;}
+table.plain th{text-align:left; font-weight:500; color:var(--faint); font-size:12.5px; padding:8px 8px; border-bottom:1px solid var(--line);}
+table.plain td{padding:9px 8px; border-bottom:1px solid var(--line); vertical-align:top;}
+table.plain tr:last-child td{border-bottom:none;}
+
+/* map */
+.map-bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;}
+.seg{display:inline-flex; background:var(--surface); border:1px solid var(--line); border-radius:0; padding:3px;}
+.seg button{border:none; background:none; padding:6px 12px; border-radius:0; font-size:14px;}
+.seg button[aria-pressed="true"]{background:var(--navy); color:#E5ECEC;}
+.map-wrap{background:var(--surface); border-radius:0; box-shadow:var(--shadow); overflow-x:auto;}
+#mapSvg{display:block; min-width:640px; width:100%; height:auto;}
+.map-layout{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:22px; align-items:start;}
+.map-side{position:sticky; top:130px; display:flex; flex-direction:column; gap:16px; max-height:calc(100vh - 150px); overflow-y:auto;}
+@media (max-width:1000px){ .map-layout{grid-template-columns:1fr;} .map-side{position:static; max-height:none;} }
+#mapSvg .node{cursor:pointer;}
+#mapSvg .node rect.box{transition:opacity .2s;}
+#mapSvg.focus .node:not(.hl) rect.box, #mapSvg.focus .node:not(.hl) text{opacity:.28;}
+#mapSvg.focus .xc:not(.hl){opacity:.3;}
+.seqline{margin:14px 0 0; font-size:14px; color:var(--muted); background:var(--surface-2); border-radius:0; padding:10px 14px;}
+.map-cols{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:20px; margin-top:20px;}
+@media (max-width:900px){ .map-cols{grid-template-columns:1fr;} }
+/* chain view */
+.chain-bar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:22px; font-size:14px;}
+.chain-bar select{padding:7px 10px; border:1px solid var(--faint); background:var(--surface); color:var(--ink); border-radius:0;}
+.chain-bar .chk{display:inline-flex; gap:6px; align-items:center; color:var(--muted); margin-left:6px;}
+.chain-frame{border:1px solid var(--faint); background:var(--surface); padding:22px 22px 26px; margin-bottom:18px; position:relative;}
+.chain-tag{position:absolute; top:-12px; left:22px; background:var(--navy); color:#E5ECEC; font-size:13px; padding:3px 12px; font-weight:300; letter-spacing:.01em;}
+.chain-tag b{font-weight:500;}
+.chain-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+@media (max-width:980px){ .chain-cols{grid-template-columns:1fr;} }
+.band{position:relative; display:flex; align-items:center; gap:10px; min-height:56px; padding:8px 44px; margin-bottom:12px; background:var(--surface); color:var(--ink); border:1px solid var(--c); border-left-width:0; border-right-width:0; cursor:pointer; width:100%; text-align:left; font-size:16px; font-weight:300; letter-spacing:-0.01em;}
+.band::before, .band::after{content:""; position:absolute; top:-1px; bottom:-1px; width:22px; background:var(--c); clip-path:polygon(0 0, 100% 50%, 0 100%);}
+.band::before{left:0; clip-path:polygon(0 0, 100% 50%, 0 100%); opacity:.9;}
+.band::after{right:0; clip-path:polygon(0 0, 100% 50%, 0 100%);}
+.band .bc{font-weight:500; color:var(--c);}
+.band .team{margin-left:auto;}
+.band:hover{background:var(--surface-2);}
+.chevs{display:flex; flex-wrap:wrap; gap:6px 0; list-style:none; margin:0; padding:0;}
+.chev{position:relative; flex:1 0 132px; max-width:190px; min-height:92px; margin-right:-8px; padding:10px 22px 10px 24px; background:#DCE6E6; color:var(--ink); border:none; text-align:left; cursor:pointer; font-size:12.5px; line-height:1.3;
+  clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%); transition:background 240ms var(--ease);}
+.chev:first-child{padding-left:14px; clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);}
+.chev:hover{background:#C9D8D8;}
+.chev .n{display:block; font-size:11px; color:var(--faint); margin-bottom:3px; font-weight:500;}
+.chev .o{display:block; margin-top:6px; font-size:11px; color:var(--muted);}
+.chev.dark{background:var(--navy); color:#E5ECEC;}
+.chev.dark .n, .chev.dark .o{color:#BFD1D0;}
+.chev.dark:hover{background:#013634;}
+.chev.dark.alert{background:var(--coral);}
+.chev.dark.alert .n, .chev.dark.alert .o{color:#F6DCE4;}
+.chev .mark{position:absolute; top:6px; right:18px; width:7px; height:7px; border-radius:50%;}
+.gate-band{display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; border:1px dashed var(--ink); padding:12px 16px; margin:0 0 18px; background:var(--surface-2); text-align:center; font-size:14px;}
+.gate-band b{font-weight:500;}
+.fb-band{display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:13.5px; color:var(--muted);}
+.fb-band .pill{border:1px solid var(--faint); border-radius:9999px; padding:3px 10px; color:var(--ink); background:var(--surface);}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chev{background:#0B4C48;} :root:not([data-theme="light"]) .chev:hover{background:#115B56;} :root:not([data-theme="light"]) .chev.dark{background:#E5ECEC; color:#004643;} :root:not([data-theme="light"]) .chev.dark .n, :root:not([data-theme="light"]) .chev.dark .o{color:#4F7472;} :root:not([data-theme="light"]) .chev.dark.alert{background:var(--coral); color:#002B29;} }
+:root[data-theme="dark"] .chev{background:#0B4C48;} :root[data-theme="dark"] .chev.dark{background:#E5ECEC; color:#004643;}
+@media (max-width:600px){ .chev{flex-basis:46%; max-width:none;} }
+.fb{width:100%; text-align:left; background:none; border:none; border-bottom:1px solid var(--line); padding:9px 6px; display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:14px; border-radius:0;}
+.fb:hover, .fb.on{background:var(--ice-soft);}
+.fb small{display:block; color:var(--muted); font-size:12.5px;}
+.gate-list{columns:2; column-gap:24px; font-size:14px; padding-left:18px; margin:8px 0 0;}
+@media (max-width:600px){ .gate-list{columns:1;} }
+
+/* functions */
+.fn-layout{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px;}
+@media (max-width:980px){ .fn-layout{grid-template-columns:1fr;} }
+.matrix-wrap{overflow-x:auto; background:var(--surface); border-radius:0; box-shadow:var(--shadow);}
+table.matrix{border-collapse:collapse; width:100%; font-size:13px; min-width:520px;}
+table.matrix th, table.matrix td{padding:6px 8px; border-bottom:1px solid var(--line);}
+table.matrix th{font-weight:600; font-size:12px; text-align:center; position:sticky; top:0; background:var(--surface);}
+table.matrix th:first-child, table.matrix td:first-child{text-align:left;}
+table.matrix td.cell{text-align:center; cursor:pointer; min-width:64px;}
+table.matrix td.cell span{display:inline-block; min-width:44px; border-radius:0; padding:2px 6px;}
+table.matrix tr.grp td{background:var(--surface-2); font-size:12px; color:var(--faint); font-weight:600;}
+table.matrix tr.sel td{background:var(--ice-soft);}
+table.matrix td.fnname{cursor:pointer;}
+.fn-detail{background:var(--surface); border-radius:0; box-shadow:var(--shadow); padding:20px;}
+.fn-detail select{width:100%; padding:8px 10px; border-radius:0; border:1px solid var(--line); background:var(--surface-2); margin-bottom:14px;}
+.fn-row{display:grid; grid-template-columns:62px 1fr auto; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; align-items:center; cursor:pointer;}
+.fn-row:hover{background:var(--surface-2);}
+.fn-row .code{font-weight:700; font-size:12px;}
+
+/* register */
+.reg-filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.reg-table{background:var(--surface); border-radius:0; box-shadow:var(--shadow); overflow-x:auto;}
+.reg-table table{min-width:760px;}
+.reg-table tr{cursor:pointer;}
+.reg-table tr:hover td{background:var(--surface-2);}
+.overdue{color:var(--coral); font-weight:600;}
+.empty-state{padding:30px; text-align:center; color:var(--muted);}
+
+/* drawer */
+.scrim{position:fixed; inset:0; background:rgba(10,17,32,.45); z-index:40; display:none;}
+.scrim.on{display:block;}
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(560px,100%); background:var(--bg); z-index:41; transform:translateX(100%); transition:transform .25s ease; display:flex; flex-direction:column; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+.drawer.on{transform:none; box-shadow:-10px 0 40px rgba(0,0,0,.2);}
+@media (prefers-reduced-motion: reduce){ .drawer{transition:none;} }
+.d-head{padding:18px 22px 14px; border-bottom:1px solid var(--line); background:var(--surface); border-top:4px solid var(--c);}
+.d-head .close{float:right; border:none; background:var(--surface-2); border-radius:0; width:34px; height:34px; font-size:18px;}
+.d-head .code{color:var(--c); font-weight:700; font-size:13px;}
+.d-head h3{font-family:var(--sans); font-weight:300; letter-spacing:-0.02em; font-size:24px; margin:2px 0 6px;}
+.d-body{overflow-y:auto; padding:18px 22px 40px; flex:1;}
+.d-sec{margin-bottom:22px;}
+.d-sec h4{margin:0 0 8px; font-size:14px; font-weight:600;}
+.d-sec p{margin:0 0 6px; font-size:14px;}
+.rolerow{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line);}
+.rolerow .nm{font-size:14px;}
+.rolerow .nm small{display:block; color:var(--faint); font-size:12px;}
+.rseg{display:inline-flex; border:1px solid var(--line); border-radius:0; overflow:hidden; background:var(--surface);}
+.rseg button{border:none; background:none; padding:5px 9px; font-size:12.5px; border-left:1px solid var(--line);}
+.rseg button:first-child{border-left:none;}
+.rseg button[aria-pressed="true"][data-r="owner"]{background:var(--navy); color:#fff;}
+.rseg button[aria-pressed="true"][data-r="helper"]{background:var(--ice); color:#141F35;}
+.rseg button[aria-pressed="true"][data-r="claimant"]{background:var(--coral); color:#fff;}
+.rseg button[aria-pressed="true"][data-r="none"]{background:var(--surface-2);}
+.addrow{display:flex; gap:8px; margin-top:10px;}
+.addrow select{flex:1; padding:7px 10px; border-radius:0; border:1px solid var(--line); background:var(--surface);}
+.btn{border:1px solid var(--faint); background:var(--surface); color:var(--ink); border-radius:0; transition:background 240ms var(--ease);}
+.btn:hover:not(:disabled){background:var(--surface-2);}
+.btn{ padding:7px 12px; font-size:14px;}
+.btn.primary{background:var(--navy); color:#E5ECEC; border-color:var(--navy);}
+.btn.primary:hover:not(:disabled){background:#013634;}
+.btn.warn{background:var(--coral); color:#fff; border-color:var(--coral);}
+.btn:disabled{opacity:.45; cursor:not-allowed;}
+.field{display:flex; flex-direction:column; gap:4px; margin-bottom:10px; font-size:13px; color:var(--muted);}
+.field input, .field textarea, .field select{padding:8px 10px; border-radius:0; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:14px;}
+.field textarea{min-height:70px; resize:vertical;}
+.two-f{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.dispute-box{background:var(--coral-soft); border:1px solid var(--coral); border-radius:0; padding:12px 14px; font-size:14px;}
+.dispute-box .actions{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;}
+.conf{border-left:3px solid var(--coral); padding:6px 10px; background:var(--surface); border-radius:0 8px 8px 0; font-size:13.5px; margin-bottom:8px;}
+.conf b{color:var(--coral);}
+.hist{font-size:13px; color:var(--muted); list-style:none; padding:0; margin:0;}
+.hist li{padding:4px 0; border-bottom:1px dashed var(--line);}
+.note-banner{font-size:13px; color:var(--muted); background:var(--surface-2); border:1px solid var(--line); border-radius:0; padding:8px 12px; margin-bottom:18px; display:none;}
+.note-banner.on{display:block;}
+.toast{position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%); background:var(--navy); color:#fff; padding:10px 16px; border-radius:0; font-size:14px; z-index:60; opacity:0; pointer-events:none; transition:opacity .2s;}
+.toast.on{opacity:1;}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 640 112.12" role="img" aria-label="Coral Club" fill="currentColor"><g> <g id="_2437341851632"> <path d="M600.84 29.41c-11.95,0 -21.07,4.4 -27.52,13.21l0 -42.62 -16.98 0 0 110.08 16.98 0 0 -11.32c6.45,8.96 15.57,13.36 27.52,13.36 10.85,0 19.97,-3.93 27.68,-11.95 7.71,-8.02 11.48,-17.93 11.48,-29.41 0,-11.63 -3.77,-21.38 -11.48,-29.4 -7.71,-8.02 -16.83,-11.95 -27.68,-11.95zm-20.44 59.44c-4.72,-4.88 -7.08,-10.85 -7.08,-18.09 0,-7.23 2.36,-13.21 7.08,-17.92 4.72,-4.88 10.69,-7.24 17.77,-7.24 7.08,0 13.05,2.36 17.77,7.24 4.72,4.71 7.08,10.69 7.08,17.92 0,7.24 -2.36,13.21 -7.08,18.09 -4.72,4.72 -10.69,7.08 -17.77,7.08 -7.08,0 -13.05,-2.36 -17.77,-7.08z"></path> <polygon points="455.23,110.08 455.23,0 438.24,0 438.24,110.08 "></polygon> <path d="M541.56 110.08l0 -78.63 -16.98 0 0 45.45c0,10.93 -7.79,19.03 -18.8,19.03 -11.88,0 -18.79,-7.06 -18.79,-18.8l0 -45.68 -16.98 0 0 48.63c0,20.02 11.78,32.04 32.04,32.04 9.32,0 17.01,-3.26 22.53,-10.94l0 8.9 16.98 0z"></path> <path d="M392.24 29.41c-11.48,0 -21.38,3.93 -29.4,11.95 -8.02,8.02 -12.12,17.77 -12.12,29.4 0,11.64 4.1,21.39 12.12,29.41 8.02,8.02 17.92,11.95 29.4,11.95 11.3,0 20.77,-3.93 28.56,-11.95 2.72,-2.79 4.97,-5.8 6.75,-9.02l-13.83 -7.98c-1.08,1.96 -2.45,3.78 -4.1,5.49 -4.74,4.87 -10.5,7.27 -17.38,7.27 -14.17,0 -24.53,-10.97 -24.53,-25.17 0,-14.19 10.36,-25.16 24.53,-25.16 6.88,0 12.64,2.4 17.38,7.28 1.65,1.7 3.02,3.52 4.1,5.48l13.83 -7.98c-1.78,-3.22 -4.03,-6.23 -6.75,-9.02 -7.79,-8.02 -17.26,-11.95 -28.56,-11.95z"></path> <polygon points="339.09,110.08 339.09,0 322.11,0 322.11,110.08 "></polygon> <path d="M262.83 29.41c11.95,0 21.07,4.4 27.52,13.21l0 -11.17 16.98 0 0 78.63 -16.98 0 0 -11.32c-6.45,8.96 -15.57,13.36 -27.52,13.36 -10.85,0 -19.97,-3.93 -27.68,-11.95 -7.71,-8.02 -11.48,-17.93 -11.48,-29.41 0,-11.63 3.77,-21.38 11.48,-29.4 7.71,-8.02 16.83,-11.95 27.68,-11.95zm20.44 59.44c4.72,-4.88 7.08,-10.85 7.08,-18.09 0,-7.23 -2.36,-13.21 -7.08,-17.92 -4.72,-4.88 -10.69,-7.24 -17.77,-7.24 -7.08,0 -13.05,2.36 -17.77,7.24 -4.72,4.71 -7.08,10.69 -7.08,17.92 0,7.24 2.36,13.21 7.08,18.09 4.72,4.72 10.69,7.08 17.77,7.08 7.08,0 13.05,-2.36 17.77,-7.08z"></path> <path d="M125.73 29.41c-11.48,0 -21.39,3.93 -29.41,11.95 -8.02,8.02 -12.11,17.77 -12.11,29.4 0,11.64 4.09,21.39 12.11,29.41 8.02,8.02 17.93,11.95 29.41,11.95 11.48,0 21.38,-3.93 29.4,-11.95 8.02,-8.02 12.11,-17.77 12.11,-29.41 0,-11.63 -4.09,-21.38 -12.11,-29.4 -8.02,-8.02 -17.92,-11.95 -29.4,-11.95zm0 66.52c-14.17,0 -24.53,-10.97 -24.53,-25.17 0,-14.19 10.36,-25.16 24.53,-25.16 14.16,0 24.53,10.97 24.53,25.16 0,14.2 -10.36,25.17 -24.53,25.17z"></path> <path d="M195.86 110.08l0 -40.3c0,-13.51 6.19,-23.35 23.34,-23.2l0 -16.98c-9.92,0.92 -17.67,5.27 -23.34,13.02l0 -11.17 -16.99 0 0 78.63 16.99 0z"></path> <path d="M41.52 29.41c-11.48,0 -21.39,3.93 -29.41,11.95 -8.02,8.02 -12.11,17.77 -12.11,29.4 0,11.64 4.09,21.39 12.11,29.41 8.02,8.02 17.93,11.95 29.41,11.95 11.3,0 20.77,-3.93 28.56,-11.95 2.71,-2.79 4.96,-5.8 6.74,-9.02l-13.82 -7.98c-1.09,1.96 -2.46,3.78 -4.11,5.49 -4.74,4.87 -10.5,7.27 -17.37,7.27 -14.17,0 -24.54,-10.97 -24.54,-25.17 0,-14.19 10.37,-25.16 24.54,-25.16 6.87,0 12.63,2.4 17.37,7.28 1.65,1.7 3.02,3.52 4.1,5.48l13.83 -7.98c-1.78,-3.22 -4.03,-6.23 -6.74,-9.02 -7.79,-8.02 -17.26,-11.95 -28.56,-11.95z"></path> </g> </g></svg><span class="sep" aria-hidden="true"></span>
+      <h1>Потоки <em class="acc">создания ценности</em></h1>
+      <span>Стратсессия №3. Кто владелец шага, кто помощник</span>
+      <div class="sync" id="sync"><i></i><span id="syncTxt">Подключение…</span></div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-view="portfolio" aria-selected="true">Портфель потоков</button>
+      <button role="tab" data-view="stream" aria-selected="false">Профиль потока</button>
+      <button role="tab" data-view="map" aria-selected="false">Карта связей</button>
+      <button role="tab" data-view="chain" aria-selected="false">Цепочка ценности</button>
+      <button role="tab" data-view="functions" aria-selected="false">Функции в потоках</button>
+      <button role="tab" data-view="register" aria-selected="false">Споры и закрепления</button>
+    </nav>
+  </div>
+  <span class="rainbow" aria-hidden="true"></span>
+</header>
+
+<main>
+  <div class="note-banner" id="localNote">Общее хранилище недоступно в этом окне: изменения сохраняются только в этом браузере.</div>
+
+  <!-- PORTFOLIO -->
+  <section class="view on" id="v-portfolio">
+    <h2>Пять потоков, <em class="acc">одна ценность</em> для клиента</h2>
+    <p class="northstar">Помочь клиенту осознанно выбрать, своевременно получить и безопасно использовать качественный wellness-продукт при поддержке компетентного партнёра.</p>
+    <div class="legend">
+      <span><i style="background:var(--line)"></i>Шаг без владельца</span>
+      <span><i style="background:var(--ice)"></i>Владелец назначен</span>
+      <span><i style="background:var(--ok)"></i>Роль закреплена с метрикой и сроком</span>
+      <span><i style="background:var(--coral)"></i>Спор за владение</span>
+    </div>
+    <div class="tier">
+      <div class="tier-head"><h3>Уровень 1. Создать готовность</h3><p>Что предлагать клиенту и кто будет создавать для него ценность</p></div>
+      <div class="grid two" id="tier1"></div>
+    </div>
+    <div class="tier">
+      <div class="tier-head"><h3>Уровень 2. Реализовать ценность</h3><p>Основной клиентский цикл после Commercial Readiness Gate</p></div>
+      <div class="grid three" id="tier2"></div>
+    </div>
+    <div class="xcut">
+      <h3>Сквозные механизмы</h3>
+      <p class="muted" style="margin:0;font-size:14px;">Не отдельные потоки: проходят поперёк всех пяти как контрольные точки, данные, системы и решения.</p>
+      <div class="xcut-list" id="xcutList"></div>
+    </div>
+  </section>
+
+  <!-- STREAM -->
+  <section class="view" id="v-stream">
+    <div class="stream-pick" id="streamPick"></div>
+    <div id="streamBody"></div>
+  </section>
+
+  <!-- MAP -->
+  <section class="view" id="v-map">
+    <h2>Как потоки проходят <em class="acc">через компанию</em></h2>
+    <p class="lede">VS1 и VS5 создают готовность параллельно, сходятся в контрольной точке, после неё VS2–VS4 идут последовательно, а обратная связь возвращается в продукт, сеть и supply chain. Нажмите на поток, чтобы открыть его профиль.</p>
+    <div class="map-bar">
+      <div class="seg" id="modeSeg">
+        <button data-mode="run" aria-pressed="true">Действующий бизнес</button>
+        <button data-mode="launch" aria-pressed="false">Запуск нового продукта</button>
+      </div>
+      <button class="btn" id="gateBtn">Критерии коммерческой готовности</button>
+    </div>
+    <div class="map-layout">
+      <div>
+        <div class="map-wrap"><svg id="mapSvg" viewBox="0 0 1000 1040" role="img" aria-label="Карта связей потоков"></svg></div>
+        <p class="seqline" id="seqLine"></p>
+      </div>
+      <div class="map-side">
+        <div class="aside-box" style="margin-top:0" id="gateBox" hidden>
+          <h3>Коммерческая готовность</h3>
+          <p class="muted" style="font-size:14px;margin:0;">Продукт нельзя активно продвигать, пока одновременно не подтверждено:</p>
+          <ul class="gate-list" id="gateList" style="columns:1"></ul>
+        </div>
+        <div class="aside-box" style="margin-top:0">
+          <h3>Обратные связи</h3>
+          <p class="muted" style="font-size:14px;margin:0 0 8px;">Наведите или нажмите на сигнал: на карте появится путь от потока-источника к потокам, куда он возвращается.</p>
+          <div id="fbList"></div>
+        </div>
+        <div class="aside-box" style="margin-top:0">
+          <h3>VS5 внутри клиентского цикла</h3>
+          <table class="plain"><tbody id="vs5Roles"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAIN -->
+  <section class="view" id="v-chain">
+    <h2>Цепочка <em class="acc">создания ценности</em></h2>
+    <p class="lede">Все пять потоков как одна последовательность шагов. Тёмные шаги отвечают выбранному фильтру. Нажмите на шаг, чтобы открыть его карточку.</p>
+    <div class="chain-bar">
+      <label for="chainHl">Выделить</label>
+      <select id="chainHl">
+        <option value="hot">Точки накала из свода</option>
+        <option value="dispute">Споры за владение</option>
+        <option value="empty">Шаги без владельца</option>
+        <option value="custom">Шаги, добавленные командами</option>
+        <option value="fn">Шаги функции…</option>
+        <option value="none">Ничего</option>
+      </select>
+      <select id="chainFn" hidden aria-label="Функция"></select>
+      <label class="chk"><input type="checkbox" id="chainOwner" checked> Показывать владельца</label>
+    </div>
+    <div id="chainBody"></div>
+  </section>
+
+  <!-- FUNCTIONS -->
+  <section class="view" id="v-functions">
+    <h2>Где каждая функция <em class="acc">находит себя</em></h2>
+    <p class="lede">Матрица пересечений: сколько шагов каждого потока функция ведёт как владелец (В), поддерживает как помощник (П), оспаривает (С) или участвует без назначенной роли (У). Пунктиром отмечено участие по гипотезе из свода анкет от 17.09 — его нужно подтвердить.</p>
+    <div class="fn-layout">
+      <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+      <div class="fn-detail">
+        <select id="fnSelect" aria-label="Функция"></select>
+        <div id="fnSteps"></div>
+        <div class="addrow" style="margin-top:18px;">
+          <input id="newFnName" placeholder="Новая функция, например R&amp;D" style="flex:1;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);">
+          <button class="btn" id="addFnBtn">Добавить функцию</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="view" id="v-register">
+    <h2>Споры и закреплённые роли</h2>
+    <p class="lede">Реестр «на дорешение»: шаги, где несколько функций претендуют на владение, и роли, закреплённые на срок с метрикой. Если к дате метрика не выполнена, владелец и сменщик меняются местами.</p>
+    <div class="reg-filters">
+      <div class="seg" id="regSeg">
+        <button data-f="dispute" aria-pressed="true">Споры</button>
+        <button data-f="fixed" aria-pressed="false">Закреплённые роли</button>
+        <button data-f="empty" aria-pressed="false">Без владельца</button>
+        <button data-f="hyp" aria-pressed="false">Точки накала из свода</button>
+      </div>
+      <button class="btn" id="exportBtn" hidden>Скачать CSV для Excel</button>
+    </div>
+    <div class="reg-table" id="regTable"></div>
+  </section>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<div class="toast" id="toast"></div>
+<div class="role-menu" id="roleMenu" role="menu"></div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const FN_GROUPS = [
+  ["Работа с партнёрами и клиентами", [
+    ["distr","ДПД","Distributor Support"],
+    ["train","Департамент обучения","Training Department"],
+    ["motiv","Отдел мотивации и признания","Motivation and Recognition"],
+    ["rao","Управление бизнес-отношениями с ЧК","Club Member Relations"],
+    ["cs","Customer Service","Customer Service"],
+    ["cx","Customer Experience","Customer Experience"]]],
+  ["Маркетинг и коммуникации", [
+    ["mkt","Департамент маркетинга","Marketing Department"],
+    ["adv","Отдел рекламы","Advertising Department"],
+    ["pr","PR","PR"],
+    ["event","Организация мероприятий","Event Management"],
+    ["interp","Events: переводы","Events: Interpretation"]]],
+  ["Операции и качество", [
+    ["ops","Операционное управление","Operations Management"],
+    ["log","Департамент логистики","Logistics Department"],
+    ["plan","Планирование и снабжение","Planning and Supply"],
+    ["cert","Сертификация и качество","Certification and Quality"]]],
+  ["Цифровые продукты и ИТ", [
+    ["ecom","Электронная коммерция и цифровые продукты","E-commerce and Digital Products"],
+    ["it","Управление ИТ","IT Management"]]],
+  ["Право и комплаенс", [
+    ["legal","Юридическая функция","Legal"],
+    ["claims","Health & Income Claims EU & US","Health & Income Claims EU & US"]]],
+  ["Финансы и управление", [
+    ["fin","Финансовый контроль и прогнозирование","Financial Control and Forecasting"],
+    ["procoff","Процессный офис","Process Office"],
+    ["projoff","Проектный офис","Project Office"],
+    ["hr","HR","HR"]]],
+  ["Развитие рынков", [
+    ["markets","Выход на новые рынки","New Market Entry"],
+    ["partn","Стратегические партнёрства","Strategic Partnerships"]]]
+];
+/* Старые коды справочника (до чистки 25.09.2026) → новые. Пусто = функция исключена. */
+const FN_ALIAS = {sales:"distr", pm:"mkt", av:"adv", digmkt:"mkt", opseu:"ops", legaleu:"legal", acc:"fin", eventswr:"event", div:""};
+
+const CONFLICTS = {
+  12:"Юридическая работа стартует без подтверждённого юрлица и юрисдикции, часть работы переделывается.",
+  13:"Один материал проверяют и Коробкина (ЕС/США), и локальная команда (Германия): дублирование и разные подходы. Нужен единый владелец проверки.",
+  18:"Неясно, кто утверждает критерии признания на мероприятиях, кто отвечает за процедуру, кто выдаёт наградные элементы (Мотивация ↔ Ивент).",
+  20:"Не определён владелец ежемесячного расчёта платежей по Бонусу привилегий и его автоматизации (Мотивация ↔ РАО / ФД).",
+  21:"Информирование дистрибьюторов о рангах и Бонусе привилегий дублируется центральной функцией и локальными ДПД/ДП.",
+  26:"Мотивация называет расчёт Бонуса привилегий конфликтом с РАО; РАО конфликт не подтвердила и не опровергла.",
+  28:"Возвраты заказов не текущего месяца: нет правила, что делать с баллами, и нет ответственного.",
+  30:"И центральный Операционный департамент, и Операционная дирекция Европа пишут, что их полномочия не зафиксированы.",
+  31:"Центр описывает координацию операционных директоров, а Европа центр не упоминает вовсе: практика разошлась.",
+  32:"Три функции независимо называют отсутствие WMS и автоматизации учёта остатков.",
+  33:"«Логистика» в трёх анкетах означает разное: инфраструктура рынка, импорт/Sales, выбор перевозчиков.",
+  34:"Клиентский сервис формально в KPI Операционной дирекции Европа, но контакт-центры подчинены HR и странам: фактически белое пятно.",
+  35:"Акции для товаров с истекающим сроком: операциям нужна быстрая скидка, маркетинг согласует долго и иногда запускает акции без проверки наличия.",
+  38:"Юридический департамент называет Маркетинг функцией с частым конфликтом зон.",
+  39:"Юристов подключают по факту, а не на этапе постановки задачи.",
+  40:"Комплаенс существует де-факто (проверка claims ведётся в Business Development), но нигде не закреплён как зона ответственности."
+};
+
+const STREAMS = [
+ {id:"VS1", team:"CoralEVO", c:"var(--vs1)", tier:1, name:"Развивать продуктовый портфель",
+  short:"Продукт", trigger:"Выявлена потребность или возможность",
+  out:"Востребованный, доказательный и готовый к продаже продукт",
+  object:"Продуктовая идея → готовый продукт → управляемый портфель",
+  recipient:"Конечный клиент, партнёр и рынок",
+  value:"Востребованный продукт с подтверждённым составом и качеством, допустимыми заявлениями, понятным применением и устойчивой доступностью.",
+  kpi:["Time-to-market","Доля успешных запусков","First-year reorder rate","Batch release RFT","Маржинальность","Complaints per SKU","Списания","Срок вывода SKU"],
+  fns:"Strategy, Product, R&D, Scientific, Regulatory, Quality, Procurement, Supply Chain, Marketing, Finance",
+  handoff:"Product → Regulatory → Manufacturing → Commercial",
+  steps:[
+   ["Выявить потребности","Анализ потребностей клиентов, сети, feedback, научных и рыночных тенденций","Перечень клиентских проблем и возможностей",["mkt","cx"]],
+   ["Сформировать портфельные приоритеты","Категории, целевые сегменты, роль продукта, соответствие стратегии","Product opportunity brief",["mkt","fin"]],
+   ["Разработать концепцию продукта","Аудитория, customer job, ожидаемая польза, формат, применение, цена","Product concept",["mkt"]],
+   ["Оценить концепцию","Стратегическая, коммерческая, техническая, регуляторная и финансовая оценка","Решение Go / Revise / Stop",["mkt","fin","legal","cert"],[39]],
+   ["Разработать формулу","Ингредиенты, дозировки, форма выпуска, совместимость, поставщики","Проект формулы и спецификаций",["mkt","cert","plan"],[],"В оргструктуре нет явной функции R&D"],
+   ["Сформировать доказательную базу","Исследования, безопасность ингредиентов, допустимые claims и ограничения","Evidence dossier и перечень разрешённых claims",["mkt","cert","claims","legal"],[40]],
+   ["Создать и протестировать прототип","Органолептика, стабильность, лабораторные испытания, пилотная партия, упаковка","Подтверждённый прототип",["mkt","cert"]],
+   ["Подготовить продукт к рынкам","Регуляторная оценка, этикетка, инструкция, перевод, регистрация по странам","Market-ready product dossier",["cert","legal","markets"],[12,39]],
+   ["Индустриализировать производство","Производитель, quality agreement, sourcing, технология, мощности","Готовый производственный процесс",["plan","ops","cert"]],
+   ["Подготовить запуск","Прогноз, запасы, позиционирование, цены, материалы, обучение партнёров, support","Launch readiness",["mkt","train","plan","fin","ecom"]],
+   ["Запустить продукт","Первая коммерческая партия, распределение по складам, активация каналов","Продукт доступен клиенту",["ops","log","mkt","distr"]],
+   ["Управлять жизненным циклом","Продажи, повторные покупки, жалобы, качество, прибыльность","Решение Improve / Extend / Localize / Retire",["mkt","fin","ops"],[35]]
+  ]},
+ {id:"VS2", team:"PrimeGrowth", c:"var(--vs2)", tier:2, name:"Формировать клиентский спрос",
+  short:"Спрос", trigger:"Определена целевая аудитория",
+  out:"Клиент осознанно выбрал подходящее решение",
+  object:"Аудитория → контакт → квалифицированная потребность → решение о покупке",
+  recipient:"Потенциальный и действующий клиент",
+  value:"Клиент понимает свою потребность, получает достоверную информацию и осознанно выбирает релевантный продукт без давления и неподтверждённых обещаний.",
+  kpi:["Qualified demand rate","Conversion to order","Cost per new retail customer","Доля approved claims","Доля повторного спроса","CAC payback","Причины отказа"],
+  fns:"Marketing, Field, Content, E-commerce, CRM, Medical/Scientific, Compliance",
+  handoff:"Marketing/Partner → Client → Commerce",
+  steps:[
+   ["Сегментировать аудиторию","Сегменты, потребности, жизненные ситуации, каналы","Приоритетные customer segments",["mkt"]],
+   ["Определить ценностное предложение","Связь «потребность — решение — продукт — польза»","Value proposition по сегментам",["mkt"]],
+   ["Разработать compliant-контент","Материалы, сценарии, кампании, партнёрские инструменты на разрешённых claims","Одобренный контент",["mkt","adv","claims","legal"],[13,38,40]],
+   ["Подготовить каналы","Сайт, приложение, сеть, мероприятия, соцсети, referral","Готовые точки привлечения",["ecom","it","mkt","event","distr"]],
+   ["Создать осведомлённость","Коммуникации, рекомендации партнёров, экспертный контент, мероприятия, digital","Охваченная аудитория",["mkt","pr","event","distr","adv"]],
+   ["Получить отклик","Регистрация интереса, запрос консультации, переход в каталог, опрос","Identified prospect / lead",["ecom","mkt","distr"]],
+   ["Уточнить потребность","Цель, предпочтения, ограничения, контекст без медицинского диагноза","Customer need profile",["distr","cx"]],
+   ["Подобрать решение","Сопоставление потребности с продуктом, проверка ограничений","Персонализированное предложение",["distr","mkt","cx"]],
+   ["Представить предложение","Состав, польза, цена, длительность программы, доставка, возврат","Понятное клиенту предложение",["distr","ecom"]],
+   ["Обработать вопросы","Возражения, доказательная информация, направление к специалисту","Снятая неопределённость",["cs","mkt","distr"]],
+   ["Получить решение клиента","Клиент осознанно принимает или отклоняет предложение","Purchase intent / No purchase",["distr"]],
+   ["Передать в заказ","Корзина, идентификация канала и партнёра, передача в commerce/OMS","Готовый к оформлению заказ",["ecom","it","rao"]]
+  ]},
+ {id:"VS3", team:"ITModel", c:"var(--vs3)", tier:2, name:"Исполнять клиентский заказ",
+  short:"Заказ", trigger:"Клиент подтвердил заказ",
+  out:"Правильный продукт полностью и вовремя доставлен",
+  object:"Подтверждённый заказ → доставленный продукт → закрытая транзакция",
+  recipient:"Клиент",
+  value:"Клиент получает правильный продукт, в полном объёме, надлежащего качества и в обещанный срок, понимая статус заказа на каждом этапе.",
+  kpi:["OTIF","Perfect order rate","Order cycle time","Picking accuracy","Payment success","First-attempt delivery","Cost per order","Return rate","Batch traceability"],
+  fns:"Commerce, Payments, Customer Service, ERP, WMS, Logistics, Finance",
+  handoff:"Commerce → ERP → Warehouse → Carrier",
+  steps:[
+   ["Принять заказ","Корзина, клиентские данные, адрес, партнёр, условия","Зарегистрированный заказ",["ecom","it","ops"]],
+   ["Проверить заказ","SKU, цена, скидка, промокод, страна, адрес, ограничения","Валидированный заказ",["ecom","ops","fin"]],
+   ["Подтвердить оплату","Авторизация платежа, проверка риска","Оплаченный заказ",["fin","ecom"]],
+   ["Подтвердить обещание","ATP, срок годности, склад исполнения, дата доставки","Подтверждённая дата и состав",["ops","plan"]],
+   ["Зарезервировать товар","SKU и партии с учётом FEFO и рыночных ограничений","Inventory allocation",["ops","plan"],[32]],
+   ["Передать на склад","Задание в WMS, маршрут комплектации, приоритет","Warehouse task",["ops","it"],[30,31]],
+   ["Скомплектовать заказ","Отбор SKU и партий, фиксация lot/batch ID","Собранный заказ",["ops"],[30]],
+   ["Проверить и упаковать","Контроль количества и качества, упаковка, вложения, документы","Готовая к отправке посылка",["ops"]],
+   ["Передать перевозчику","Способ доставки, этикетка, передача груза, tracking ID","Отправленный заказ",["log","ops"],[33]],
+   ["Сопроводить доставку","Информирование клиента, статусы, задержки, повторные попытки","Управляемая доставка",["log","cs"]],
+   ["Подтвердить получение","Proof of delivery, комплектность, отсутствие повреждений","Доставленный заказ",["log","cs"]],
+   ["Обработать исключение","Недостача, повреждение, потеря, отказ, замена, повторная отправка","Разрешённое исключение",["cs","ops","log"],[34]],
+   ["Обработать возврат","Return authorization, оценка состояния, refund или replacement","Закрытый возврат",["ops","fin","rao","cs"],[28]],
+   ["Закрыть транзакцию","Обновление CRM, финансов, запасов, PV/BV и статуса","Полностью закрытый заказ",["fin","rao","it"]]
+  ]},
+ {id:"VS4", team:"HealthOS", c:"var(--vs4)", tier:2, name:"Обеспечивать успех клиента",
+  short:"Успех", trigger:"Клиент получил продукт",
+  out:"Клиент безопасно применяет продукт и осознанно решает о продолжении",
+  object:"Полученный продукт → применение → обратная связь → решение о продолжении",
+  recipient:"Действующий клиент",
+  value:"Клиент правильно и безопасно использует продукт, получает доступную поддержку и самостоятельно решает о продолжении, изменении или завершении программы.",
+  kpi:["Activation rate","Time to first use","Adherence","First response time","Resolution time","Complaint completeness","AE triage SLA","30/60/90-day reorder","Причины прекращения"],
+  fns:"Partner, Customer Service, CRM, Product Education, Quality, Medical/Regulatory, Data",
+  handoff:"Delivery → Partner/Support → Quality/Product",
+  steps:[
+   ["Приветствовать клиента","Подтверждение получения, контакты поддержки, следующий шаг","Клиент в программе сопровождения",["cx","distr","ecom"]],
+   ["Активировать продукт","Регистрация старта программы, продукт, партия, дата","Активированный customer cycle",["cx","ecom"]],
+   ["Объяснить применение","Approved-инструкция, режим приёма, хранение, ограничения","Клиент понимает порядок использования",["mkt","claims","train"]],
+   ["Сформировать план сопровождения","Частота check-in, напоминания, роль партнёра, каналы","Customer support plan",["cx","distr"]],
+   ["Поддерживать применение","Напоминания, ответы, образовательный контент, помощь с регулярностью","Поддерживаемая вовлечённость",["cx","mkt","distr"]],
+   ["Проводить check-in","Факт начала, удобство, вопросы, общий опыт","Актуальный customer status",["distr","cx"]],
+   ["Обрабатывать обращения","Консультационные, логистические, продуктовые, технические вопросы","Решённый клиентский запрос",["cs","ops","hr"],[34]],
+   ["Регистрировать жалобы","Суть проблемы, продукт, партия, время, обстоятельства","Полная complaint record",["cs","cert"]],
+   ["Проводить safety-triage","Выявление adverse event, передача Quality / Medical / Regulatory","Классифицированный safety case",["cert","legal"],[],"Нет явной функции Quality / Medical safety"],
+   ["Собирать результат и feedback","Опыт, удовлетворённость, барьеры, причины прекращения","Customer outcome record",["cx","mkt"]],
+   ["Предложить следующий шаг","Продолжение, изменение программы, пауза или завершение","Осознанное решение клиента",["distr","cx"]],
+   ["Оформить повторную покупку","Актуальная потребность, состав заказа, подписка/autoship","Подтверждённый reorder",["ecom","distr"]],
+   ["Вернуть знания в систему","Feedback в Product, Quality, Marketing, Supply Chain, Partner Development","Улучшение продукта и процессов",["cx","mkt","train"]]
+  ]},
+ {id:"VS5", team:"GrowthModel", c:"var(--vs5)", tier:1, name:"Развивать партнёрскую сеть",
+  short:"Партнёр", trigger:"Кандидат заинтересован бизнес-возможностью",
+  out:"Компетентный партнёр регулярно создаёт подтверждённую клиентскую ценность",
+  object:"Кандидат → партнёр → компетентный создатель ценности → лидер",
+  recipient:"Партнёр, его клиенты и компания",
+  value:"Партнёр получает понятный путь развития, необходимые компетенции, инструменты и справедливое вознаграждение за реальную ценность, созданную для клиентов.",
+  kpi:["Onboarding completion","Certification rate","Time to first action","Time to first retail customer","Active customers per partner","90/180-day retention","Compliant-communication rate","Доля бонуса от клиентского спроса"],
+  fns:"Field Development, Legal, Compliance, Learning, Country Operations, Digital, Compensation, Support",
+  handoff:"Recruitment → Registration → Learning → Field activation",
+  steps:[
+   ["Определить целевой профиль партнёра","Мотивация, компетенции, ценности, время, роль","Partner profile",["distr","mkt"]],
+   ["Привлечь кандидата","Бизнес-возможность через партнёров и корпоративные каналы","Заинтересованный кандидат",["distr","event","mkt"]],
+   ["Представить бизнес-модель","Роль, обязанности, расходы, риски, compensation plan, ограничения","Информированный кандидат",["distr","claims","legal"]],
+   ["Подтвердить решение","Проверка понимания условий, добровольное решение","Согласие кандидата",["distr","legal"]],
+   ["Зарегистрировать партнёра","KYC, договор, налоговые данные, sponsor attribution, доступы","Активная учётная запись",["rao","ecom","legal","it"]],
+   ["Провести onboarding","Компания, продукты, системы, политики, стартовый маршрут","Готов к обучению",["train","distr"]],
+   ["Обучить продукту и этике","Product knowledge, customer care, разрешённые claims, privacy, продажи","Базовая компетентность",["train","mkt","claims"]],
+   ["Сертифицировать партнёра","Проверка знаний, допуск к действиям и материалам","Certified partner",["train","claims"]],
+   ["Сформировать стартовый план","Цели, сегменты, активности, sponsor/coach, первые 30–90 дней","Individual activation plan",["distr"]],
+   ["Обеспечить первое действие","Первый контакт, презентация, мероприятие, digital","First meaningful action",["distr","event"]],
+   ["Помочь создать первую клиентскую ценность","Потребность, compliant-рекомендация, первый retail-заказ","First served customer",["distr","cx"]],
+   ["Закрепить воспроизводимый цикл","Повторение привлечения, продажи и сопровождения","Активный продуктивный партнёр",["distr"]],
+   ["Развивать компетенции","Продажи, сопровождение, аналитика, лидерство, digital","Развивающийся партнёр",["train","distr"]],
+   ["Развивать лидера","Наставничество, сообщество, обучение, развитие новых партнёров","Certified field leader",["train","distr","event"]],
+   ["Оценивать и вознаграждать результат","Подтверждение retail-активности, квалификация, бонус, признание","Вознаграждённая клиентская ценность",["rao","motiv","fin","event"],[18,20,26]],
+   ["Удерживать или реактивировать","Диагностика снижения активности, поддержка, новый план","Retained / reactivated partner",["distr","motiv","rao"],[21]],
+   ["Корректно завершить сотрудничество","Доступы, расчёты, возврат продукции, сохранение клиентов","Управляемый partner exit",["rao","legal","fin"]]
+  ]}
+];
+const DEFAULTS = {}; const DEFMAP = {};
+STREAMS.forEach(s=>{ DEFAULTS[s.id] = s.steps.map((a,i)=>({id:`${s.id}.${i+1}`, name:a[0], content:a[1], result:a[2], cand:a[3]||[], conf:a[4]||[], gap:a[5]||""})); DEFAULTS[s.id].forEach(x=>DEFMAP[x.id]=x); });
+const SMAP = Object.fromEntries(STREAMS.map(s=>[s.id,s]));
+let streamDocs = {};   // sid -> {steps:[{id,name,content,result}], log:[]}
+let ALLSTEPS = [], STEPMAP = {};
+function rebuildSteps(){
+  STREAMS.forEach(s=>{
+    const doc = streamDocs[s.id];
+    const list = (doc && Array.isArray(doc.steps)) ? doc.steps : DEFAULTS[s.id];
+    s.steps = list.map((x,i)=>{ const def = DEFMAP[x.id]||{};
+      return {code:x.id, disp:`${s.id}.${i+1}`, name:x.name, content:x.content||"", result:x.result||"", cand:def.cand||[], conf:x.conf||def.conf||[], gap:("gap" in x) ? (x.gap||"") : (def.gap||""), custom:!DEFMAP[x.id], stream:s}; });
+  });
+  ALLSTEPS = STREAMS.flatMap(s=>s.steps);
+  STEPMAP = Object.fromEntries(ALLSTEPS.map(s=>[s.code,s]));
+}
+rebuildSteps();
+
+const XCUT = [
+  ["Quality, Safety & Compliance","требования, контрольные точки, разрешения"],
+  ["Data & Analytics","идентификация клиента, партнёра, заказа, партии"],
+  ["Technology","автоматизация и передача информации"],
+  ["Compensation & Recognition","закрепляет желательное поведение партнёров"],
+  ["Finance","платежи, учёт, рентабельность"],
+  ["Knowledge Management","единая продуктовая база"],
+  ["Governance","владельцы потоков, decision rights, эскалация"]
+];
+const GATE = ["Готовность продукта к продаже на рынке","Выпуск коммерческой партии","Достаточный запас","Утверждённые цена и условия","Разрешённые product и health claims","Готовность сайта, приложения и заказа","Готовность customer support","Готовность логистики и возвратов","Обучение и сертификация партнёров","Настройка PV/BV и compensation plan","Готовность обработки complaints и adverse events"];
+const FEEDBACK = [
+  ["Причины отказа от покупки","VS2",["VS2","VS1"],"Изменить предложение, контент, цену или продукт"],
+  ["Фактические заказы","VS3",["VS1","X_sc"],"Скорректировать прогноз и пополнение"],
+  ["Ошибки комплектации","VS3",["VS3"],"Изменить складской процесс и контроль"],
+  ["Жалобы на продукт","VS4",["VS1","X_q"],"Проверить партию, формулу, упаковку, инструкцию"],
+  ["Нежелательные события","VS4",["X_q","VS1"],"Safety assessment, corrective action или recall"],
+  ["Вопросы клиентов","VS4",["VS4","VS2"],"Улучшить onboarding и клиентский контент"],
+  ["Ошибки рекомендаций","VS4",["VS5"],"Изменить обучение и сертификацию партнёров"],
+  ["Повторная покупка","VS4",["VS2","VS5"],"Подтвердить ценность предложения и сопровождения"],
+  ["Уход клиента","VS4",["VS1","VS2","VS4"],"Найти продуктовую, ценовую или сервисную причину"],
+  ["Результаты партнёров","VS5",["VS5","X_comp"],"Скорректировать развитие, поддержку, стимулирование"]
+];
+const VS5ROLES = [["До VS2","Привлечь, обучить и сертифицировать партнёра"],["VS2 — спрос","Качественное выявление потребности и compliant-рекомендация"],["VS3 — заказ","Помочь оформить заказ, не подменяя корпоративную систему"],["VS4 — успех","Сопровождать применение, check-in, передавать сложные случаи"],["После VS4","Feedback, развитие компетенций, подтверждение результата и вознаграждение"]];
+
+/* ---------------- STATE ---------------- */
+let roles = {};          // code -> doc
+let customFns = [];      // [{id,name}]
+let dlCap = null;
+const LS_KEY = "vs-tool-v1";
+let editMode = false, stepForm = null, confirmDel = null, dragId = null;
+let currentStream = "VS1", currentFn = "distr", openStep = null, regFilter = "dispute", mapMode = "run";
+
+function allFns(){
+  const base = FN_GROUPS.flatMap(([g,l])=>l.map(([id,name,who])=>({id,name,who,group:g})));
+  return base.concat(customFns.map(f=>({id:f.id,name:f.name,who:"",group:"Добавлено на сессии"})));
+}
+const ROLE_RANK = {owner:3, claimant:2, helper:1, none:0};
+function normId(id){ return Object.prototype.hasOwnProperty.call(FN_ALIAS, id) ? FN_ALIAS[id] : id; }
+function normalizeRoleDoc(d){
+  if(!d || typeof d!=="object") return d;
+  const fns = {};
+  Object.keys(d.fns||{}).forEach(k=>{ const n = normId(k), r = d.fns[k]; if(!n) return;
+    if(!fns[n] || (ROLE_RANK[r]||0) > (ROLE_RANK[fns[n]]||0)) fns[n] = r; });
+  if(Object.values(fns).filter(r=>r==="owner").length > 1){ let seen=false; Object.keys(fns).forEach(k=>{ if(fns[k]==="owner"){ if(seen) fns[k]="helper"; seen=true; } }); }
+  const out = Object.assign({}, d, {fns});
+  if(Array.isArray(d.members)){ const m=[]; d.members.forEach(k=>{ const n=normId(k); if(n && !m.includes(n)) m.push(n); }); out.members = m; }
+  if(d.successor){ const n = normId(d.successor); out.successor = (n && fns[n]==="helper") ? n : ""; }
+  return out;
+}
+function normalizeRoles(obj){ const o = {}; Object.keys(obj||{}).forEach(k=>{ o[k] = normalizeRoleDoc(obj[k]); }); return o; }
+function fnName(id){ const f = allFns().find(x=>x.id===id); return f? f.name : id; }
+function blankDoc(){ return {fns:{}, metric:"", target:"", until:"", successor:"", rule:"", note:"", history:[]}; }
+function getDoc(code){ return roles[code] || blankDoc(); }
+function ownerOf(d){ return Object.keys(d.fns).find(k=>d.fns[k]==="owner")||""; }
+function byRole(d,r){ return Object.keys(d.fns).filter(k=>d.fns[k]===r); }
+function memberList(code, d){
+  d = d || getDoc(code); const st = STEPMAP[code] || {cand:[]};
+  const base = Array.isArray(d.members) ? d.members.slice() : Array.isArray(d.cand) ? d.cand.slice() : st.cand.slice();
+  Object.keys(d.fns).forEach(k=>{ if(d.fns[k] && d.fns[k]!=="none" && !base.includes(k)) base.push(k); });
+  return base;
+}
+function isConfirmed(code){ return Array.isArray(getDoc(code).members); }
+function roleOf(d,fid){ return d.fns[fid] || "none"; }
+function status(code){
+  const d = getDoc(code); const o = ownerOf(d); const cl = byRole(d,"claimant");
+  if(cl.length>=2 || (o && cl.length>=1)) return "dispute";
+  if(!o) return "empty";
+  if(d.metric && d.until) return "fixed";
+  return "assigned";
+}
+const STATUS_TXT = {empty:"Нет владельца", assigned:"Владелец назначен", fixed:"Закреплено", dispute:"Спор"};
+
+/* ---------------- PERSISTENCE ----------------
+   Supabase: справочники vs_functions / vs_streams / vs_hot_points,
+   по каждому потоку vsN_steps (шаги) и vsN_roles (функции на шагах).
+   Без config.js — локальный режим (localStorage в браузере). */
+let sb = null;                                 // клиент Supabase
+const dbSteps = {};                            // sid -> Set(id шагов, которые есть в базе)
+let writeChain = Promise.resolve(), pendingWrites = 0, reloadTimer = null;
+const T = sid=>sid.toLowerCase();
+function check(res){ if(res && res.error) throw res.error; return res ? res.data : null; }
+function enqueue(label, fn){
+  pendingWrites++;
+  writeChain = writeChain.then(fn).catch(e=>{
+    console.error(label, e);
+    const perm = e && (e.code==="42501" || /row-level security|permission/i.test(e.message||""));
+    toast(perm ? "Нет прав на изменение: доска только для чтения" : `Не сохранено (${label}): ${e&&e.message||"ошибка"}`);
+    scheduleReload(0);
+  }).finally(()=>{ pendingWrites--; });
+  return writeChain;
+}
+function saveDoc(code){
+  if(!sb){ saveLocal(); return; }
+  const st = STEPMAP[code]; if(!st) return;
+  const sid = st.stream.id, d = JSON.parse(JSON.stringify(roles[code]||blankDoc()));
+  const members = memberList(code, d);
+  enqueue("роли шага", async ()=>{
+    check(await sb.from(T(sid)+"_steps").update({
+      members_confirmed: Array.isArray(d.members),
+      owner_metric: d.metric||null, metric_target: d.target||null, fixed_until: d.until||null,
+      successor_id: d.successor||null, swap_rule: d.rule||null, note: d.note||null, history: d.history||[]
+    }).eq("id", code));
+    let del = sb.from(T(sid)+"_roles").delete().eq("step_id", code);
+    if(members.length) del = del.not("function_id", "in", "(" + members.map(x=>'"'+x+'"').join(",") + ")");
+    check(await del);
+    if(members.length){
+      const rows = members.map(fid=>({step_id:code, function_id:fid, role:d.fns[fid]||"none"}));
+      check(await sb.from(T(sid)+"_roles").upsert(rows, {onConflict:"step_id,function_id"}));
+    }
+  });
+}
+function saveStream(sid){
+  if(!sb){ saveLocal(); return; }
+  const doc = JSON.parse(JSON.stringify(streamDocs[sid]));
+  const ids = doc.steps.map(x=>x.id);
+  enqueue("шаги потока", async ()=>{
+    const rows = doc.steps.map((x,i)=>({id:x.id, stream_id:sid, position:i+1, name:x.name, content:x.content||null, result:x.result||null, is_custom:!DEFMAP[x.id], active:true}));
+    if(rows.length) check(await sb.from(T(sid)+"_steps").upsert(rows, {onConflict:"id"}));
+    const known = dbSteps[sid] = dbSteps[sid] || new Set();
+    const gone = [...known].filter(id=>!ids.includes(id));
+    if(gone.length) check(await sb.from(T(sid)+"_steps").update({active:false}).in("id", gone));
+    ids.forEach(id=>known.add(id));
+    check(await sb.from("vs_streams").update({change_log: doc.log||[]}).eq("id", sid));
+  });
+}
+function mutateSteps(sid, fn, log){
+  const cur = streamDocs[sid] && Array.isArray(streamDocs[sid].steps) ? JSON.parse(JSON.stringify(streamDocs[sid])) : {steps: DEFAULTS[sid].map(x=>({id:x.id,name:x.name,content:x.content,result:x.result})), log: (streamDocs[sid]&&streamDocs[sid].log)||[]};
+  fn(cur.steps);
+  if(log) cur.log = [{t:stamp(), text:log}].concat(cur.log||[]).slice(0,40);
+  streamDocs[sid] = cur; rebuildSteps(); saveStream(sid); renderAll();
+}
+function saveFns(){
+  if(!sb){ saveLocal(); return; }
+  const rows = customFns.map((f,i)=>({id:f.id, name:f.name, grp:"Добавлено на сессии", sort:9000+i, is_custom:true}));
+  if(rows.length) enqueue("функции", async ()=>check(await sb.from("vs_functions").upsert(rows, {onConflict:"id"})));
+}
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({roles,customFns,streamDocs})); }catch(e){} }
+function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(j){ roles=normalizeRoles(j.roles||{}); customFns=j.customFns||[]; streamDocs=j.streamDocs||{}; rebuildSteps(); } }catch(e){} }
+
+async function loadAll(){
+  const sel = t=>sb.from(t).select("*");
+  const res = await Promise.all([sel("vs_functions"), sel("vs_streams"), sel("vs_hot_points"),
+    ...STREAMS.map(s=>sel(T(s.id)+"_steps").order("position")), ...STREAMS.map(s=>sel(T(s.id)+"_roles"))]);
+  const [fns, strs, hps] = res.slice(0,3).map(check);
+  const stepsBy = res.slice(3,8).map(check), rolesBy = res.slice(8,13).map(check);
+  if(!fns.length || !strs.length) throw new Error("таблицы пусты: выполните миграции из папки supabase/migrations");
+  // справочник функций
+  const groups = [];
+  fns.filter(f=>!f.is_custom && f.active).sort((a,b)=>a.sort-b.sort).forEach(f=>{
+    let g = groups.find(x=>x[0]===f.grp); if(!g){ g=[f.grp,[]]; groups.push(g); }
+    g[1].push([f.id, f.name, f.name_en||""]);
+  });
+  FN_GROUPS.splice(0, FN_GROUPS.length, ...groups);
+  customFns = fns.filter(f=>f.is_custom && f.active).sort((a,b)=>a.sort-b.sort).map(f=>({id:f.id, name:f.name}));
+  // точки накала
+  hps.forEach(h=>{ CONFLICTS[h.id] = h.description; });
+  // потоки, шаги, роли
+  const nextDocs = {}, nextRoles = {};
+  STREAMS.forEach((s,i)=>{
+    const r = strs.find(x=>x.id===s.id);
+    if(r) Object.assign(s, {team:r.team, tier:r.tier, name:r.name, short:r.short_name||s.short, trigger:r.trigger_text||"", out:r.output||"", object:r.flow_object||"", recipient:r.recipient||"", value:r.value||"", kpi:r.kpi||[], fns:r.industry_functions||"", handoff:r.handoff||""});
+    const steps = stepsBy[i];
+    dbSteps[s.id] = new Set(steps.map(x=>x.id));
+    nextDocs[s.id] = {steps: steps.filter(x=>x.active).sort((a,b)=>a.position-b.position)
+      .map(x=>({id:x.id, name:x.name, content:x.content||"", result:x.result||"", conf:x.hot_points||[], gap:x.gap_note||""})), log: (r&&r.change_log)||[]};
+    const byStep = {};
+    rolesBy[i].forEach(x=>{ (byStep[x.step_id] = byStep[x.step_id] || []).push(x); });
+    steps.forEach(x=>{
+      const rs = (byStep[x.id]||[]).sort((a,b)=>a.function_id.localeCompare(b.function_id));
+      const d = {fns:{}, metric:x.owner_metric||"", target:x.metric_target||"", until:x.fixed_until||"", successor:x.successor_id||"", rule:x.swap_rule||"", note:x.note||"", history:x.history||[]};
+      rs.forEach(y=>{ if(y.role!=="none") d.fns[y.function_id] = y.role; });
+      if(x.members_confirmed) d.members = rs.map(y=>y.function_id); else d.cand = rs.map(y=>y.function_id);
+      nextRoles[x.id] = d;
+    });
+  });
+  streamDocs = nextDocs; roles = nextRoles; rebuildSteps();
+  if(openStep && !STEPMAP[openStep]) closeDrawer();
+}
+function scheduleReload(delay){
+  clearTimeout(reloadTimer);
+  reloadTimer = setTimeout(async ()=>{
+    if(pendingWrites > 0){ scheduleReload(300); return; }
+    try{ await loadAll(); renderAll(true); }catch(e){ console.error(e); setSync(false, "Нет связи с базой"); }
+  }, delay==null ? 500 : delay);
+}
+
+function setSync(live, txt){ const s=document.getElementById("sync"); s.classList.toggle("live",live); document.getElementById("syncTxt").textContent=txt; }
+const browserDownloads = { save: async ({filename, data})=>{ const url = URL.createObjectURL(data); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 2000); } };
+function goLocal(msg){ setSync(false, msg||"Локальный режим"); document.getElementById("localNote").classList.add("on"); }
+async function initCaps(){
+  dlCap = browserDownloads; document.getElementById("exportBtn").hidden = false;
+  const cfg = window.APP_CONFIG || {};
+  if(!cfg.supabaseUrl || !cfg.supabaseKey || !window.supabase || !window.supabase.createClient){ loadLocal(); renderAll(); goLocal(); return; }
+  renderAll(); setSync(false, "Подключение к базе…");
+  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}});
+  try{ await loadAll(); }
+  catch(e){ console.error(e); sb = null; loadLocal(); renderAll(); goLocal("Нет связи с базой, локальный режим"); toast("Supabase недоступен: " + (e.message||e)); return; }
+  document.getElementById("localNote").classList.remove("on");
+  setSync(true, "Общая доска, изменения видны всем");
+  renderAll(true);
+  const ch = sb.channel("vs-sync");
+  ["vs_functions","vs_streams", ...STREAMS.flatMap(s=>[T(s.id)+"_steps", T(s.id)+"_roles"])].forEach(t=>{
+    ch.on("postgres_changes", {event:"*", schema:"public", table:t}, ()=>scheduleReload());
+  });
+  ch.subscribe(status=>{
+    if(status==="SUBSCRIBED") setSync(true, "Общая доска, изменения видны всем");
+    if(status==="CHANNEL_ERROR" || status==="TIMED_OUT" || status==="CLOSED") setSync(false, "Нет живой синхронизации, обновите страницу");
+  });
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) scheduleReload(0); });
+}
+
+/* ---------------- HELPERS ---------------- */
+const $ = s=>document.querySelector(s);
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("on"),2600); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function stamp(){ const d=new Date(); return d.toLocaleDateString("ru-RU")+" "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}); }
+
+function setView(v){
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.view===v));
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on", s.id==="v-"+v));
+  window.scrollTo({top:0});
+  renderView(v);
+}
+function curView(){ const b=document.querySelector('.tabs button[aria-selected="true"]'); return b?b.dataset.view:"portfolio"; }
+function renderView(v){
+  if(v==="portfolio") renderPortfolio();
+  if(v==="stream") renderStream();
+  if(v==="map") renderMap();
+  if(v==="chain") renderChain();
+  if(v==="functions") renderFunctions();
+  if(v==="register") renderRegister();
+}
+function renderAll(fromSync){
+  const ae = document.activeElement;
+  const busy = fromSync && ae && ((ae.classList && ae.classList.contains("addsel")) || $("#roleMenu").classList.contains("on") || (ae.closest && ae.closest(".stepform")));
+  if(!busy) renderView(curView());
+  if(openStep) renderDrawer(fromSync);
+}
+
+/* ---------------- PORTFOLIO ---------------- */
+function streamStats(s){
+  const st = s.steps.map(x=>status(x.code));
+  return {st, owners: st.filter(x=>x!=="empty" && x!=="dispute").length, disputes: st.filter(x=>x==="dispute").length, fixed: st.filter(x=>x==="fixed").length, hot: s.steps.filter(x=>x.conf.length).length};
+}
+function vcard(s){
+  const k = streamStats(s);
+  return `<button class="vcard" style="--c:${s.c}" data-open-stream="${s.id}">
+    <span class="vcode">${s.id}. ${esc(s.short)}<span class="team" title="Команда трека">${s.team}</span></span>
+    <span class="vname">${esc(s.name)}</span>
+    <span class="flowline"><span><b>Триггер</b>${esc(s.trigger)}</span><span class="arr">→</span><span><b>Ценность на выходе</b>${esc(s.out)}</span></span>
+    <span class="strip" title="Шаги потока">${k.st.map((x,i)=>`<i class="${x}" title="${s.steps[i].disp} ${esc(s.steps[i].name)}"></i>`).join("")}</span>
+    <span class="vstats"><span><b>${s.steps.length}</b> шагов</span><span>Владельцы: <b>${k.owners}/${s.steps.length}</b></span><span>Споры: <b>${k.disputes}</b></span><span>Точки накала из свода: <b>${k.hot}</b></span></span>
+    <span class="kpis">${s.kpi.slice(0,4).map(x=>`<span>${esc(x)}</span>`).join("")}</span>
+  </button>`;
+}
+function renderPortfolio(){
+  $("#tier1").innerHTML = ["VS1","VS5"].map(id=>vcard(SMAP[id])).join("");
+  $("#tier2").innerHTML = ["VS2","VS3","VS4"].map(id=>vcard(SMAP[id])).join("");
+  $("#xcutList").innerHTML = XCUT.map(([a,b])=>`<span><b>${esc(a)}</b> — ${esc(b)}</span>`).join("");
+}
+
+/* ---------------- STREAM ---------------- */
+let hlFn = "";
+function renderStream(){
+  $("#streamPick").innerHTML = STREAMS.map(s=>`<button style="--c:${s.c}" data-pick="${s.id}" aria-pressed="${s.id===currentStream}">${s.id}. ${esc(s.name)} · ${s.team}</button>`).join("");
+  const s = SMAP[currentStream]; const k = streamStats(s);
+  const fnOpts = `<option value="">Подсветить шаги функции…</option>` + allFns().map(f=>`<option value="${f.id}" ${hlFn===f.id?"selected":""}>${esc(f.name)}</option>`).join("");
+  let html = `<div class="profile" style="--c:${s.c}">
+    <div>
+      <span class="vcode" style="--c:${s.c};color:${s.c}">${s.id}. Уровень ${s.tier===1?"1, создать готовность":"2, реализовать ценность"}<span class="team" style="--c:${s.c};background:${s.c}">Команда ${s.team}</span></span>
+      <h2 style="margin:4px 0 12px">${esc(s.name)}</h2><span class="rainbow" style="width:96px" aria-hidden="true"></span>
+      <p class="quote" style="--c:${s.c}">${esc(s.value)}</p>
+      <div class="kpis">${s.kpi.map(x=>`<span>${esc(x)}</span>`).join("")}</div>
+    </div>
+    <dl>
+      <dt>Объект потока</dt><dd>${esc(s.object)}</dd>
+      <dt>Получатель</dt><dd>${esc(s.recipient)}</dd>
+      <dt>Триггер</dt><dd>${esc(s.trigger)}</dd>
+      <dt>Результат</dt><dd>${esc(s.out)}</dd>
+      <dt>Функции по отраслевой модели</dt><dd>${esc(s.fns)}</dd>
+      <dt>Ключевые передачи</dt><dd>${esc(s.handoff)}</dd>
+      <dt>Состояние ролей</dt><dd>Владельцы на ${k.owners} из ${s.steps.length} шагов, споров ${k.disputes}, закреплено ${k.fixed}</dd>
+    </dl>
+  </div>
+  <div class="steps-head"><h3>Шаги потока</h3>
+    <div class="seg" role="group" aria-label="Режим"><button data-emode="roles" aria-pressed="${!editMode}">Функции и роли</button><button data-emode="edit" aria-pressed="${editMode}">Редактировать шаги</button></div>
+    ${editMode?"":`<select id="hlSel" aria-label="Подсветить функцию">${fnOpts}</select>`}</div>
+  <p class="faint" style="font-size:13px;margin:-4px 0 10px">${editMode?"Перетащите шаг за ручку ⋮⋮ или используйте стрелки. Названия, содержание и результат меняются кнопкой «Изменить». Новый шаг вставляется в любое место по шаблону.":"Сначала соберите состав функций (× убрать, + добавить), затем нажмите на функцию и назначьте роль"}</p>
+  ${editMode?"":`<div class="step-legend"><span class="chip owner">Владелец</span><span class="chip claimant">Претендент</span><span class="chip">Помощник</span><span class="chip member">Без роли</span><span class="chip hyp">Гипотеза из свода</span><span>Метрики и закрепление роли открываются по нажатию на шаг</span></div>`}
+  <ol class="steps${editMode?" editing":""}" style="--c:${s.c}">`;
+  if(editMode){ html += renderEditSteps(s); }
+  else s.steps.forEach((st,i)=>{
+    const d = getDoc(st.code); const stt = status(st.code);
+    const conf = isConfirmed(st.code);
+    const order = {owner:0, claimant:1, helper:2, none:3};
+    const mem = memberList(st.code, d).sort((a,b)=>order[roleOf(d,a)]-order[roleOf(d,b)]);
+    const rTitle = {owner:"Владелец", claimant:"Претендует на владение", helper:"Помощник", none:"Роль не назначена"};
+    let chips = mem.map(fid=>{
+      const r = roleOf(d,fid);
+      const cls = r==="owner"?"owner":r==="claimant"?"claimant":r==="helper"?"":(conf?"member":"hyp");
+      return `<span class="chip ${cls}"><button class="cn" data-menu="${fid}" data-code="${st.code}" title="${rTitle[r]}${conf||r!=="none"?"":", гипотеза из свода"}. Нажмите, чтобы назначить роль">${esc(fnName(fid))}</button><button class="x" data-rm="${fid}" data-code="${st.code}" aria-label="Убрать ${esc(fnName(fid))} с шага" title="Убрать с шага">×</button></span>`;
+    }).join("");
+    chips += `<span class="addwrap" data-addwrap="${st.code}"><button class="addfn" data-add="${st.code}">+ Функция</button></span>`;
+    if(!conf) chips += `<span class="comp-note">${mem.length?"Состав из свода, гипотеза":"Функций нет"}${mem.length?`<button data-confirm="${st.code}">Состав верный</button>`:""}</span>`;
+    const dim = hlFn && !mem.includes(hlFn) ? " dim":"";
+    html += `<li><div class="step${dim}" data-step="${st.code}" tabindex="0" role="button" aria-label="${st.disp} ${esc(st.name)}">
+      <span class="dot"><b>${i+1}</b></span>
+      <span><span class="t">${esc(st.name)}</span><br><span class="r">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span>
+        ${st.conf.length?`<div class="flag">Точка накала из свода: №${st.conf.join(", №")}</div>`:""}${st.gap?`<div class="flag">${esc(st.gap)}</div>`:""}</span>
+      <span class="roles">${chips}</span>
+      <span class="st"><span class="badge ${stt}">${STATUS_TXT[stt]}</span></span>
+    </div></li>`;
+  });
+  html += `</ol>`;
+  const slog = (streamDocs[s.id]&&streamDocs[s.id].log)||[];
+  if(editMode) html += `<div class="aside-box"><h3>Изменения шагов потока</h3>${slog.length?`<ul class="hist">${slog.map(x=>`<li>${esc(x.t)}: ${esc(x.text)}</li>`).join("")}</ul>`:`<p class="faint" style="font-size:13px;margin:0">Шаги соответствуют отраслевой модели, изменений пока нет.</p>`}
+    ${streamDocs[s.id]?`<div style="margin-top:12px">${confirmDel==="__reset"?`<span style="font-size:14px">Вернуть все шаги к отраслевой модели? Роли на удалённых шагах сохранятся и вернутся вместе с ними.</span> <button class="btn warn" data-reset-yes="${s.id}">Да, вернуть</button> <button class="btn" data-del-no>Отмена</button>`:`<button class="btn" data-reset="${s.id}">Вернуть отраслевую модель</button>`}</div>`:""}</div>`;
+  if(s.id==="VS5"){
+    html += `<div class="aside-box"><h3>VS5 проходит через весь клиентский цикл</h3><table class="plain"><tbody>${VS5ROLES.map(r=>`<tr><td style="width:160px;font-weight:600">${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+  if(s.id==="VS4"){
+    html += `<div class="aside-box"><h3>Четыре исхода VS4</h3><p class="muted" style="margin:0;font-size:14px">Повторная покупка, изменение решения, завершение программы или эскалация (жалоба, нежелательное событие, возврат, проблема качества). Каждый исход возвращается в систему через обратные связи на карте.</p></div>`;
+  }
+  $("#streamBody").innerHTML = html;
+  const hs = $("#hlSel"); if(hs) hs.onchange = e=>{ hlFn = e.target.value; renderStream(); };
+  if(editMode) bindEditSteps(s);
+}
+
+/* ---------------- EDIT STEPS ---------------- */
+function formHtml(s, mode, pos, st){
+  const v = st || {name:"",content:"",result:""};
+  let tpl = "";
+  if(mode==="add"){
+    const present = new Set(s.steps.map(x=>x.code));
+    const removed = DEFAULTS[s.id].filter(x=>!present.has(x.id));
+    const others = STREAMS.filter(o=>o.id!==s.id);
+    tpl = `<div class="field"><label for="sf-tpl">Шаблон</label><select id="sf-tpl"><option value="">Пустой шаг</option>
+      ${removed.length?`<optgroup label="Удалённые шаги этого потока (вернутся с ролями)">${removed.map(x=>`<option value="R|${x.id}">${esc(x.name)}</option>`).join("")}</optgroup>`:""}
+      ${others.map(o=>`<optgroup label="Скопировать из ${o.id}. ${esc(o.name)}">${o.steps.map(x=>`<option value="C|${x.code}">${x.disp} ${esc(x.name)}</option>`).join("")}</optgroup>`).join("")}
+    </select></div>`;
+  }
+  return `<li><div class="stepform" data-sf="${mode}" data-pos="${pos}" data-id="${st?st.code:""}">
+    <h4>${mode==="add"?`Новый шаг на позиции ${pos+1}`:`Изменить шаг ${st.disp}`}</h4>
+    ${tpl}
+    <div class="field"><label for="sf-name">Название шага <small>глагол + объект, например «Проверить заказ»</small></label><input id="sf-name" value="${esc(v.name)}" maxlength="90"></div>
+    <div class="field"><label for="sf-content">Что происходит на шаге <small>ключевые действия через запятую</small></label><textarea id="sf-content" maxlength="400">${esc(v.content)}</textarea></div>
+    <div class="field"><label for="sf-result">Результат шага <small>что получает следующий шаг, например «Валидированный заказ»</small></label><input id="sf-result" value="${esc(v.result)}" maxlength="140"></div>
+    <div class="acts"><button class="btn primary" data-sf-save>${mode==="add"?"Добавить шаг":"Сохранить"}</button><button class="btn" data-sf-cancel>Отмена</button></div>
+  </div></li>`;
+}
+function renderEditSteps(s){
+  let out = "";
+  const ins = pos=>`<li class="ins"><button data-ins="${pos}">+ Вставить шаг${pos===0?" в начало":pos===s.steps.length?" в конец":" сюда"}</button></li>`;
+  if(stepForm && stepForm.mode==="add" && stepForm.pos===0) out += formHtml(s,"add",0); else out += ins(0);
+  s.steps.forEach((st,i)=>{
+    if(stepForm && stepForm.mode==="edit" && stepForm.id===st.code){ out += formHtml(s,"edit",i,st); }
+    else {
+      const nFn = memberList(st.code).length;
+      const del = confirmDel===st.code;
+      out += `<li><div class="erow" draggable="true" data-eid="${st.code}">
+        <span class="handle" title="Перетащить" aria-hidden="true">⋮⋮</span>
+        <span class="num">${i+1}</span>
+        <span><span class="t">${esc(st.name)}</span>${st.custom?`<span class="tag">добавлен командой</span>`:""}<br><span class="r">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span><br><span class="r">Функций на шаге: ${nFn}</span></span>
+        <span class="eacts">${del?`<span style="font-size:13px;align-self:center">Удалить шаг?</span><button class="btn warn" data-del-yes="${st.code}">Удалить</button><button class="btn" data-del-no>Отмена</button>`:
+          `<button class="btn" data-mv="-1" data-mid="${st.code}" ${i===0?"disabled":""} aria-label="Выше">↑</button><button class="btn" data-mv="1" data-mid="${st.code}" ${i===s.steps.length-1?"disabled":""} aria-label="Ниже">↓</button><button class="btn" data-edit="${st.code}">Изменить</button><button class="btn" data-del="${st.code}">Удалить</button>`}</span>
+      </div></li>`;
+    }
+    const pos = i+1;
+    if(stepForm && stepForm.mode==="add" && stepForm.pos===pos) out += formHtml(s,"add",pos); else out += ins(pos);
+  });
+  return out;
+}
+function bindEditSteps(s){
+  const root = $("#streamBody");
+  const sf = root.querySelector(".stepform");
+  if(sf){
+    const nm = $("#sf-name"); setTimeout(()=>{ if(document.activeElement===document.body || !sf.contains(document.activeElement)) (($("#sf-tpl"))||nm).focus(); }, 30);
+    const tpl = $("#sf-tpl");
+    if(tpl) tpl.onchange = ()=>{ const [k,id] = tpl.value.split("|"); const src = k==="R" ? DEFMAP[id] : STEPMAP[id];
+      if(src){ $("#sf-name").value = src.name; $("#sf-content").value = src.content; $("#sf-result").value = src.result; } };
+    sf.querySelector("[data-sf-cancel]").onclick = ()=>{ stepForm=null; renderStream(); };
+    sf.querySelector("[data-sf-save]").onclick = ()=>{
+      const name = $("#sf-name").value.trim(), content = $("#sf-content").value.trim(), result = $("#sf-result").value.trim();
+      if(!name){ toast("Укажите название шага"); $("#sf-name").focus(); return; }
+      if(sf.dataset.sf==="add"){
+        const t = tpl ? tpl.value.split("|") : [""];
+        const presentIds = new Set(s.steps.map(x=>x.code));
+        const id = (t[0]==="R" && !presentIds.has(t[1])) ? t[1] : `${s.id}.n${Date.now().toString(36)}`;
+        const pos = +sf.dataset.pos;
+        stepForm = null;
+        mutateSteps(s.id, arr=>{ arr.splice(pos,0,{id,name,content,result}); }, `Добавлен шаг «${name}» на позицию ${pos+1}`);
+      } else {
+        const id = sf.dataset.id; const old = STEPMAP[id];
+        stepForm = null;
+        const changes = [];
+        if(old.name!==name) changes.push(`название «${old.name}» → «${name}»`);
+        if(old.content!==content) changes.push("содержание");
+        if(old.result!==result) changes.push("результат");
+        if(!changes.length){ renderStream(); return; }
+        mutateSteps(s.id, arr=>{ const x = arr.find(a=>a.id===id); if(x){ x.name=name; x.content=content; x.result=result; } }, `Шаг ${old.disp}: изменено ${changes.join(", ")}`);
+      }
+    };
+    sf.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target.tagName==="INPUT"){ e.preventDefault(); sf.querySelector("[data-sf-save]").click(); } });
+  }
+  // drag and drop
+  root.querySelectorAll(".erow[draggable]").forEach(row=>{
+    row.addEventListener("dragstart", e=>{ dragId = row.dataset.eid; row.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; try{ e.dataTransfer.setData("text/plain", dragId); }catch(_){} });
+    row.addEventListener("dragend", ()=>{ dragId=null; root.querySelectorAll(".erow").forEach(r=>r.classList.remove("dragging","over-top","over-bot")); });
+    row.addEventListener("dragover", e=>{ if(!dragId || dragId===row.dataset.eid) return; e.preventDefault(); const r=row.getBoundingClientRect(); const top = e.clientY < r.top + r.height/2; row.classList.toggle("over-top",top); row.classList.toggle("over-bot",!top); });
+    row.addEventListener("dragleave", ()=>row.classList.remove("over-top","over-bot"));
+    row.addEventListener("drop", e=>{ e.preventDefault(); if(!dragId) return; const r=row.getBoundingClientRect(); const top = e.clientY < r.top + r.height/2; moveStep(s.id, dragId, row.dataset.eid, top); });
+  });
+}
+function moveStep(sid, id, targetId, before){
+  const s = SMAP[sid]; const from = s.steps.findIndex(x=>x.code===id); if(from<0 || id===targetId) return;
+  const name = s.steps[from].name;
+  mutateSteps(sid, arr=>{ const i = arr.findIndex(a=>a.id===id); const [it] = arr.splice(i,1); let t = arr.findIndex(a=>a.id===targetId); if(!before) t+=1; arr.splice(t,0,it); }, null);
+  const to = SMAP[sid].steps.findIndex(x=>x.code===id);
+  if(to!==from) logStreamOnly(sid, `Шаг «${name}» перемещён с позиции ${from+1} на ${to+1}`);
+}
+function logStreamOnly(sid, text){ const d = streamDocs[sid]; d.log = [{t:stamp(), text}].concat(d.log||[]).slice(0,40); saveStream(sid); if(curView()==="stream") renderStream(); }
+function shiftStep(sid, id, dir){
+  const s = SMAP[sid]; const i = s.steps.findIndex(x=>x.code===id); const j = i+dir; if(j<0||j>=s.steps.length) return;
+  moveStep(sid, id, s.steps[j].code, dir<0);
+  setTimeout(()=>{ const b = document.querySelector(`[data-mv="${dir}"][data-mid="${CSS.escape(id)}"]`) || document.querySelector(`[data-mid="${CSS.escape(id)}"]`); b && b.focus(); }, 0);
+}
+
+/* ---------------- DRAWER ---------------- */
+function openDrawer(code){ openStep = code; renderDrawer(); $("#drawer").classList.add("on"); $("#scrim").classList.add("on"); $("#drawer").setAttribute("aria-hidden","false"); setTimeout(()=>{ const c=$("#drawer .close"); c&&c.focus(); },50); }
+function closeDrawer(){ openStep = null; $("#drawer").classList.remove("on"); $("#scrim").classList.remove("on"); $("#drawer").setAttribute("aria-hidden","true"); }
+function mutate(code, fn, log){
+  const d = JSON.parse(JSON.stringify(getDoc(code)));
+  if(!Array.isArray(d.members)) d.members = memberList(code, d);
+  delete d.cand;
+  fn(d);
+  if(log){ d.history = [{t:stamp(), text:log}].concat(d.history||[]).slice(0,40); }
+  roles[code] = d; saveDoc(code); renderAll();
+}
+function setRole(code, fid, r){
+  const d0 = getDoc(code); const prev = d0.fns[fid]||"none"; if(prev===r) return;
+  mutate(code, d=>{
+    if(r==="owner"){
+      const cur = ownerOf(d);
+      const cl = byRole(d,"claimant");
+      if(cur && cur!==fid) d.fns[cur]="helper";
+      cl.forEach(x=>{ if(x!==fid) d.fns[x]="helper"; });
+      if(d.successor===fid) d.successor = cur||"";
+    }
+    if(r==="none") delete d.fns[fid]; else d.fns[fid]=r;
+    if(!d.members.includes(fid)) d.members.push(fid);
+    if(r!=="helper" && d.successor===fid) d.successor="";
+  }, r==="owner" ? `Владелец: ${fnName(fid)}${byRole(d0,"claimant").length?" (спор решён)":""}` : r==="claimant" ? `${fnName(fid)} претендует на владение` : r==="helper" ? `${fnName(fid)}: помощник` : `${fnName(fid)}: роль снята`);
+}
+function addMember(code, fid){
+  if(!fid) return;
+  mutate(code, d=>{ if(!d.members.includes(fid)) d.members.push(fid); }, `${fnName(fid)} добавлена на шаг`);
+}
+function removeMember(code, fid){
+  const wasOwner = ownerOf(getDoc(code))===fid;
+  mutate(code, d=>{ d.members = d.members.filter(x=>x!==fid); delete d.fns[fid]; if(d.successor===fid) d.successor=""; }, `${fnName(fid)} убрана с шага${wasOwner?" (была владельцем)":""}`);
+}
+function confirmMembers(code){ mutate(code, d=>{}, "Состав функций подтверждён"); }
+function renderDrawer(fromSync){
+  const st = STEPMAP[openStep]; if(!st) return;
+  const dr = $("#drawer");
+  const active = document.activeElement;
+  if(fromSync && dr.contains(active) && (active.tagName==="INPUT"||active.tagName==="TEXTAREA")) return; // don't clobber typing
+  const d = getDoc(openStep); const s = st.stream; const stt = status(openStep);
+  const o = ownerOf(d); const cl = byRole(d,"claimant"); const helpers = byRole(d,"helper");
+  const rows = memberList(openStep, d); const conf = isConfirmed(openStep);
+  const others = allFns().filter(f=>!rows.includes(f.id));
+  const seg = fid=>{ const r = d.fns[fid]||"none"; return `<span class="rseg" role="group" aria-label="Роль">${[["none","Без роли"],["helper","Помощник"],["claimant","Претендент"],["owner","Владелец"]].map(([k,t])=>`<button data-r="${k}" data-fid="${fid}" aria-pressed="${r===k}">${t}</button>`).join("")}</span>`; };
+  let disp = "";
+  if(stt==="dispute"){
+    const parties = (o?[o]:[]).concat(cl);
+    disp = `<div class="d-sec dispute-box"><b>Спор за владение шагом.</b> Претендуют: ${parties.map(x=>esc(fnName(x))).join(", ")}. Назначьте владельца, остальные станут помощниками. Если решение временное, закрепите роль с метрикой и сроком ниже.
+      <div class="actions">${parties.map(x=>`<button class="btn warn" data-resolve="${x}">Владелец: ${esc(fnName(x))}</button>`).join("")}</div></div>`;
+  }
+  dr.innerHTML = `<div class="d-head" style="--c:${s.c}">
+      <button class="close" aria-label="Закрыть">×</button>
+      <span class="code">${st.disp}, ${esc(s.name)}</span>
+      <h3>${esc(st.name)}</h3>
+      <span class="badge ${stt}">${STATUS_TXT[stt]}</span>
+    </div>
+    <div class="d-body">
+      <div class="d-sec"><p>${esc(st.content)}</p><p class="muted">Результат шага: <b style="color:var(--ink)">${esc(st.result)}</b></p></div>
+      ${disp}
+      <div class="d-sec"><h4>Роли функций на шаге</h4>
+        <p class="faint" style="font-size:13px">Один владелец отвечает за результат шага. Помощники дают ресурс и экспертизу. Претендент заявляет право на владение, и это фиксируется как спор. Лишнюю функцию уберите крестиком, недостающую добавьте из списка.</p>
+        ${rows.length?"":`<p class="faint" style="font-size:13px">На шаге нет функций. Добавьте их ниже.</p>`}
+        ${rows.map(fid=>`<div class="rolerow"><span class="nm">${esc(fnName(fid))}${!conf&&roleOf(d,fid)==="none"?"<small>гипотеза из свода 17.09</small>":""}</span><span style="display:inline-flex;gap:6px;align-items:center">${seg(fid)}<button class="btn" data-drm="${fid}" aria-label="Убрать с шага" title="Убрать с шага" style="padding:4px 9px">×</button></span></div>`).join("")}
+        <div class="addrow"><select id="addFnSel" aria-label="Добавить функцию"><option value="">Добавить другую функцию на шаг…</option>${others.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join("")}</select></div>
+      </div>
+      <div class="d-sec"><h4>Закрепление роли на время</h4>
+        <p class="faint" style="font-size:13px">Роль владельца закрепляется до даты пересмотра. Если метрика не выполнена, владение переходит к сменщику, а текущий владелец становится помощником.</p>
+        <div class="field"><label for="f-metric">Метрика владельца</label><input id="f-metric" value="${esc(d.metric)}" placeholder="${esc(s.kpi[0])}"></div>
+        <div class="two-f">
+          <div class="field"><label for="f-target">Целевое значение</label><input id="f-target" value="${esc(d.target)}" placeholder="например, 95%"></div>
+          <div class="field"><label for="f-until">Закреплено до</label><input id="f-until" type="date" value="${esc(d.until)}"></div>
+        </div>
+        <div class="field"><label for="f-succ">Сменщик (из помощников)</label><select id="f-succ"><option value="">Не выбран</option>${helpers.map(x=>`<option value="${x}" ${d.successor===x?"selected":""}>${esc(fnName(x))}</option>`).join("")}</select></div>
+        <div class="field"><label for="f-rule">Условие смены ролей</label><input id="f-rule" value="${esc(d.rule)}" placeholder="например, два месяца подряд ниже цели"></div>
+        <button class="btn primary" id="swapBtn" ${o&&d.successor?"":"disabled"}>Метрика не выполнена: передать владение сменщику</button>
+      </div>
+      ${st.conf.length||st.gap?`<div class="d-sec"><h4>Что известно из свода анкет</h4>${st.conf.map(n=>`<div class="conf"><b>№${n}.</b> ${esc(CONFLICTS[n]||"")}</div>`).join("")}${st.gap?`<div class="conf">${esc(st.gap)}</div>`:""}</div>`:""}
+      <div class="d-sec"><h4>Заметка для реестра «на дорешение»</h4><div class="field"><textarea id="f-note" placeholder="Аргументы сторон, договорённости, кто эскалирует">${esc(d.note)}</textarea></div></div>
+      <div class="d-sec"><h4>История</h4>${(d.history||[]).length?`<ul class="hist">${d.history.map(h=>`<li>${esc(h.t)}: ${esc(h.text)}</li>`).join("")}</ul>`:`<p class="faint" style="font-size:13px">Изменений пока нет.</p>`}</div>
+    </div>`;
+  dr.querySelector(".close").onclick = closeDrawer;
+  dr.querySelectorAll(".rseg button").forEach(b=>b.onclick=()=>setRole(openStep,b.dataset.fid,b.dataset.r));
+  dr.querySelectorAll("[data-resolve]").forEach(b=>b.onclick=()=>setRole(openStep,b.dataset.resolve,"owner"));
+  $("#addFnSel").onchange = e=>addMember(openStep, e.target.value);
+  dr.querySelectorAll("[data-drm]").forEach(b=>b.onclick=()=>removeMember(openStep,b.dataset.drm));
+  const bindField = (id,key,label)=>{ const el=$("#"+id); el.onchange = ()=>{ const val = el.value; if((getDoc(openStep)[key]||"")===val) return; mutate(openStep, d=>{ d[key]=val; }, key==="note"?null:`${label}: ${key==="successor"?(val?fnName(val):"не выбран"):(val||"очищено")}`); }; };
+  bindField("f-metric","metric","Метрика"); bindField("f-target","target","Цель"); bindField("f-until","until","Закреплено до");
+  bindField("f-succ","successor","Сменщик"); bindField("f-rule","rule","Условие смены"); bindField("f-note","note","Заметка");
+  $("#swapBtn").onclick = ()=>{
+    const d0 = getDoc(openStep); const cur = ownerOf(d0), nx = d0.successor; if(!cur||!nx) return;
+    mutate(openStep, d=>{ d.fns[cur]="helper"; d.fns[nx]="owner"; d.successor=cur; d.until=""; }, `Смена ролей по метрике: владелец ${fnName(nx)}, сменщик ${fnName(cur)}`);
+    toast("Роли поменялись. Задайте новую дату пересмотра.");
+  };
+}
+
+/* ---------------- MAP ---------------- */
+const FLOWS = {VS1:"Идея → готовый продукт", VS5:"Кандидат → компетентный партнёр", VS2:"Аудитория → потребность → решение → намерение купить", VS3:"Заказ → оплата → комплектация → доставка", VS4:"Получение → применение → поддержка → результат"};
+const NODES = {
+  VS1:{x:60,y:110,w:420,h:124}, VS5:{x:520,y:110,w:420,h:124},
+  GATE:{x:170,y:300,w:660,h:70},
+  VS2:{x:60,y:410,w:880,h:112}, VS3:{x:60,y:562,w:880,h:112}, VS4:{x:60,y:714,w:880,h:112},
+  FB:{x:250,y:866,w:500,h:44}
+};
+const TARGETS = ["VS1","VS2","VS3","VS4","VS5","X_q","X_sc","X_comp"];
+const TLABEL = {X_q:"Quality", X_sc:"Supply Chain", X_comp:"Compensation"};
+TARGETS.forEach((id,i)=>{ NODES["T_"+id] = {x:60+i*112, y:950, w:100, h:40}; });
+function ctr(id){ const n=NODES[id]; return [n.x+n.w/2, n.y+n.h/2]; }
+function renderMap(){
+  const svg = $("#mapSvg");
+  const cs = getComputedStyle(document.documentElement);
+  const v = n=>cs.getPropertyValue(n).trim();
+  const ink=v("--ink"), muted=v("--muted"), faint=v("--faint"), line=v("--line"), surf2=v("--surface-2"), surf=v("--surface");
+  const col = id=>v("--"+id.toLowerCase());
+  const arrow = (x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${muted}" stroke-width="2" marker-end="url(#ah)"/>`;
+  const node = id=>{
+    const n=NODES[id], s=SMAP[id], k=streamStats(s);
+    const cellW = Math.min((n.w-190)/s.steps.length, 40);
+    return `<g class="node" data-node="${id}" tabindex="0" role="button" aria-label="${s.id} ${esc(s.name)}">
+      <rect class="box" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" fill="${surf}" stroke="${col(id)}" stroke-width="2"/>
+      <rect x="${n.x}" y="${n.y}" width="8" height="${n.h}" rx="4" fill="${col(id)}"/>
+      <text x="${n.x+26}" y="${n.y+42}" font-size="21" fill="${ink}"><tspan font-weight="700" fill="${col(id)}">${s.id}.</tspan> <tspan font-weight="300">${esc(s.name)}</tspan></text>
+      <text x="${n.x+26}" y="${n.y+70}" font-size="16" fill="${muted}">${esc(FLOWS[id])}</text>
+      ${k.st.map((x,i)=>`<rect x="${n.x+26+i*cellW}" y="${n.y+n.h-30}" width="${Math.max(cellW-4,2)}" height="8" rx="2" fill="${x==="dispute"?v("--coral"):x==="fixed"?v("--ok"):x==="assigned"?v("--ice"):line}"><title>${s.steps[i].disp} ${esc(s.steps[i].name)}</title></rect>`).join("")}
+      <g><rect x="${n.x+26}" y="${n.y-13}" width="${s.team.length*8.6+26}" height="26" rx="7" fill="${col(id)}"/><text x="${n.x+39}" y="${n.y+5}" font-size="14" font-weight="500" fill="${v("--on-c")}">${s.team}</text></g>
+      <text x="${n.x+n.w-24}" y="${n.y+n.h-22}" text-anchor="end" font-size="13" fill="${faint}">владельцы ${k.owners}/${s.steps.length}${k.disputes?`, споры ${k.disputes}`:""}</text>
+      <g class="seqbadge" data-badge="${id}"></g>
+    </g>`;
+  };
+  let h = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${muted}"/></marker>
+    <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${v("--coral")}"/></marker></defs>`;
+  // top
+  h += `<text x="500" y="34" text-anchor="middle" font-size="16" font-weight="600" fill="${ink}" letter-spacing=".5">Потребности рынка и стратегия</text>`;
+  h += `<line x1="500" y1="46" x2="500" y2="72" stroke="${muted}" stroke-width="2"/><line x1="270" y1="72" x2="730" y2="72" stroke="${muted}" stroke-width="2"/>`;
+  h += arrow(270,72,270,106) + arrow(730,72,730,106);
+  // bracket to gate
+  h += `<path d="M 270 234 V 262 H 730 V 234" fill="none" stroke="${muted}" stroke-width="2"/>` + arrow(500,262,500,296);
+  // gate
+  h += `<g class="node" data-node="GATE" tabindex="0" role="button" aria-label="Коммерческая готовность"><rect class="box" x="${NODES.GATE.x}" y="${NODES.GATE.y}" width="${NODES.GATE.w}" height="${NODES.GATE.h}" rx="10" fill="${surf2}" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="500" y="330" text-anchor="middle" font-size="17" font-weight="700" fill="${ink}" letter-spacing=".5">Коммерческая готовность</text>
+    <text x="500" y="355" text-anchor="middle" font-size="15" fill="${muted}">Продукт + партнёр + контент + запас</text><g class="seqbadge" data-badge="GATE"></g></g>`;
+  h += arrow(500,372,500,406) + arrow(500,524,500,558) + arrow(500,676,500,710) + arrow(500,828,500,862);
+  // repeat & feedback
+  const F=NODES.FB;
+  h += `<rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" rx="22" fill="${surf2}" stroke="${line}"/><text x="500" y="${F.y+28}" text-anchor="middle" font-size="16" font-weight="600" fill="${ink}" letter-spacing=".5">Повторная покупка и обратная связь</text>`;
+  h += arrow(500,912,500,946);
+  // targets row
+  TARGETS.forEach((id,i)=>{
+    const n=NODES["T_"+id], isVS=!id.startsWith("X_"), c=isVS?col(id):muted;
+    h += `<g class="xc${isVS?" tnode":""}" data-x="T_${id}" ${isVS?`data-go="${id}" role="button" tabindex="0" style="cursor:pointer"`:""}><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${isVS?surf:surf2}" stroke="${c}" stroke-width="${isVS?2:1}" ${isVS?"":'stroke-dasharray="4 3"'}/><text x="${n.x+n.w/2}" y="${n.y+26}" text-anchor="middle" font-size="${isVS?15:13}" font-weight="${isVS?700:400}" fill="${isVS?c:ink}">${isVS?id:TLABEL[id]}</text></g>`;
+  });
+  h += `<line x1="60" y1="1004" x2="940" y2="1004" stroke="${line}"/><text x="500" y="1024" text-anchor="middle" font-size="13" fill="${faint}">обратная связь возвращается во все потоки и сквозные механизмы</text>`;
+  // run-mode loop to VS2
+  h += `<g id="loopRun" opacity="0"><path d="M ${F.x} ${F.y+22} H 36 Q 24 ${F.y+22} 24 ${F.y+10} V 478 Q 24 466 36 466 H 56" fill="none" stroke="${col("vs2")}" stroke-width="2.5" marker-end="url(#ahc)"/><text x="16" y="660" font-size="13" fill="${col("vs2")}" transform="rotate(-90 16 660)" text-anchor="middle">повторный VS2</text></g>`;
+  h += `<g id="fbLayer"></g>`;
+  h += ["VS1","VS5","VS2","VS3","VS4"].map(node).join("");
+  svg.innerHTML = h;
+  const bindGo = (el,id)=>{ const go=()=>{ if(id==="GATE"){ toggleGate(true); return; } currentStream=id; hlFn=""; setView("stream"); }; el.onclick=go; el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } }; };
+  svg.querySelectorAll(".node").forEach(g=>bindGo(g,g.dataset.node));
+  svg.querySelectorAll("[data-go]").forEach(g=>bindGo(g,g.dataset.go));
+  applyMode();
+  $("#fbList").innerHTML = FEEDBACK.map((f,i)=>`<button class="fb" data-fb="${i}"><span><b>${esc(f[0])}</b><small>из ${f[1]}</small></span><span>${esc(f[3])}<small>в ${f[2].map(x=>TLABEL[x]||x).join(", ")}</small></span></button>`).join("");
+  $("#fbList").querySelectorAll(".fb").forEach(b=>{
+    b.onmouseenter = ()=>showFb(+b.dataset.fb); b.onfocus = ()=>showFb(+b.dataset.fb);
+    b.onclick = ()=>showFb(+b.dataset.fb, true);
+  });
+  $("#fbList").onmouseleave = ()=>{ if(showFb.pinned==null) clearFb(); else showFb(showFb.pinned); };
+  $("#vs5Roles").innerHTML = VS5ROLES.map(r=>`<tr><td style="width:110px;font-weight:600">${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("");
+  $("#gateList").innerHTML = GATE.map(g=>`<li>${esc(g)}</li>`).join("");
+}
+function clearFb(){ const svg=$("#mapSvg"); svg.classList.remove("focus"); svg.querySelectorAll(".hl").forEach(n=>n.classList.remove("hl")); $("#fbLayer").innerHTML=""; document.querySelectorAll(".fb.on").forEach(b=>b.classList.remove("on")); }
+function showFb(i, pin){
+  if(pin){ if(showFb.pinned===i){ showFb.pinned=null; clearFb(); return; } showFb.pinned=i; }
+  clearFb();
+  const f = FEEDBACK[i]; const svg=$("#mapSvg"); const coral = getComputedStyle(document.documentElement).getPropertyValue("--coral").trim();
+  svg.classList.add("focus");
+  document.querySelector(`.fb[data-fb="${i}"]`).classList.add("on");
+  const src = svg.querySelector(`[data-node="${f[1]}"]`); src && src.classList.add("hl");
+  const S = NODES[f[1]]; const sx = S.x+S.w, sy = S.y+S.h/2;
+  let paths = "";
+  f[2].forEach((t,k)=>{
+    const el = svg.querySelector(`[data-x="T_${t}"]`); el && el.classList.add("hl");
+    const T = NODES["T_"+t]; const tx = T.x+T.w/2, ty = T.y-2;
+    const rx = 975 - k*9;
+    paths += `<path d="M ${sx+2} ${sy} H ${rx-12} Q ${rx} ${sy} ${rx} ${sy+12} V ${T.y-38} Q ${rx} ${T.y-26} ${rx-12} ${T.y-26} H ${tx+10} Q ${tx} ${T.y-26} ${tx} ${T.y-16} V ${ty}" fill="none" stroke="${coral}" stroke-width="2.5" marker-end="url(#ahc)"/>`;
+  });
+  $("#fbLayer").innerHTML = paths;
+}
+function toggleGate(show){ const b=$("#gateBox"); b.hidden = show===undefined ? !b.hidden : !show; if(!b.hidden) b.scrollIntoView({behavior:"smooth",block:"nearest"}); }
+function applyMode(){
+  document.querySelectorAll("#modeSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===mapMode));
+  const svg=$("#mapSvg"); const cs=getComputedStyle(document.documentElement); const navy=cs.getPropertyValue("--navy").trim();
+  const order = mapMode==="launch" ? {VS1:"1",VS5:"2",GATE:"3",VS2:"4",VS3:"5",VS4:"6"} : {VS1:"∞",VS5:"∞",VS2:"1",VS3:"2",VS4:"3"};
+  svg.querySelectorAll(".seqbadge").forEach(g=>{
+    const id=g.dataset.badge; const t=order[id]; if(!t){ g.innerHTML=""; return; }
+    const n = NODES[id];
+    g.innerHTML = `<circle cx="${n.x+n.w-24}" cy="${n.y+24}" r="15" fill="${navy}" stroke="#fff" stroke-width="1.5"/><text x="${n.x+n.w-24}" y="${n.y+29}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${t}</text>`;
+  });
+  const loop = $("#loopRun"); if(loop) loop.setAttribute("opacity", mapMode==="run"?"1":"0");
+  $("#seqLine").textContent = mapMode==="launch"
+    ? "Запуск нового продукта: потребность рынка → VS1 продуктовая концепция → подключение VS5, подготовка партнёров → коммерческая готовность → VS2 спрос → VS3 первые заказы → VS4 сопровождение первых клиентов → анализ результатов → корректировка VS1 и VS5 → масштабирование."
+    : "Действующий бизнес: VS1 и VS5 работают постоянно, клиентский цикл VS2 → VS3 → VS4 замыкается повторным VS2, а обратная связь идёт в продукт, сеть и supply chain. Единой стартовой точки нет.";
+}
+
+/* ---------------- CHAIN ---------------- */
+let chainHl = "hot", chainFnId = "", chainOwner = true;
+function chainMatch(st){
+  const stt = status(st.code);
+  if(chainHl==="hot") return st.conf.length>0 || !!st.gap;
+  if(chainHl==="dispute") return stt==="dispute";
+  if(chainHl==="empty") return stt==="empty";
+  if(chainHl==="custom") return st.custom;
+  if(chainHl==="fn") return !!chainFnId && memberList(st.code).includes(chainFnId);
+  return false;
+}
+function chevs(s){
+  return `<ol class="chevs">${s.steps.map(st=>{
+    const d = getDoc(st.code), o = ownerOf(d), stt = status(st.code), dark = chainMatch(st);
+    const alert = dark && (chainHl==="dispute");
+    const tip = `${st.disp} ${st.name}. Результат: ${st.result}${stt==="dispute"?". Спор за владение":""}`;
+    return `<li class="chev${dark?" dark":""}${alert?" alert":""}" role="button" tabindex="0" data-chev="${st.code}" title="${esc(tip)}">
+      <span class="n">${st.disp}</span>${esc(st.name)}${chainOwner&&o?`<span class="o">${esc(fnName(o))}</span>`:""}
+      ${!dark&&stt==="dispute"?`<span class="mark" style="background:var(--coral)" aria-label="Спор"></span>`:""}</li>`;
+  }).join("")}</ol>`;
+}
+function band(s){
+  return `<button class="band" style="--c:${s.c}" data-band="${s.id}"><span class="bc">${s.id}</span> ${esc(s.name)}<span class="team" style="--c:${s.c};background:${s.c}">${s.team}</span></button>`;
+}
+function renderChain(){
+  const sel = $("#chainHl"); sel.value = chainHl;
+  const fsel = $("#chainFn");
+  fsel.hidden = chainHl!=="fn";
+  fsel.innerHTML = `<option value="">Выберите функцию…</option>` + allFns().map(f=>`<option value="${f.id}" ${f.id===chainFnId?"selected":""}>${esc(f.name)}</option>`).join("");
+  $("#chainOwner").checked = chainOwner;
+  const S = SMAP;
+  const count = ALLSTEPS.filter(chainMatch).length;
+  let html = `<p class="faint" style="font-size:13px;margin:-10px 0 18px">${chainHl==="none"?"":`Выделено шагов: ${count} из ${ALLSTEPS.length}`}</p>`;
+  html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 1.</b> Создать готовность</span>
+    <div class="chain-cols"><div>${band(S.VS1)}${chevs(S.VS1)}</div><div>${band(S.VS5)}${chevs(S.VS5)}</div></div></div>`;
+  html += `<div class="gate-band" role="button" tabindex="0" data-gate><b>Коммерческая готовность</b><span class="muted">Продукт + партнёр + контент + запас</span></div>`;
+  html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 2.</b> Реализовать ценность</span>
+    ${["VS2","VS3","VS4"].map(id=>`<div style="margin-bottom:18px">${band(S[id])}${chevs(S[id])}</div>`).join("")}</div>`;
+  html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 3.</b> Обновить систему</span>
+    <div class="fb-band"><span>Повторная покупка и обратная связь возвращаются в</span>${["VS1 продукт","VS2 спрос","VS4 сопровождение","VS5 обучение партнёров","Quality","Supply Chain","Compensation"].map(x=>`<span class="pill">${x}</span>`).join("")}</div></div>`;
+  $("#chainBody").innerHTML = html;
+}
+
+/* ---------------- FUNCTIONS ---------------- */
+function fnInvolvement(fid){
+  return ALLSTEPS.map(st=>{ const d=getDoc(st.code); if(!memberList(st.code,d).includes(fid)) return null;
+    const r = roleOf(d,fid); if(r!=="none") return {st, r}; return {st, r: isConfirmed(st.code)?"member":"hyp"}; }).filter(Boolean);
+}
+function renderFunctions(){
+  const fns = allFns();
+  let rows = `<thead><tr><th>Функция</th>${STREAMS.map(s=>`<th style="color:${s.c}">${s.id}</th>`).join("")}</tr></thead><tbody>`;
+  let grp = "";
+  fns.forEach(f=>{
+    if(f.group!==grp){ grp=f.group; rows += `<tr class="grp"><td colspan="6">${esc(grp)}</td></tr>`; }
+    const inv = fnInvolvement(f.id);
+    rows += `<tr class="${f.id===currentFn?"sel":""}"><td class="fnname" data-fn="${f.id}">${esc(f.name)}${f.who&&f.who!==f.name?`<br><span class="faint" style="font-size:12px">${esc(f.who)}</span>`:""}</td>`;
+    STREAMS.forEach(s=>{
+      const x = inv.filter(i=>i.st.stream.id===s.id);
+      const O=x.filter(i=>i.r==="owner").length, H=x.filter(i=>i.r==="helper").length, C=x.filter(i=>i.r==="claimant").length, Y=x.filter(i=>i.r==="hyp").length, M=x.filter(i=>i.r==="member").length;
+      let txt = [O?`В${O}`:"",H?`П${H}`:"",C?`С${C}`:"",M?`У${M}`:""].filter(Boolean).join(" ");
+      let style = "";
+      if(C) style = "background:var(--coral-soft)"; else if(O) style="background:var(--navy);color:#fff"; else if(H) style="background:var(--ice-soft)"; else if(M) style="border:1px solid var(--faint)";
+      if(!txt && Y){ txt = `${Y}`; style="border:1px dashed var(--faint);color:var(--muted)"; }
+      rows += `<td class="cell" data-fn="${f.id}" data-s="${s.id}">${txt?`<span style="${style}">${txt}</span>`:""}</td>`;
+    });
+    rows += `</tr>`;
+  });
+  $("#matrix").innerHTML = rows + "</tbody>";
+  $("#matrix").querySelectorAll("[data-fn]").forEach(td=>td.onclick=()=>{ currentFn = td.dataset.fn; if(td.dataset.s){ currentStream=td.dataset.s; hlFn=currentFn; setView("stream"); } else renderFunctions(); });
+  $("#fnSelect").innerHTML = fns.map(f=>`<option value="${f.id}" ${f.id===currentFn?"selected":""}>${esc(f.name)}</option>`).join("");
+  $("#fnSelect").onchange = e=>{ currentFn=e.target.value; renderFunctions(); };
+  const inv = fnInvolvement(currentFn);
+  const lbl = {owner:"Владелец",helper:"Помощник",claimant:"Претендент",hyp:"Гипотеза",member:"Без роли"};
+  const cls = {owner:"owner",helper:"",claimant:"claimant",hyp:"hyp",member:"member"};
+  $("#fnSteps").innerHTML = inv.length ? `<p class="muted" style="font-size:14px;margin:0 0 6px">Шагов с участием: ${inv.length}. Владелец: ${inv.filter(i=>i.r==="owner").length}, помощник: ${inv.filter(i=>i.r==="helper").length}, спорит: ${inv.filter(i=>i.r==="claimant").length}.</p>` +
+    inv.map(i=>`<div class="fn-row" data-step="${i.st.code}"><span class="code" style="color:${i.st.stream.c}">${i.st.disp}</span><span>${esc(i.st.name)}<br><span class="faint" style="font-size:12.5px">${esc(i.st.stream.name)}</span></span><span class="chip ${cls[i.r]}">${lbl[i.r]}</span></div>`).join("")
+    : `<div class="empty-state">Функция пока не найдена ни в одном шаге. Откройте поток и добавьте её на шаг, где она создаёт результат.</div>`;
+  $("#fnSteps").querySelectorAll("[data-step]").forEach(r=>r.onclick=()=>openDrawer(r.dataset.step));
+}
+
+/* ---------------- REGISTER ---------------- */
+function renderRegister(){
+  document.querySelectorAll("#regSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.f===regFilter));
+  let list = ALLSTEPS;
+  if(regFilter==="hyp") list = list.filter(s=>s.conf.length||s.gap);
+  else list = list.filter(s=>status(s.code)===regFilter);
+  if(regFilter==="fixed") list = list.slice().sort((a,b)=>(getDoc(a.code).until||"").localeCompare(getDoc(b.code).until||""));
+  const empty = {dispute:"Споров нет. Когда на шаге две функции отмечены претендентами, он появится здесь.", fixed:"Закреплённых ролей пока нет. Задайте на шаге метрику владельца и дату пересмотра.", empty:"У всех шагов есть владелец.", hyp:""}[regFilter];
+  if(!list.length){ $("#regTable").innerHTML = `<div class="empty-state">${empty}</div>`; return; }
+  const t = today();
+  let h = `<table class="plain"><thead><tr><th>Шаг</th><th>Поток</th><th>Владелец</th><th>${regFilter==="dispute"?"Претенденты":"Помощники"}</th><th>Метрика и цель</th><th>До</th><th>${regFilter==="hyp"?"Из свода":"Заметка"}</th></tr></thead><tbody>`;
+  list.forEach(st=>{
+    const d=getDoc(st.code); const o=ownerOf(d);
+    const second = regFilter==="dispute" ? byRole(d,"claimant") : byRole(d,"helper");
+    const over = d.until && d.until < t;
+    h += `<tr data-step="${st.code}"><td><b style="color:${st.stream.c}">${st.disp}</b> ${esc(st.name)}</td><td>${esc(st.stream.short)}</td><td>${o?esc(fnName(o)):'<span class="faint">нет</span>'}</td><td>${second.map(x=>esc(fnName(x))).join(", ")||'<span class="faint">—</span>'}</td><td>${esc(d.metric)}${d.target?` → ${esc(d.target)}`:""}</td><td class="${over?"overdue":""}">${d.until?esc(new Date(d.until).toLocaleDateString("ru-RU"))+(over?" пересмотреть":""):""}</td><td style="max-width:320px">${regFilter==="hyp"?(st.conf.map(n=>"№"+n+". "+esc(CONFLICTS[n])).join("<br>")+(st.gap?esc(st.gap):"")):esc(d.note)}</td></tr>`;
+  });
+  $("#regTable").innerHTML = h + "</tbody></table>";
+  $("#regTable").querySelectorAll("tr[data-step]").forEach(r=>r.onclick=()=>openDrawer(r.dataset.step));
+}
+async function exportCsv(){
+  if(!dlCap) return;
+  const q = v=>`"${String(v||"").replace(/"/g,'""')}"`;
+  const rows = [["Поток","Код","Шаг","Статус","Владелец","Помощники","Претенденты","Метрика","Цель","Закреплено до","Сменщик","Условие смены","Заметка"]];
+  ALLSTEPS.forEach(st=>{ const d=getDoc(st.code); rows.push([st.stream.id+" "+st.stream.name, st.disp, st.name, STATUS_TXT[status(st.code)], fnName(ownerOf(d)), byRole(d,"helper").map(fnName).join(", "), byRole(d,"claimant").map(fnName).join(", "), d.metric, d.target, d.until, d.successor?fnName(d.successor):"", d.rule, d.note]); });
+  const csv = "\ufeff" + rows.map(r=>r.map(q).join(";")).join("\r\n");
+  try{ await dlCap.save({filename:`роли_в_потоках_${today()}.csv`, data:new Blob([csv],{type:"text/csv"})}); }
+  catch(e){ toast("Файл не сохранён"); }
+}
+
+/* ---------------- EVENTS ---------------- */
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
+document.addEventListener("click", e=>{
+  const c = e.target.closest("[data-open-stream]"); if(c){ currentStream=c.dataset.openStream; hlFn=""; setView("stream"); return; }
+  const p = e.target.closest("[data-pick]"); if(p){ currentStream=p.dataset.pick; stepForm=null; confirmDel=null; renderStream(); return; }
+  const cv = e.target.closest("[data-chev]"); if(cv){ openDrawer(cv.dataset.chev); return; }
+  const bd = e.target.closest("[data-band]"); if(bd){ currentStream = bd.dataset.band; hlFn=""; setView("stream"); return; }
+  const gt = e.target.closest("[data-gate]"); if(gt){ setView("map"); toggleGate(true); return; }
+  const em = e.target.closest("[data-emode]"); if(em){ editMode = em.dataset.emode==="edit"; stepForm=null; confirmDel=null; renderStream(); return; }
+  const insB = e.target.closest("[data-ins]"); if(insB){ stepForm={mode:"add", pos:+insB.dataset.ins}; confirmDel=null; renderStream(); return; }
+  const edB = e.target.closest("[data-edit]"); if(edB){ stepForm={mode:"edit", id:edB.dataset.edit}; confirmDel=null; renderStream(); return; }
+  const mvB = e.target.closest("[data-mv]"); if(mvB){ shiftStep(currentStream, mvB.dataset.mid, +mvB.dataset.mv); return; }
+  const dlB = e.target.closest("[data-del]"); if(dlB){ confirmDel = dlB.dataset.del; stepForm=null; renderStream(); return; }
+  const dlY = e.target.closest("[data-del-yes]"); if(dlY){ const st = STEPMAP[dlY.dataset.delYes]; confirmDel=null; if(st) mutateSteps(currentStream, arr=>{ const i=arr.findIndex(a=>a.id===st.code); if(i>=0) arr.splice(i,1); }, `Удалён шаг ${st.disp} «${st.name}»`); return; }
+  if(e.target.closest("[data-del-no]")){ confirmDel=null; renderStream(); return; }
+  const rs = e.target.closest("[data-reset]"); if(rs){ confirmDel="__reset"; renderStream(); return; }
+  const rsY = e.target.closest("[data-reset-yes]"); if(rsY){ confirmDel=null; const sid=rsY.dataset.resetYes; mutateSteps(sid, arr=>{ arr.splice(0, arr.length, ...DEFAULTS[sid].map(x=>({id:x.id,name:x.name,content:x.content,result:x.result}))); }, "Шаги возвращены к отраслевой модели"); return; }
+  const mn = e.target.closest("[data-menu]"); if(mn){ e.stopPropagation(); openRoleMenu(mn.dataset.code, mn.dataset.menu, mn); return; }
+  if(!e.target.closest("#roleMenu")) closeRoleMenu();
+  const rm = e.target.closest("[data-rm]"); if(rm){ removeMember(rm.dataset.code, rm.dataset.rm); return; }
+  const ad = e.target.closest("[data-add]"); if(ad){ showAddSelect(ad.dataset.add); return; }
+  const cf = e.target.closest("[data-confirm]"); if(cf){ confirmMembers(cf.dataset.confirm); return; }
+  if(e.target.closest(".addsel")) return;
+  const s = e.target.closest(".step[data-step]"); if(s && !e.target.closest(".roles")){ openDrawer(s.dataset.step); return; }
+});
+$("#scrim").onclick = closeDrawer;
+document.addEventListener("keydown", e=>{
+  if(e.key==="Escape"){ if($("#roleMenu").classList.contains("on")) { closeRoleMenu(); return; } if(openStep) closeDrawer(); }
+  if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".step[data-step]")){ e.preventDefault(); openDrawer(e.target.dataset.step); }
+  if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches("[data-chev],[data-gate]")){ e.preventDefault(); e.target.click(); }
+});
+let menuOpenedAt = 0;
+window.addEventListener("scroll", ()=>{ if(Date.now()-menuOpenedAt > 400) closeRoleMenu(); }, {passive:true});
+function openRoleMenu(code, fid, anchor){
+  const m = $("#roleMenu"); const r = roleOf(getDoc(code), fid);
+  const opts = [["owner","Владелец","var(--navy)"],["claimant","Претендент на владение","var(--coral)"],["helper","Помощник","var(--surface-2)"],["none","Без роли","transparent"]];
+  m.innerHTML = `<div class="h">${esc(fnName(fid))}, ${STEPMAP[code]?STEPMAP[code].disp:code}</div>` + opts.map(([k,t,c])=>`<button role="menuitemradio" data-setr="${k}" aria-pressed="${r===k}"><i style="background:${c}"></i>${t}</button>`).join("") + `<hr><button data-delr="1"><i style="border-color:var(--coral)"></i>Убрать с шага</button>`;
+  m.querySelectorAll("[data-setr]").forEach(b=>b.onclick=()=>{ closeRoleMenu(); setRole(code, fid, b.dataset.setr); });
+  m.querySelector("[data-delr]").onclick = ()=>{ closeRoleMenu(); removeMember(code, fid); };
+  const rc = anchor.getBoundingClientRect();
+  m.classList.add("on"); menuOpenedAt = Date.now();
+  const w = m.offsetWidth, hh = m.offsetHeight;
+  m.style.left = Math.max(8, Math.min(rc.left, window.innerWidth - w - 8)) + "px";
+  m.style.top = (rc.bottom + hh + 8 > window.innerHeight ? rc.top - hh - 6 : rc.bottom + 6) + "px";
+  const first = m.querySelector('[aria-pressed="true"]') || m.querySelector("button"); first && first.focus({preventScroll:true});
+}
+function closeRoleMenu(){ const m=$("#roleMenu"); if(m) m.classList.remove("on"); }
+function showAddSelect(code){
+  const wrap = document.querySelector(`[data-addwrap="${code}"]`); if(!wrap) return;
+  const mem = memberList(code);
+  const fns = allFns().filter(f=>!mem.includes(f.id));
+  let grp = "", opts = `<option value="">Выберите функцию…</option>`;
+  fns.forEach(f=>{ if(f.group!==grp){ if(grp) opts+="</optgroup>"; grp=f.group; opts+=`<optgroup label="${esc(grp)}">`; } opts+=`<option value="${f.id}">${esc(f.name)}</option>`; });
+  if(grp) opts += "</optgroup>";
+  wrap.innerHTML = `<select class="addsel" aria-label="Добавить функцию на шаг">${opts}</select>`;
+  const sel = wrap.querySelector("select"); sel.focus();
+  sel.onchange = ()=>{ if(sel.value) addMember(code, sel.value); };
+  sel.onblur = ()=>{ setTimeout(()=>{ if(document.activeElement!==sel && curView()==="stream") renderStream(); }, 150); };
+}
+document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ mapMode=b.dataset.mode; applyMode(); });
+$("#gateBtn").onclick = ()=>toggleGate();
+document.querySelectorAll("#regSeg button").forEach(b=>b.onclick=()=>{ regFilter=b.dataset.f; renderRegister(); });
+$("#exportBtn").onclick = exportCsv;
+$("#chainHl").onchange = e=>{ chainHl = e.target.value; renderChain(); };
+$("#chainFn").onchange = e=>{ chainFnId = e.target.value; renderChain(); };
+$("#chainOwner").onchange = e=>{ chainOwner = e.target.checked; renderChain(); };
+$("#addFnBtn").onclick = ()=>{
+  const name = $("#newFnName").value.trim(); if(!name) return;
+  if(allFns().some(f=>f.name.toLowerCase()===name.toLowerCase())){ toast("Такая функция уже есть"); return; }
+  const id = "c"+Date.now().toString(36);
+  customFns = customFns.concat([{id,name}]); currentFn=id; $("#newFnName").value="";
+  saveFns(); renderFunctions(); toast("Функция добавлена, назначьте её на шаги");
+};
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", ()=>{ if(curView()==="map") renderMap(); });
+
+initCaps();
+</script>
+</body>
+</html>

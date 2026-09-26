@@ -1,0 +1,26 @@
+﻿id,name,name_en,grp,sort
+distr,ДПД,Distributor Support,Работа с партнёрами и клиентами,0
+train,Департамент обучения,Training Department,Работа с партнёрами и клиентами,1
+motiv,Отдел мотивации и признания,Motivation and Recognition,Работа с партнёрами и клиентами,2
+rao,Управление бизнес-отношениями с ЧК,Club Member Relations,Работа с партнёрами и клиентами,3
+cs,Customer Service,Customer Service,Работа с партнёрами и клиентами,4
+cx,Customer Experience,Customer Experience,Работа с партнёрами и клиентами,5
+mkt,Департамент маркетинга,Marketing Department,Маркетинг и коммуникации,100
+adv,Отдел рекламы,Advertising Department,Маркетинг и коммуникации,101
+pr,PR,PR,Маркетинг и коммуникации,102
+event,Организация мероприятий,Event Management,Маркетинг и коммуникации,103
+interp,Events: переводы,Events: Interpretation,Маркетинг и коммуникации,104
+ops,Операционное управление,Operations Management,Операции и качество,200
+log,Департамент логистики,Logistics Department,Операции и качество,201
+plan,Планирование и снабжение,Planning and Supply,Операции и качество,202
+cert,Сертификация и качество,Certification and Quality,Операции и качество,203
+ecom,Электронная коммерция и цифровые продукты,E-commerce and Digital Products,Цифровые продукты и ИТ,300
+it,Управление ИТ,IT Management,Цифровые продукты и ИТ,301
+legal,Юридическая функция,Legal,Право и комплаенс,400
+claims,Health & Income Claims EU & US,Health & Income Claims EU & US,Право и комплаенс,401
+fin,Финансовый контроль и прогнозирование,Financial Control and Forecasting,Финансы и управление,500
+procoff,Процессный офис,Process Office,Финансы и управление,501
+projoff,Проектный офис,Project Office,Финансы и управление,502
+hr,HR,HR,Финансы и управление,503
+markets,Выход на новые рынки,New Market Entry,Развитие рынков,600
+partn,Стратегические партнёрства,Strategic Partnerships,Развитие рынков,601
