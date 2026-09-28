@@ -237,6 +237,29 @@ h3{font-size:17px; margin:0 0 6px; font-weight:600;}
   .step .dot{width:44px;} .steps::before{left:21px;}
   .step .roles, .step .st{grid-column:2;}
 }
+.why{background:var(--surface); box-shadow:var(--shadow); padding:22px 24px 24px; margin:0 0 22px;}
+.why[hidden]{display:none;}
+.why h3{margin:0 0 10px; font-size:20px; font-weight:400;}
+.why .why-lead{font-size:16px; line-height:1.55; margin:0 0 8px; max-width:980px;}
+.why .why-shift{font-family:var(--accent); font-style:italic; font-size:18px; margin:0 0 20px;}
+.why h4{margin:20px 0 10px; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+.why-reasons{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;}
+.why-reason{border-top:3px solid var(--c); background:var(--surface-2); padding:14px 16px;}
+.why-reason .ft{display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12.5px; margin-bottom:8px;}
+.why-reason .ft .from{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--faint);}
+.why-reason .ft .to{font-weight:700; color:var(--c);}
+.why-reason b{display:block; font-size:15px; font-weight:600; margin-bottom:6px;}
+.why-reason p{margin:0; font-size:14px; line-height:1.5; color:var(--ink);}
+.why-streams{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px;}
+.why-stream{display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-start; width:100%; text-align:left; background:var(--surface); border:1px solid var(--line); border-left:6px solid var(--c); padding:12px 14px; cursor:pointer; transition:background 200ms var(--ease);}
+.why-stream:hover, .why-stream:focus-visible{background:var(--surface-2);}
+.why-stream .code{font-weight:700; color:var(--c); font-size:13px;}
+.why-stream .obj{display:block; font-size:15px; font-weight:600; margin:2px 0 6px;}
+.why-stream .obj small{display:block; font-size:12px; font-weight:400; color:var(--muted); margin-bottom:2px;}
+.why-stream p{margin:0; font-size:13.5px; line-height:1.5;}
+.why-note{margin:16px 0 0; font-size:13.5px; color:var(--muted); border-left:3px solid var(--line); padding-left:12px;}
+.why-src{margin:10px 0 0; font-size:12px; color:var(--faint);}
+@media (max-width:980px){ .why-reasons{grid-template-columns:1fr;} }
 .aside-box{background:var(--surface); border-radius:0; box-shadow:var(--shadow); padding:18px 20px; margin-top:26px;}
 table.plain{width:100%; border-collapse:collapse; font-size:14px;}
 table.plain th{text-align:left; font-weight:500; color:var(--faint); font-size:12.5px; padding:8px 8px; border-bottom:1px solid var(--line);}
@@ -252,7 +275,7 @@ table.plain tr:last-child td{border-bottom:none;}
 #mapSvg{display:block; min-width:640px; width:100%; height:auto;}
 .map-layout{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:22px; align-items:start;}
 .map-side{position:sticky; top:130px; display:flex; flex-direction:column; gap:16px; max-height:calc(100vh - 150px); overflow-y:auto;}
-@media (max-width:1000px){ .map-layout{grid-template-columns:1fr;} .map-side{position:static; max-height:none;} }
+@media (max-width:1000px){ .map-layout{grid-template-columns:minmax(0,1fr);} .map-side{position:static; max-height:none;} }
 #mapSvg .node{cursor:pointer;}
 #mapSvg .node rect.box{transition:opacity .2s;}
 #mapSvg.focus .node:not(.hl) rect.box, #mapSvg.focus .node:not(.hl) text{opacity:.28;}
@@ -427,6 +450,39 @@ table.matrix td.fnname{cursor:pointer;}
 .note-banner.on{display:block;}
 .toast{position:fixed; bottom:calc(20px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%); background:var(--navy); color:#fff; padding:10px 16px; border-radius:0; font-size:14px; z-index:60; opacity:0; pointer-events:none; transition:opacity .2s;}
 .toast.on{opacity:1;}
+
+/* ---------- Печать: только текущий раздел, светлая тема, альбомный A4 ---------- */
+#printHead{display:none;}
+@media print{
+  @page{ size:A4 landscape; margin:10mm; }
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]){
+    --navy:#004643; --navy-2:#013634; --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F6F6;
+    --ink:#004643; --muted:#4F7472; --faint:#7FA2A1; --line:#BFD1D0;
+    --coral:#B8325A; --coral-soft:#F6DCE4; --ice:#7FA9D0; --ice-soft:#DEF1FF; --ok:#20927B; --ok-soft:#D6E9B4;
+    --focus:#264FD6; --on-c:#FFFFFF;
+    --vs1:#20927B; --vs2:#264FD6; --vs3:#C1905C; --vs4:#2C1492; --vs5:#004643; --vs2c:#1F7FB8; --vs6:#6B7A12; --vs7:#A24F86;
+  }
+  html, body{background:#fff !important;}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact; box-shadow:none !important; transition:none !important;}
+  header.top, .note-banner, .drawer, .scrim, .toast, .role-menu, .login-dlg, .stream-pick, .map-bar, .chain-bar,
+  .present-exit, .seg, #hlSel, .ro-note, .help-link, .rename-btn, .x, .addwrap, .addsel, .addfn, .addrow, .ins, .handle,
+  .eacts, .actions, .dict-add, .reg-filters, #whyBtn, .print-btn{display:none !important;}
+  .view{display:none !important;}
+  .view.on{display:block !important;}
+  #printHead{display:flex !important; justify-content:space-between; gap:16px; align-items:baseline; border-bottom:2px solid #004643; padding:0 0 6px; margin:0 0 14px; font-size:12px; color:#004643;}
+  #printHead b{font-size:14px;}
+  main{max-width:none !important; margin:0 !important; padding:0 !important;}
+  .vcard, .profile, .why-reason, .why-stream, .band, .aside-box, .role-card, .fn-row, .guide-sec, tr, .chev, .steps > li{break-inside:avoid; page-break-inside:avoid;}
+  h2, h3, h4, .steps-head, .tier-head, .band, .cycle-tag{break-after:avoid; page-break-after:avoid;}
+  main{zoom:.85;}
+  #v-map.on{display:flex !important; flex-direction:column;}
+  #v-map > h2{order:1;} #v-map > .lede{order:2;} #v-map > .map-layout{order:3;} #v-map > .why{order:4; break-before:page; page-break-before:always;}
+  .map-layout, .fn-layout{display:block !important;}
+  .map-side{position:static !important; max-height:none !important; overflow:visible !important;}
+  .map-wrap, .matrix-wrap, .dict-wrap{overflow:visible !important;}
+  #mapSvg{min-width:0 !important; width:auto !important; max-width:100%; max-height:160mm; margin:0 auto;}
+  a{color:inherit; text-decoration:none;}
+}
 </style>
 </head>
 <body>
@@ -437,6 +493,7 @@ table.matrix td.fnname{cursor:pointer;}
       <h1 data-notr data-en="Value <em class=&quot;acc&quot;>streams</em>">Потоки <em class="acc">создания ценности</em></h1>
       <span>Стратсессия №3. Кто владелец шага, кто помощник</span>
       <div class="sync" id="sync"><i></i><span id="syncTxt">Подключение…</span></div>
+      <button class="lang-btn print-btn" id="printBtn" type="button" title="Распечатать текущий раздел">Печать</button>
       <button class="lang-btn" id="langBtn" type="button" data-notr>EN</button>
       <div class="who" id="who"></div>
     </div>
@@ -455,6 +512,7 @@ table.matrix td.fnname{cursor:pointer;}
 </header>
 
 <main>
+  <div id="printHead" data-notr aria-hidden="true"></div>
   <div class="note-banner" id="localNote">Общее хранилище недоступно в этом окне: изменения сохраняются только в этом браузере.</div>
 
   <!-- PORTFOLIO -->
@@ -492,12 +550,14 @@ table.matrix td.fnname{cursor:pointer;}
   <section class="view" id="v-map">
     <h2 data-notr data-en="How the streams run <em class=&quot;acc&quot;>through the company</em>">Как потоки проходят <em class="acc">через компанию</em></h2>
     <p class="lede">VS1, VS5 и VS7 создают готовность параллельно и сходятся в контрольной точке. После неё идут два цикла: клиентский VS2C → VS3 → VS4 и партнёрский VS2D → VS3 → VS6. Обратная связь возвращается в продукт, сеть и supply chain. Нажмите на поток, чтобы открыть его профиль.</p>
+    <div class="why" id="whyBox" data-notr></div>
     <div class="map-bar">
       <div class="seg" id="modeSeg">
         <button data-mode="run" aria-pressed="true">Действующий бизнес</button>
         <button data-mode="launch" aria-pressed="false">Запуск нового продукта</button>
       </div>
       <button class="btn" id="gateBtn">Критерии коммерческой готовности</button>
+      <button class="btn" id="whyBtn" type="button" aria-controls="whyBox"></button>
     </div>
     <div class="map-layout">
       <div>
@@ -1130,7 +1190,7 @@ function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"n
 async function loadAll(){
   const sel = t=>sb.from(t).select("*");
   const res = await Promise.all([sel("vs_functions"), sel("vs_streams"), sel("vs_hot_points"),
-    ...STREAMS.map(s=>sel(T(s.id)+"_steps").order("position")), ...STREAMS.map(s=>sel(T(s.id)+"_roles"))]);
+    ...STREAMS.map(s=>sel(T(s.id)+"_steps").order("position")), ...STREAMS.map(s=>sel(T(s.id)+"_roles")), sel("vs_i18n")]);
   const [fns, strs, hps] = res.slice(0,3).map(check);
   const NS = STREAMS.length, stepsBy = res.slice(3,3+NS).map(check), rolesBy = res.slice(3+NS,3+2*NS).map(check);
   if(!fns.length || !strs.length) throw new Error("таблицы пусты: выполните миграции из папки supabase/migrations");
@@ -1145,6 +1205,7 @@ async function loadAll(){
   FN_ROWS = fns.map(f=>({id:f.id, name:f.name, name_en:f.name_en||"", grp:f.grp, sort:f.sort, is_custom:f.is_custom, active:f.active}));
   // точки накала
   hps.forEach(h=>{ CONFLICTS[h.id] = h.description; });
+  { const ti = res[3+2*NS]; setDynamic(ti && !ti.error ? ti.data : []); }
   // потоки, шаги, роли
   const nextDocs = {}, nextRoles = {};
   STREAMS.forEach((s,i)=>{
@@ -1192,7 +1253,7 @@ async function initCaps(){
   if(me && me.stream_id){ currentStream = me.stream_id; chainStream = me.stream_id; }
   renderAll(true);
   const ch = sb.channel("vs-sync");
-  ["vs_functions","vs_streams", ...STREAMS.flatMap(s=>[T(s.id)+"_steps", T(s.id)+"_roles"])].forEach(t=>{
+  ["vs_functions","vs_streams","vs_i18n", ...STREAMS.flatMap(s=>[T(s.id)+"_steps", T(s.id)+"_roles"])].forEach(t=>{
     ch.on("postgres_changes", {event:"*", schema:"public", table:t}, ()=>scheduleReload());
   });
   ch.subscribe(status=>{
@@ -1216,27 +1277,43 @@ const I18N_PATS = (I18N.patterns||[]).map(([ru,en])=>{
 window.__i18nMissing = new Set();
 let fnNameMap = {};
 function rebuildFnNameMap(){ fnNameMap = {}; (FN_ROWS||[]).forEach(x=>{ if(x.name_en) fnNameMap[x.name] = x.name_en; }); }
+/* Переводы текстов, которые ввели команды (таблица vs_i18n): ключ — исходный текст.
+   en — для русских исходников, ru — для английских. Если команда изменит текст, старый перевод
+   перестанет совпадать и покажется исходник, пока не появится новый перевод. */
+let DYN = {en:{}, ru:{}}, DYN_RU_N = 0;
+function setDynamic(rows){
+  DYN = {en:{}, ru:{}};
+  (rows||[]).forEach(r=>{ const k = String(r.src||"").trim(); if(!k) return; if(r.en) DYN.en[k] = r.en; if(r.ru) DYN.ru[k] = r.ru; });
+  DYN_RU_N = Object.keys(DYN.ru).length;
+}
+const LAT = /[A-Za-z]/;
+function mayTr(s){ return !!s && (CYR.test(s) || (DYN_RU_N > 0 && LAT.test(s))); }
 function trCore(c, depth){
   depth = depth||0;
-  if(!c || !CYR.test(c)) return c;
-  if(I18N.exact[c] != null) return I18N.exact[c];
-  if(fnNameMap[c]) return fnNameMap[c];
-  if(/^[ВПСУ]\d+( [ВПСУ]\d+)*$/.test(c)) return c.replace(/[ВПСУ]/g, x=>({"В":"O","П":"H","С":"C","У":"N"})[x]);
-  for(const [re, out] of I18N_PATS){ const m = c.match(re); if(m) return out.replace(/\{(\d)\}/g, (_,i)=>trCore(m[+i+1], depth+1)).replace(/№\s?/g, "No. "); }
+  if(!c) return c;
+  const en = LANG==="en", D = en ? DYN.en : DYN.ru;
+  if(D[c] != null) return D[c];
+  if(en){
+    if(!CYR.test(c)) return c;
+    if(I18N.exact[c] != null) return I18N.exact[c];
+    if(fnNameMap[c]) return fnNameMap[c];
+    if(/^[ВПСУ]\d+( [ВПСУ]\d+)*$/.test(c)) return c.replace(/[ВПСУ]/g, x=>({"В":"O","П":"H","С":"C","У":"N"})[x]);
+    for(const [re, out] of I18N_PATS){ const m = c.match(re); if(m) return out.replace(/\{(\d)\}/g, (_,i)=>trCore(m[+i+1], depth+1)).replace(/№\s?/g, "No. "); }
+  } else if(!DYN_RU_N || !LAT.test(c)) return c;
   if(depth < 4){
     let m = c.match(/^((?:VS\d[A-Z]?(?:\.[\dn][\w]*)?|№\s?\d+)[.,:]?\s+)([\s\S]+)$/);
     if(m){ const t2 = trCore(m[2], depth+1); if(t2 !== m[2]) return m[1].replace("№","No. ") + t2; }
     m = c.match(/^([\s\S]+?)([.:,;!?…]+)$/);
-    if(m && (I18N.exact[m[1]]!=null || fnNameMap[m[1]])) return trCore(m[1], depth+1) + m[2];
+    if(m && (D[m[1]]!=null || (en && (I18N.exact[m[1]]!=null || fnNameMap[m[1]])))) return trCore(m[1], depth+1) + m[2];
     for(const sep of [" · ", " → ", " — ", "; ", ": ", ", "]){
       if(c.includes(sep)){ const parts = c.split(sep), tp = parts.map(p=>trCore(p, depth+1)); if(tp.some((x,i)=>x!==parts[i])) return tp.join(sep); }
     }
   }
-  if(depth===0) window.__i18nMissing.add(c);
+  if(depth===0 && en) window.__i18nMissing.add(c);
   return c;
 }
 function tr(s){
-  if(LANG!=="en" || !s || !CYR.test(s)) return s;
+  if(!s || (LANG==="en" ? !CYR.test(s) : !(DYN_RU_N && LAT.test(s)))) return s;
   const m = s.match(/^(\s*)([\s\S]*?)(\s*)$/);
   return m[1] + trCore(m[2]) + m[3];
 }
@@ -1246,8 +1323,8 @@ function trNode(n){
     const p = n.parentNode; if(!p || p.nodeName==="SCRIPT" || p.nodeName==="STYLE" || p.nodeName==="TEXTAREA") return;
     if(p.closest && p.closest("[data-notr]")) return;
     if(n.__out !== undefined && n.nodeValue !== n.__out) n.__ru = undefined;   // код поменял текст
-    if(n.__ru === undefined){ if(!CYR.test(n.nodeValue)) return; n.__ru = n.nodeValue; }
-    const v = LANG==="en" ? tr(n.__ru) : n.__ru;
+    if(n.__ru === undefined){ if(!mayTr(n.nodeValue)) return; n.__ru = n.nodeValue; }
+    const v = tr(n.__ru);
     if(n.nodeValue !== v) n.nodeValue = v;
     n.__out = v;
     return;
@@ -1257,8 +1334,8 @@ function trNode(n){
     if(!n.hasAttribute(a)) return;
     const cur = n.getAttribute(a), key = "__ru_"+a, okey = "__out_"+a;
     if(n[okey] !== undefined && cur !== n[okey]) n[key] = undefined;
-    if(n[key] === undefined){ if(!CYR.test(cur)) return; n[key] = cur; }
-    const v = LANG==="en" ? tr(n[key]) : n[key];
+    if(n[key] === undefined){ if(!mayTr(cur)) return; n[key] = cur; }
+    const v = tr(n[key]);
     if(cur !== v) n.setAttribute(a, v);
     n[okey] = v;
   });
@@ -1272,7 +1349,7 @@ let trObserver = null;
 function startTranslator(){
   if(trObserver) return;
   trObserver = new MutationObserver(ms=>{
-    if(LANG!=="en") return;
+    if(LANG!=="en" && !DYN_RU_N) return;
     ms.forEach(m=>{
       if(m.type==="childList") m.addedNodes.forEach(n=>{ if(n.nodeType===1) trTree(n); else trNode(n); });
       else trNode(m.target);
@@ -1738,6 +1815,7 @@ function renderMap(){
   $("#fbList").onmouseleave = ()=>{ if(showFb.pinned==null) clearFb(); else showFb(showFb.pinned); };
   $("#vs5Roles").innerHTML = VS5ROLES.map(r=>`<tr><td style="width:110px;font-weight:600">${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("");
   $("#gateList").innerHTML = GATE.map(g=>`<li>${esc(g)}</li>`).join("");
+  renderWhy();
 }
 function clearFb(){ const svg=$("#mapSvg"); svg.classList.remove("focus"); svg.querySelectorAll(".hl").forEach(n=>n.classList.remove("hl")); $("#fbLayer").innerHTML=""; document.querySelectorAll(".fb.on").forEach(b=>b.classList.remove("on")); }
 function showFb(i, pin){
@@ -1775,6 +1853,54 @@ function applyMode(){
     ? "Запуск нового продукта: потребность рынка → VS1 продуктовая концепция → VS5 подготовка партнёров и VS7 брендовые материалы → коммерческая готовность → VS2C спрос потребителя и VS2D работа дистрибьюторов → VS3 первые заказы → VS4 сопровождение клиентов и VS6 сопровождение партнёров → анализ результатов → корректировка VS1, VS5 и VS7 → масштабирование."
     : "Действующий бизнес: VS1, VS5 и VS7 работают постоянно. Клиентский цикл VS2C → VS3 → VS4 замыкается повторной покупкой: без изменений — сразу в VS3, новая потребность — в VS2C. Партнёрский цикл VS2D → VS3 → VS6: лидеры приходят из VS5, начисления, признание и работа с лидерами — в VS6. Обратная связь идёт в продукт, сеть и supply chain.";
 }
+
+
+/* ---------- Почему потоков стало семь (лист на карте связей) ---------- */
+const WHY = {"title": ["Почему потоков стало семь", "Why there are now seven streams"], "lead": ["Пять потоков описывали в основном путь продукта к клиенту, а вся партнёрская система была пристроена к нему одним большим пятым блоком. Семь потоков — это двухсторонняя архитектура бизнеса: клиент получает ценность, партнёр получает способность эту ценность воспроизводить, а бренд создаёт среду доверия для обоих.", "Five streams mostly described the product's path to the customer, with the whole partner system attached as one big fifth block. Seven streams are a two-sided business architecture: the customer gets value, the partner gets the ability to reproduce that value, and the brand creates an environment of trust for both."], "shift": ["Модель выросла из customer journey в operating model Coral Club.", "The model has grown from a customer journey into Coral Club's operating model."], "reasonsTitle": ["Три причины", "Three reasons"], "reasons": [{"from": ["VS5 · один большой блок", "VS5 · one big block"], "to": ["VS5 + VS6", "VS5 + VS6"], "streams": ["VS5", "VS6"], "t": ["Старый VS5 был перегружен двумя разными преобразованиями", "The old VS5 carried two different transformations"], "d": ["«Стать компетентным партнёром» и «ежедневно вести партнёрский бизнес» — не один процесс: у них разные события запуска, владельцы, метрики и ритм. VS5 — развитие роли и компетенций, VS6 — эксплуатация партнёрского бизнеса.", "“Becoming a competent partner” and “running a partner business day to day” are not one process: they have different triggers, owners, metrics and rhythm. VS5 develops the role and skills; VS6 runs the partner business."]}, {"from": ["бренд внутри VS2", "brand inside VS2"], "to": ["VS7", "VS7"], "streams": ["VS7"], "t": ["Бренд был невидимой предпосылкой спроса", "The brand was an invisible precondition of demand"], "d": ["Бренд живёт дольше кампании и продукта и работает одновременно на клиента, кандидата и партнёра. Спрятать его в VS2 — значит подчинить долгосрочное доверие краткосрочной конверсии.", "The brand outlives any campaign or product and works for the customer, the candidate and the partner at once. Hiding it inside VS2 means putting long-term trust below short-term conversion."]}, {"from": ["заказ клиента", "customer order"], "to": ["общий VS3", "shared VS3"], "streams": ["VS3"], "t": ["Заказ перестал считаться только клиентским", "An order is no longer only a customer order"], "d": ["Один человек может быть клиентом, партнёром и лидером. VS3 стал общим операционным контуром заказов, а назначение заказа (личное или для клиента) фиксируется отдельно — это связывает исполнение с корректным расчётом вознаграждения.", "One person can be a customer, a partner and a leader. VS3 became the shared operating loop for orders, and the order's purpose (personal or for a customer) is recorded separately — this links fulfilment to correct reward calculation."]}], "meaningTitle": ["Смысл каждого потока: что он преобразует", "What each stream transforms"], "meanings": [["VS1", ["Продуктовая возможность", "A product opportunity"], ["Сигнал рынка или проблема продукта превращается в коммерчески готовый продукт для конкретного рынка либо в обоснованное решение изменить, отложить или закрыть проект. Это не просто R&D: поток соединяет потребность, доказательства, формулу, экономику, допуск, производство и жизненный цикл.", "A market signal or product problem becomes a commercially ready product for a specific market, or a reasoned decision to change, postpone or close the project. Not just R&D: the stream links need, evidence, formula, economics, approval, production and life cycle."]], ["VS2C", ["Решение клиента", "The customer's decision"], ["Не «сгенерировать лид», а помочь человеку понять предложение и сделать осознанный выбор: собрать корзину, отложить покупку или отказаться. Правильный результат — не охват, а качество выбора.", "Not “generate a lead” but help a person understand the offer and make an informed choice: build a cart, postpone or decline. The right result is not reach but the quality of the choice."]], ["VS3", ["Обещание исполнения", "The fulfilment promise"], ["Согласованная корзина превращается в доставленный, прослеживаемый и сверенный заказ; отклонение — в выполненное урегулирование. Общий индустриальный позвоночник и для клиента, и для партнёра.", "An agreed cart becomes a delivered, traceable and reconciled order; a deviation becomes a completed resolution. The shared industrial backbone for both customer and partner."]], ["VS4", ["Опыт использования", "The experience of use"], ["Полученный продукт превращается в понятное применение, доступную поддержку и самостоятельное решение клиента: продолжить, изменить, сделать паузу или завершить. Поток не обещает медицинский результат и не сводится к удержанию любой ценой.", "A received product becomes clear use, available support and the customer's own decision: continue, change, pause or stop. The stream promises no medical outcome and is not retention at any cost."]], ["VS5", ["Роль и компетентность человека", "A person's role and competence"], ["Интерес превращается в подготовленного партнёра, способного корректно провести клиента через VS2–VS4, а затем — в лидера, способного развивать структуру и наставлять других.", "Interest becomes a prepared partner who can guide a customer through VS2–VS4 correctly, and then a leader who can grow a structure and mentor others."]], ["VS6", ["Работоспособность бизнеса партнёра", "A working partner business"], ["Инструменты, информация, обращения, начисления, признание, события, работа с лидерами, соблюдение правил, пауза и выход, пересмотр маркетинг-плана. VS5 создаёт способность, VS6 даёт среду, в которой эта способность может работать.", "Tools, information, requests, payouts, recognition, events, work with leaders, rule compliance, pause and exit, marketing plan reviews. VS5 creates the capability; VS6 gives it an environment to work in."]], ["VS7", ["Готовность рынка верить компании", "The market's readiness to trust the company"], ["Разрозненные точки контакта превращаются в единый смысл, язык, образ и репутацию. Поток задаёт платформу для продуктовых имён в VS1, спроса в VS2, предложения партнёру в VS5 и материалов сети в VS6.", "Scattered touchpoints become one meaning, language, image and reputation. The stream sets the platform for product names in VS1, demand in VS2, the partner offer in VS5 and network materials in VS6."]]], "vs2note": ["В инструменте VS2 разделён на два потока: VS2C — клиентский спрос потребителя в логике модели, VS2D — работа команды PrimeGrowth с дистрибьюторами. Поэтому на карте восемь блоков при семи потоках модели.", "In this tool VS2 is split in two: VS2C is consumer demand in the model's logic, VS2D is the PrimeGrowth team's work with distributors. That is why the map shows eight blocks for the model's seven streams."], "src": ["По материалам «Модели потоков v0.4», 28.09.2026", "Based on “Value Stream Model v0.4”, 28.09.2026"], "open": ["Открыть профиль", "Open profile"]};
+let whyOpen = true; try{ whyOpen = localStorage.getItem("vs-why") !== "0"; }catch(e){}
+function renderWhy(){
+  const box = $("#whyBox"), btn = $("#whyBtn"); if(!box || !btn) return;
+  const L = LANG==="en" ? 1 : 0, T = k=>WHY[k][L];
+  btn.textContent = whyOpen ? (L ? "Hide: why seven streams" : "Скрыть пояснение") : T("title");
+  btn.setAttribute("aria-expanded", String(whyOpen)); btn.dataset.notr = "";
+  box.hidden = !whyOpen;
+  if(!whyOpen){ box.innerHTML = ""; return; }
+  const col = id=>SMAP[id] ? SMAP[id].c : "var(--muted)";
+  box.innerHTML = `<h3>${esc(T("title"))}</h3>
+    <p class="why-lead">${esc(T("lead"))}</p>
+    <p class="why-shift">${esc(T("shift"))}</p>
+    <h4>${esc(T("reasonsTitle"))}</h4>
+    <div class="why-reasons">${WHY.reasons.map((r,i)=>`<div class="why-reason" style="--c:${col(r.streams[r.streams.length-1])}">
+      <div class="ft"><span>${i+1}.</span><span class="from">${esc(r.from[L])}</span><span aria-hidden="true">→</span><span class="to">${esc(r.to[L])}</span></div>
+      <b>${esc(r.t[L])}</b><p>${esc(r.d[L])}</p></div>`).join("")}</div>
+    <h4>${esc(T("meaningTitle"))}</h4>
+    <div class="why-streams">${WHY.meanings.map(([id,obj,d])=>{ const s = SMAP[id]; if(!s) return "";
+      return `<button type="button" class="why-stream" style="--c:${s.c}" data-why-go="${id}" title="${esc(T("open"))}: ${esc(s.code)}">
+        <span class="code">${esc(s.code)} · ${esc(LANG==="en" ? tr(s.short) : s.short)}</span>
+        <span class="obj"><small>${L ? "Transforms" : "Объект преобразования"}</small>${esc(obj[L])}</span><p>${esc(d[L])}</p></button>`; }).join("")}</div>
+    <p class="why-note">${esc(T("vs2note"))}</p>
+    <p class="why-src">${esc(T("src"))}</p>`;
+  box.querySelectorAll("[data-why-go]").forEach(b=>b.onclick = ()=>{ currentStream = b.dataset.whyGo; hlFn = ""; setView("stream"); });
+}
+
+
+/* ---------------- ПЕЧАТЬ ---------------- */
+function fillPrintHead(){
+  const en = LANG==="en", v = curView();
+  const tab = document.querySelector(`.tabs [data-view="${v}"]`);
+  let title = tab ? tab.textContent.trim() : "";
+  if(v==="stream" && SMAP[currentStream]){ const s = SMAP[currentStream]; title += ` · ${s.code}. ${en ? tr(s.name) : s.name}`; }
+  if(v==="chain" && chainStream && SMAP[chainStream]){ const s = SMAP[chainStream]; title += ` · ${s.code}`; }
+  const d = new Date().toLocaleDateString(en ? "en-GB" : "ru-RU", {day:"numeric", month:"long", year:"numeric"});
+  $("#printHead").innerHTML = `<b>Coral Club · ${en ? "Value streams" : "Потоки создания ценности"}</b><span>${esc(title)}</span><span>${esc(d)}</span>`;
+}
+function printView(){
+  if(openStep) closeDrawer();
+  closeRoleMenu();
+  fillPrintHead();
+  setTimeout(()=>window.print(), 60);
+}
+window.addEventListener("beforeprint", fillPrintHead);
 
 /* ---------------- CHAIN ---------------- */
 let chainHl = "hot", chainFnId = "", chainOwner = true, chainStream = "";
@@ -2030,6 +2156,8 @@ function showAddSelect(code){
 }
 document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ mapMode=b.dataset.mode; applyMode(); });
 $("#gateBtn").onclick = ()=>toggleGate();
+$("#printBtn").onclick = printView;
+$("#whyBtn").onclick = ()=>{ whyOpen = !whyOpen; try{ localStorage.setItem("vs-why", whyOpen ? "1" : "0"); }catch(e){} renderWhy(); if(whyOpen) $("#whyBox").scrollIntoView({behavior:"smooth", block:"nearest"}); };
 document.querySelectorAll("#regSeg button").forEach(b=>b.onclick=()=>{ regFilter=b.dataset.f; renderRegister(); });
 $("#exportBtn").onclick = exportCsv;
 $("#chainHl").onchange = e=>{ chainHl = e.target.value; renderChain(); };

@@ -1,6 +1,8 @@
 /* English dictionary for «Value Streams» (RU → EN). exact: whole phrases; patterns: placeholders in braces, captured parts are translated too. */
 window.I18N_EN = {
 "exact": {
+"Печать": "Print",
+"Распечатать текущий раздел": "Print the current section",
 "Просмотр. Поток из предложения v0.4: роли на этом шаге назначает администратор.": "View only. This stream comes from proposal v0.4: roles on this step are assigned by the administrator.",
 "Стратсессия №3. Кто владелец шага, кто помощник": "Strategy session #3. Who owns a step, who helps",
 "Подключение…": "Connecting…",
