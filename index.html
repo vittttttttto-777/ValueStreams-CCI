@@ -29,6 +29,7 @@
   --ok:#20927B; --ok-soft:#D6E9B4;
   --focus:#264FD6; --on-c:#FFFFFF;
   --vs1:#20927B; --vs2:#264FD6; --vs3:#C1905C; --vs4:#2C1492; --vs5:#004643;
+  --vs2c:#1F7FB8; --vs6:#6B7A12; --vs7:#A24F86;
   --rainbow:linear-gradient(90deg,#E84B8A 0%,#2BB8B0 33%,#2C8FD6 66%,#C9D33A 100%);
   --shadow:0 0 0 1px var(--line);
   --ease:cubic-bezier(0.2,0.8,0.2,1);
@@ -44,14 +45,14 @@
     --bg:#002B29; --surface:#003633; --surface-2:#06413E; --navy:#004643;
     --ink:#E5ECEC; --muted:#BFD1D0; --faint:#7FA2A1; --line:#1E5A56;
     --coral:#E0698C; --coral-soft:#4A2332; --ice:#7FA9D0; --ice-soft:#123E55; --ok:#3DB395; --ok-soft:#1F4A38;
-    --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29;
+    --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29; --vs2c:#6FB7E6; --vs6:#B5C24A; --vs7:#D58BBE;
   }
 }
 :root[data-theme="dark"]{
   --bg:#002B29; --surface:#003633; --surface-2:#06413E; --navy:#004643;
   --ink:#E5ECEC; --muted:#BFD1D0; --faint:#7FA2A1; --line:#1E5A56;
   --coral:#E0698C; --coral-soft:#4A2332; --ice:#7FA9D0; --ice-soft:#123E55; --ok:#3DB395; --ok-soft:#1F4A38;
-  --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29;
+  --vs2:#7FA9D0; --vs4:#A596F2; --vs5:#BFD1D0; --focus:#7FA9D0; --on-c:#002B29; --vs2c:#6FB7E6; --vs6:#B5C24A; --vs7:#D58BBE;
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
 *{box-sizing:border-box;}
@@ -87,6 +88,8 @@ em.acc{font-family:var(--accent); font-style:italic; font-weight:400; font-size:
 .ro-note{display:flex; gap:12px; align-items:center; flex-wrap:wrap; border:1px solid var(--line); background:var(--surface-2); padding:10px 14px; font-size:14px; color:var(--muted); margin:0 0 14px;}
 .ro-note.mine{border-color:var(--ok); background:var(--ok-soft); color:var(--ink);}
 .roles .chip.static{padding:2px 9px; font-size:12.5px; display:inline-block;}
+.rename-btn{font-size:13px; font-weight:400; margin-left:10px; vertical-align:middle; font-family:inherit;}
+.stepform.rename{max-width:560px;}
 .help-link{border:none; background:none; color:var(--ink); text-decoration:underline; padding:0; font-size:13px;}
 /* памятка по ролям */
 .guide{max-width:980px;}
@@ -265,12 +268,15 @@ table.plain tr:last-child td{border-bottom:none;}
 .chain-tag{position:absolute; top:-12px; left:22px; background:var(--navy); color:#E5ECEC; font-size:13px; padding:3px 12px; font-weight:300; letter-spacing:.01em;}
 .chain-tag b{font-weight:500;}
 .chain-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.cycle-tag{margin:0 0 6px; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);}
 @media (max-width:980px){ .chain-cols{grid-template-columns:1fr;} }
 .band{position:relative; display:flex; align-items:center; gap:10px; min-height:56px; padding:8px 44px; margin-bottom:12px; background:var(--surface); color:var(--ink); border:1px solid var(--c); border-left-width:0; border-right-width:0; cursor:pointer; width:100%; text-align:left; font-size:16px; font-weight:300; letter-spacing:-0.01em;}
 .band::before, .band::after{content:""; position:absolute; top:-1px; bottom:-1px; width:22px; background:var(--c); clip-path:polygon(0 0, 100% 50%, 0 100%);}
 .band::before{left:0; clip-path:polygon(0 0, 100% 50%, 0 100%); opacity:.9;}
 .band::after{right:0; clip-path:polygon(0 0, 100% 50%, 0 100%);}
 .band .bc{font-weight:500; color:var(--c);}
+.band .team{white-space:nowrap;}
+.ct{white-space:pre-line;}
 .band .team{margin-left:auto;}
 .band:hover{background:var(--surface-2);}
 .chevs{display:flex; flex-wrap:wrap; gap:6px 0; list-style:none; margin:0; padding:0;}
@@ -318,68 +324,6 @@ table.plain tr:last-child td{border-bottom:none;}
 .gate-list{columns:2; column-gap:24px; font-size:14px; padding-left:18px; margin:8px 0 0;}
 @media (max-width:600px){ .gate-list{columns:1;} }
 
-/* responsibility matrix */
-.raci-bar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;}
-.raci-bar .sp{flex:1;}
-.raci-chk{font-size:14px; color:var(--muted); display:inline-flex; gap:6px; align-items:center;}
-.raci-sum{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:12px;}
-@media (max-width:760px){ .raci-sum{grid-template-columns:repeat(2,minmax(0,1fr));} }
-.raci-sum .rs{background:var(--surface); border:1px solid var(--line); padding:10px 14px; position:relative;}
-.raci-sum .rs b{display:block; font-size:26px; font-weight:500; line-height:1.1;}
-.raci-sum .rs span{font-size:12.5px; color:var(--muted);}
-.raci-sum .rs i{position:absolute; left:0; bottom:0; height:3px; width:var(--p); background:var(--ok);}
-.raci-sum .rs.alert b{color:var(--coral);}
-.raci-legend{display:flex; gap:10px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--muted); margin-bottom:18px;}
-.raci-legend .chip{font-size:12px; padding:1px 9px;}
-.raci-legend .lg-t{margin-left:8px;}
-.ftype{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--ft); margin-right:5px; vertical-align:1px; flex:none;}
-.raci-block{margin-bottom:26px; background:var(--surface); border:1px solid var(--line); border-top:4px solid var(--c);}
-.raci-h{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:12px 14px; border-bottom:1px solid var(--line);}
-.raci-h .rid{font-weight:600; color:var(--c);}
-.raci-h .rname{font-size:17px; font-weight:500;}
-.raci-h .rteam{font-size:12px; border:1px solid var(--line); padding:0 7px; color:var(--muted);}
-.raci-h .rstat{margin-left:auto; font-size:12.5px; color:var(--muted);}
-.raci-empty{padding:14px; color:var(--muted); margin:0;}
-.raci-wrap{overflow-x:auto;}
-table.raci{width:100%; border-collapse:collapse; font-size:13.5px; min-width:980px;}
-table.raci th{text-align:left; font-weight:500; color:var(--faint); font-size:12px; padding:8px 8px; border-bottom:1px solid var(--line); background:var(--surface); position:sticky; top:0;}
-table.raci td{padding:8px; border-bottom:1px solid var(--line); vertical-align:top;}
-table.raci tr:last-child td{border-bottom:none;}
-table.raci .n{width:34px; color:var(--faint); text-align:right;}
-table.raci td.stp{width:26%;}
-table.raci .res{font-size:12px; color:var(--muted); margin-top:3px;}
-table.raci td.met{width:20%;}
-table.raci tr.dispute td.n{box-shadow:inset 3px 0 0 var(--coral);}
-table.raci .rchip{display:inline-flex; align-items:center; margin:0 4px 4px 0; font-size:12.5px; max-width:260px; cursor:pointer; white-space:normal; text-align:left; line-height:1.3; border-radius:12px;}
-table.raci span.rchip{cursor:default;}
-table.raci .idle{margin-top:2px;}
-table.raci .due{font-size:11.5px; color:var(--muted); margin-top:3px;}
-table.raci .due.over{color:var(--coral);}
-table.raci .gapn{font-size:11.5px; color:var(--coral); margin-top:4px;}
-.linkbtn{border:none; background:none; padding:0; color:var(--ink); text-align:left; font:inherit; cursor:pointer;}
-.linkbtn:hover{text-decoration:underline;}
-.linkbtn.strong{font-weight:500;}
-.linkbtn.warnlink{color:var(--coral); font-size:12.5px;}
-.raci-add .linkbtn{font-size:12.5px; color:var(--muted); border:1px dashed var(--line); padding:1px 8px; border-radius:9999px;}
-.raci-add select{max-width:220px; font-size:13px;}
-table.raci.rgrid{min-width:0; width:auto;}
-table.raci.rgrid th.vf{vertical-align:bottom; padding:6px 2px; width:34px;}
-table.raci.rgrid th.vf span{writing-mode:vertical-rl; transform:rotate(180deg); white-space:nowrap; max-height:190px; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; font-size:12px; color:var(--ink);}
-table.raci.rgrid th.vf .ftype{margin:0 0 5px 0;}
-table.raci.rgrid td.gstep{min-width:240px; max-width:320px;}
-table.raci.rgrid td.gmet{min-width:200px; font-size:12.5px;}
-table.raci.rgrid td.gc{padding:2px; text-align:center; border-left:1px solid var(--line);}
-table.raci.rgrid td.gc button, table.raci.rgrid td.gc span{display:block; width:30px; height:26px; line-height:26px; border:none; background:none; font-size:12px; font-weight:600; color:var(--faint); padding:0; margin:0 auto;}
-table.raci.rgrid td.gc.owner button, table.raci.rgrid td.gc.owner span{background:var(--navy); color:#fff;}
-table.raci.rgrid td.gc.helper button, table.raci.rgrid td.gc.helper span{background:var(--ice-soft); color:var(--ink);}
-table.raci.rgrid td.gc.claimant button, table.raci.rgrid td.gc.claimant span{background:var(--coral-soft); color:var(--coral); outline:1px solid var(--coral);}
-table.raci.rgrid td.gc.none button, table.raci.rgrid td.gc.none span{background:var(--surface-2); color:var(--muted);}
-table.raci.rgrid td.gc.off button{opacity:.35;}
-table.raci.rgrid td.gc button:hover{outline:2px solid var(--faint); opacity:1;}
-.grid-add{display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line); font-size:12.5px;}
-.grid-add select{max-width:340px;}
-table.dict select{width:100%; border:1px solid transparent; background:transparent; padding:6px 4px; color:var(--ink);}
-table.dict select:hover{border-color:var(--line);}
 /* functions */
 .fn-layout{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px;}
 @media (max-width:980px){ .fn-layout{grid-template-columns:1fr;} }
@@ -502,7 +446,6 @@ table.matrix td.fnname{cursor:pointer;}
       <button role="tab" data-view="map" aria-selected="false">Карта связей</button>
       <button role="tab" data-view="chain" aria-selected="false">Цепочка ценности</button>
       <button role="tab" data-view="guide" aria-selected="false">Памятка по ролям</button>
-      <button role="tab" data-view="raci" aria-selected="false">Матрица ответственности</button>
       <button role="tab" data-view="functions" aria-selected="false">Функции в потоках</button>
       <button role="tab" data-view="dict" aria-selected="false">Справочник функций</button>
       <button role="tab" data-view="register" aria-selected="false">Споры и закрепления</button>
@@ -516,7 +459,7 @@ table.matrix td.fnname{cursor:pointer;}
 
   <!-- PORTFOLIO -->
   <section class="view on" id="v-portfolio">
-    <h2 data-notr data-en="Five streams, <em class=&quot;acc&quot;>one value</em> for the customer">Пять потоков, <em class="acc">одна ценность</em> для клиента</h2>
+    <h2 data-notr data-en="All streams, <em class=&quot;acc&quot;>one value</em> for the customer">Все потоки, <em class="acc">одна ценность</em> для клиента</h2>
     <p class="northstar">Помочь клиенту осознанно выбрать, своевременно получить и безопасно использовать качественный wellness-продукт при поддержке компетентного партнёра.</p>
     <div class="legend">
       <span><i style="background:var(--line)"></i>Шаг без владельца</span>
@@ -526,15 +469,15 @@ table.matrix td.fnname{cursor:pointer;}
     </div>
     <div class="tier">
       <div class="tier-head"><h3>Уровень 1. Создать готовность</h3><p>Что предлагать клиенту и кто будет создавать для него ценность</p></div>
-      <div class="grid two" id="tier1"></div>
+      <div class="grid three" id="tier1"></div>
     </div>
     <div class="tier">
-      <div class="tier-head"><h3>Уровень 2. Реализовать ценность</h3><p>Основной клиентский цикл после Commercial Readiness Gate</p></div>
+      <div class="tier-head"><h3>Уровень 2. Реализовать ценность</h3><p>Клиентский и партнёрский циклы после Commercial Readiness Gate</p></div>
       <div class="grid three" id="tier2"></div>
     </div>
     <div class="xcut">
       <h3>Сквозные механизмы</h3>
-      <p class="muted" style="margin:0;font-size:14px;">Не отдельные потоки: проходят поперёк всех пяти как контрольные точки, данные, системы и решения.</p>
+      <p class="muted" style="margin:0;font-size:14px;">Не отдельные потоки: проходят поперёк всех потоков как контрольные точки, данные, системы и решения.</p>
       <div class="xcut-list" id="xcutList"></div>
     </div>
   </section>
@@ -548,7 +491,7 @@ table.matrix td.fnname{cursor:pointer;}
   <!-- MAP -->
   <section class="view" id="v-map">
     <h2 data-notr data-en="How the streams run <em class=&quot;acc&quot;>through the company</em>">Как потоки проходят <em class="acc">через компанию</em></h2>
-    <p class="lede">VS1 и VS5 создают готовность параллельно, сходятся в контрольной точке, после неё VS2–VS4 идут последовательно, а обратная связь возвращается в продукт, сеть и supply chain. Нажмите на поток, чтобы открыть его профиль.</p>
+    <p class="lede">VS1, VS5 и VS7 создают готовность параллельно и сходятся в контрольной точке. После неё идут два цикла: клиентский VS2C → VS3 → VS4 и партнёрский VS2D → VS3 → VS6. Обратная связь возвращается в продукт, сеть и supply chain. Нажмите на поток, чтобы открыть его профиль.</p>
     <div class="map-bar">
       <div class="seg" id="modeSeg">
         <button data-mode="run" aria-pressed="true">Действующий бизнес</button>
@@ -558,7 +501,7 @@ table.matrix td.fnname{cursor:pointer;}
     </div>
     <div class="map-layout">
       <div>
-        <div class="map-wrap"><svg id="mapSvg" viewBox="0 0 1000 1040" role="img" aria-label="Карта связей потоков"></svg></div>
+        <div class="map-wrap"><svg id="mapSvg" viewBox="0 0 1000 1080" role="img" aria-label="Карта связей потоков"></svg></div>
         <p class="seqline" id="seqLine"></p>
       </div>
       <div class="map-side">
@@ -583,7 +526,7 @@ table.matrix td.fnname{cursor:pointer;}
   <!-- CHAIN -->
   <section class="view" id="v-chain">
     <h2 data-notr data-en="Value <em class=&quot;acc&quot;>chain</em>">Цепочка <em class="acc">создания ценности</em></h2>
-    <p class="lede">Все пять потоков как одна последовательность шагов. Тёмные шаги отвечают выбранному фильтру. Нажмите на шаг, чтобы открыть его карточку.</p>
+    <p class="lede">Все потоки как одна последовательность шагов. Тёмные шаги отвечают выбранному фильтру. Нажмите на шаг, чтобы открыть его карточку.</p>
     <div class="chain-bar">
       <label for="chainHl">Выделить</label>
       <select id="chainHl">
@@ -664,23 +607,6 @@ table.matrix td.fnname{cursor:pointer;}
     <div class="dict-wrap" id="dictBody"></div>
   </section>
 
-  <!-- RACI -->
-  <section class="view" id="v-raci">
-    <h2 data-notr data-en="Responsibility <em class=&quot;acc&quot;>matrix</em>">Матрица <em class="acc">ответственности</em></h2>
-    <p class="lede">Итог дня: по каждому потоку — шаги, владелец, помощники, претенденты и метрика владельца. Нажмите на функцию, чтобы сменить роль, на «+», чтобы добавить функцию, на шаг или метрику — чтобы открыть карточку шага. Всё сохраняется в базу сразу.</p>
-    <div class="raci-bar">
-      <div class="seg" id="raciStreamSeg" role="group" aria-label="Поток"></div>
-      <div class="seg" id="raciModeSeg" role="group" aria-label="Вид"><button type="button" data-rm="list" aria-pressed="true">По шагам</button><button type="button" data-rm="grid" aria-pressed="false">Сетка шаг × функция</button></div>
-      <label class="raci-chk"><input type="checkbox" id="raciGaps"> Только пробелы</label>
-      <span class="sp"></span>
-      <button class="btn primary" type="button" id="raciXlsx">Скачать Excel</button>
-    </div>
-    <div class="raci-sum" id="raciSum"></div>
-    <div class="raci-legend"><span class="chip owner">Владелец</span><span class="chip helper">Помощник</span><span class="chip claimant">Претендент</span><span class="chip member">Без роли</span>
-      <span class="lg-t">Тип функции по анкете:</span><span><i class="ftype" style="--ft:#20927B"></i>центр дохода</span><span><i class="ftype" style="--ft:#C1905C"></i>центр сервиса</span><span><i class="ftype" style="--ft:#B8325A"></i>центр экспертизы</span></div>
-    <div id="raciBody"></div>
-  </section>
-
   <!-- FUNCTIONS -->
   <section class="view" id="v-functions">
     <h2 data-notr data-en="Where each function <em class=&quot;acc&quot;>finds its place</em>">Где каждая функция <em class="acc">находит себя</em></h2>
@@ -709,7 +635,7 @@ table.matrix td.fnname{cursor:pointer;}
         <button data-f="empty" aria-pressed="false">Без владельца</button>
         <button data-f="hyp" aria-pressed="false">Точки накала из свода</button>
       </div>
-      <button class="btn" id="exportBtn" hidden>Скачать Excel</button>
+      <button class="btn" id="exportBtn" hidden>Скачать CSV для Excel</button>
     </div>
     <div class="reg-table" id="regTable"></div>
   </section>
@@ -811,8 +737,8 @@ const STREAMS = [
    ["Запустить продукт","Первая коммерческая партия, распределение по складам, активация каналов","Продукт доступен клиенту",["ops","log","mkt","distr"]],
    ["Управлять жизненным циклом","Продажи, повторные покупки, жалобы, качество, прибыльность","Решение Improve / Extend / Localize / Retire",["mkt","fin","ops"],[35]]
   ]},
- {id:"VS2", team:"PrimeGrowth", c:"var(--vs2)", tier:2, name:"Формировать клиентский спрос",
-  short:"Спрос", trigger:"Определена целевая аудитория",
+ {id:"VS2", code:"VS2D", team:"PrimeGrowth", c:"var(--vs2)", tier:2, name:"Формировать клиентский спрос (дистрибьютор)",
+  short:"Спрос: дистрибьютор", trigger:"Определена целевая аудитория",
   out:"Клиент осознанно выбрал подходящее решение",
   object:"Аудитория → контакт → квалифицированная потребность → решение о покупке",
   recipient:"Потенциальный и действующий клиент",
@@ -833,6 +759,25 @@ const STREAMS = [
    ["Обработать вопросы","Возражения, доказательная информация, направление к специалисту","Снятая неопределённость",["cs","mkt","distr"]],
    ["Получить решение клиента","Клиент осознанно принимает или отклоняет предложение","Purchase intent / No purchase",["distr"]],
    ["Передать в заказ","Корзина, идентификация канала и партнёра, передача в commerce/OMS","Готовый к оформлению заказ",["ecom","it","rao"]]
+  ]},
+ {id:"VS2C", code:"VS2C", origin:"v0.4", team:"Предложение v0.4", c:"var(--vs2c)", tier:2, name:"Формировать осознанный клиентский спрос (потребитель)",
+  short:"Спрос: потребитель", trigger:"Поставлена задача по спросу на продукт или получен новый запрос, требующий подбора решения",
+  out:"Зафиксирован осознанный выбор: корзина передана в оформление, пауза или отказ",
+  object:"Клиентская задача → предложение → сравнение → выбор → корзина",
+  recipient:"Конечный клиент (потребитель)",
+  value:"Помогать конечному клиенту понять предложение и самостоятельно выбрать подходящее решение на основе проверенных сведений",
+  kpi:["Конверсия в заказ", "Стоимость нового клиента", "Доля актуального материала", "Доля с подтверждённым пониманием"],
+  fns:"Маркетинг, ДПД, E-commerce, Claims, Customer Experience",
+  handoff:"Маркетинг → ДПД и партнёр → E-commerce → VS3",
+  steps:[
+   ["Определить аудиторию", "Выделить клиентские задачи, ситуации, ограничения и каналы\nПриёмка: Для каждого сегмента описаны задача и основание выделения", "Приоритетные сегменты", ["mkt", "cx", "distr", "ecom"], []],
+   ["Сформулировать предложение", "Связать задачу клиента с продуктом, применением, условиями и ограничениями\nПриёмка: Указаны цена, роль и ограничения; каждое заявление связано с проверенным основанием", "Ценностное предложение для сегмента", ["mkt", "fmul869ss", "claims", "fin", "distr"], []],
+   ["Подготовить и проверить материалы", "Создать локализованные материалы и сценарии; проверить заявления и требования\nПриёмка: Зафиксированы результаты проверок, срок актуальности и основания заявлений", "Материалы с версией, рынком и статусом допуска", ["mkt", "adv", "claims", "cert", "legal"], [13, 38, 40]],
+   ["Подготовить каналы и привлечь внимание", "Настроить точки контакта, аналитику и маршрутизацию; запустить коммуникации\nПриёмка: Пройден тест ссылок, форм и маршрута; каждое предложение связано с допущенным продуктом", "Работающие каналы с измеряемым охватом", ["mkt", "ecom", "adv", "pr", "event", "distr"], []],
+   ["Обеспечить следующий шаг для заинтересованного", "Дать переход к самостоятельному выбору, цифровому подбору или разговору с партнёром\nПриёмка: Проверен переход без заявки; для обращения указаны ответственный, срок и необходимый состав данных", "Клиент перешёл к выбору; обращение получило ответственного", ["distr", "ecom", "cs", "rao", "mkt"], []],
+   ["Уточнить задачу и ограничения", "Помочь определить ожидания, предпочтения и ограничения через материалы, цифровой или персональный подбор\nПриёмка: В самостоятельном пути доступны критерии и ограничения; при подборе рекомендация содержит учтённые требования", "Критерии выбора; при подборе — рекомендация с учётом задачи", ["distr", "mkt", "ecom", "fmul869ss", "train", "claims"], []],
+   ["Помочь сравнить решения", "Объяснить варианты, применение, ограничения и полную стоимость; проверить соответствие ожиданиям\nПриёмка: В сравнении есть варианты, ограничения, применение и полная стоимость; доступны покупка, пауза и отказ", "Сравнение вариантов и объяснение рекомендации", ["distr", "mkt", "ecom", "train"], []],
+   ["Зафиксировать выбор и передать корзину", "При согласии собрать корзину и передать в VS3; при паузе или отказе зафиксировать решение без навязывания\nПриёмка: Для корзины определены состав, рынок и условия; причины отказа используются для улучшения", "Согласованная корзина либо зафиксированная пауза или отказ", ["ecom", "distr", "rao", "it"], []]
   ]},
  {id:"VS3", team:"ITModel", c:"var(--vs3)", tier:2, name:"Исполнять клиентский заказ",
   short:"Заказ", trigger:"Клиент подтвердил заказ",
@@ -910,8 +855,51 @@ const STREAMS = [
    ["Оценивать и вознаграждать результат","Подтверждение retail-активности, квалификация, бонус, признание","Вознаграждённая клиентская ценность",["rao","motiv","fin","event"],[18,20,26]],
    ["Удерживать или реактивировать","Диагностика снижения активности, поддержка, новый план","Retained / reactivated partner",["distr","motiv","rao"],[21]],
    ["Корректно завершить сотрудничество","Доступы, расчёты, возврат продукции, сохранение клиентов","Управляемый partner exit",["rao","legal","fin"]]
+  ]},
+ {id:"VS6", code:"VS6", origin:"v0.4", team:"Предложение v0.4", c:"var(--vs6)", tier:2, name:"Сопровождать партнёрский бизнес",
+  short:"Партнёрский бизнес", trigger:"Партнёр активен; поступило обращение; расчётный период; готовится изменение; программа или событие; сигнал о нарушении",
+  out:"Партнёр получил начисления с объяснением, своевременную информацию и ответы; программы и признание проведены по правилам; нарушения закрыты",
+  object:"Действующий партнёр → информация, начисления, признание → удержание и рост структуры",
+  recipient:"Действующие партнёры и лидеры",
+  value:"Давать действующим партнёрам рабочие инструменты, своевременную информацию, понятное вознаграждение, признание и поддержку, чтобы они удерживали клиентов и развивали структуру",
+  kpi:["Удовлетворённость партнёров", "Срок решения обращений", "Доля начислений без корректировок", "Удержание квалификации лидерами", "Своевременность информирования", "Нарушения правил на 1000 партнёров"],
+  fns:"ДПД, РАО, E-commerce, Финансы, Мотивация и признание, Мероприятия, Юристы",
+  handoff:"VS5 (лидер) → ДПД → РАО и Финансы → сеть",
+  steps:[
+   ["Дать рабочий кабинет", "Обеспечить партнёру доступ к структуре, объёмам, квалификациям, начислениям, материалам и истории обращений\nПриёмка: Данные совпадают с расчётом периода; для каждого показателя указаны дата обновления и источник", "Партнёр видит показатели и начисления без запроса", ["ecom", "rao", "it", "distr", "mkt"], []],
+   ["Сообщать изменения до вступления в силу", "Готовить сообщения об изменениях цен, маркетинг-плана, ассортимента, акций и доставки; сначала лидерам, затем сети\nПриёмка: Сообщение содержит дату вступления, причину, влияние и ответы на частые вопросы; охват зафиксирован", "Изменение доведено до активных партнёров до даты вступления", ["distr", "mkt", "fin", "rao", "legal"], [21]],
+   ["Решать обращения партнёров", "Принимать вопросы о вознаграждении, структуре, спонсоре, статусе и учётной записи в отдельной очереди\nПриёмка: Зафиксированы категория, ответственный, срок и ответ; повторные обращения по одной теме связаны (ветка: при обращении)", "Обращение закрыто решением", ["rao", "distr", "fin", "it", "cs"], []],
+   ["Проверить и вознаградить результат", "Рассчитать вознаграждение по маркетинг-плану, проверить основания, возвраты и корректировки\nПриёмка: Начисление связано с расчётом; спорные начисления получили ответственного и срок пересмотра", "Проверенный расчёт и начисление с объяснением", ["rao", "motiv", "event", "it", "fin"], [18, 20, 21, 26]],
+   ["Проводить программы и признание", "Запускать мотивационные программы и признание по утверждённым правилам: челленджи, признание квалификаций на событиях\nПриёмка: Правила опубликованы до старта; итоги подведены в срок; критерии признания утверждены до события", "Программа проведена; итоги и награды выданы по правилам", ["motiv", "distr", "rao", "event", "fin", "legal"], [18]],
+   ["Проводить события сети", "Планировать и проводить форумы, лидерские встречи и региональные события с целью, программой и разбором результатов\nПриёмка: До события утверждены цель и измеримый показатель; разбор подготовлен в течение двух недель", "Событие проведено; цель и результат зафиксированы", ["event", "distr", "mkt", "interp", "fin"], []],
+   ["Работать с лидерами", "Вести регулярный контакт: план развития структуры, данные о воронке, лидерский совет, разбор споров между линиями\nПриёмка: План пересматривается по графику; предложения совета получили ответ и решение; споры закрыты", "У каждого лидера согласованный план и регулярный контакт", ["distr", "train", "motiv", "rao"], []],
+   ["Контролировать соблюдение правил", "Отслеживать заявления о здоровье и доходе, публикации и соблюдение политики; применять порядок: предупреждение, санкция, апелляция\nПриёмка: Зафиксированы источник, правило, решение и срок; доступна апелляция; повторные нарушения видны в истории (ветка: при сигнале)", "Нарушение закрыто решением в установленный срок", ["legal", "claims", "distr", "rao", "mkt"], []],
+   ["Собирать обратную связь сети", "Проводить регулярный опрос партнёров, собирать предложения лидеров, группировать сигналы и передавать адресатам\nПриёмка: Зафиксированы функция, подтверждение и статус рассмотрения; партнёрам сообщён итог по ключевым темам", "Сигналы сети приняты адресатами", ["distr", "cx", "mkt", "fmul869ss", "rao", "train"], []],
+   ["Пересмотреть участие", "При снижении активности выяснить причины и предложить поддержку; по решению оформить паузу или завершение\nПриёмка: Решение зафиксировано; при выходе согласованы расчёты, доступы и передача клиентов (ветка: по запросу или сигналу)", "План продолжения или корректно завершённое сотрудничество", ["distr", "rao", "legal", "fin", "cx"], []],
+   ["Пересматривать маркетинг-план и программы", "Раз в год и при существенных изменениях оценивать экономику, поведение сети, практику рынка и регуляторные требования\nПриёмка: Изменение прошло финансовую и юридическую проверку, утверждено и доведено до сети до вступления в силу", "Решение по маркетинг-плану с оценкой влияния на доход и маржу", ["distr", "rao", "fin", "legal", "mkt", "fmul58rvd", "fmul58ja4"], []]
+  ]},
+ {id:"VS7", code:"VS7", origin:"v0.4", team:"Предложение v0.4", c:"var(--vs7)", tier:1, name:"Развивать бренд и доверие",
+  short:"Бренд", trigger:"Утверждена бренд-стратегия на период, выходит новая версия стандартов, открывается рынок или поступил репутационный сигнал",
+  out:"Показатели здоровья бренда на рынках достигнуты; стандарты применяются во всех потоках; репутационные случаи отработаны",
+  object:"Бренд-стратегия → платформа и стандарты → кампании → здоровье бренда",
+  recipient:"Клиенты, кандидаты и партнёры на всех рынках",
+  value:"Делать Coral Club узнаваемым и заслуживающим доверия выбором для клиентов, кандидатов и партнёров; обеспечивать единый смысл и облик во всех точках контакта",
+  kpi:["Известность бренда", "Доверие", "Доля брендового поиска", "Соответствие стандарту", "Репутационные случаи"],
+  fns:"Маркетинг, PR, Реклама, Мероприятия, Claims, Юристы",
+  handoff:"Маркетинг → регионы → все потоки",
+  steps:[
+   ["Измерить здоровье бренда", "Проводить регулярный замер известности, доверия, ассоциаций и доли брендового поиска\nПриёмка: Для каждого замера указаны выборка, период и сравнение с прошлым", "Карта разрывов бренда по рынкам", ["mkt"], []],
+   ["Утвердить платформу и архитектуру бренда", "Определить смысл и обещание, манифест, роль основного бренда и суббрендов, правила имён\nПриёмка: Версия утверждена уполномоченным участником; изменения и причины зафиксированы", "Утверждённая версия платформы и архитектуры", ["mkt", "fmukzxq2b", "legal", "fmul58rvd"], []],
+   ["Выпустить стандарты бренда", "Готовить стандарты стиля, языка и оформления точек контакта, включая правила для партнёров\nПриёмка: Есть версия, дата, примеры и ответственный; потоки получили уведомление", "Стандарты опубликованы в «Управлении знаниями» с версией", ["mkt", "claims", "train"], []],
+   ["Спланировать брендовые коммуникации", "Составить план по рынкам с отдельной строкой бюджета и показателями здоровья бренда\nПриёмка: Бюджет учтён отдельно; для каждой активности указаны рынок, цель и показатель", "Утверждённый план и бюджет бренда", ["mkt", "fin"], []],
+   ["Создать брендовые материалы и кампании", "Производить видео, кампании, контент и события; проверять заявления до публикации\nПриёмка: Зафиксированы проверка заявлений, соответствие стандарту и рынки применения", "Одобренные материалы и запущенные кампании", ["mkt", "adv", "pr", "event", "claims"], []],
+   ["Вывести бренд на рынки", "Передать регионам материалы и обучение, адаптировать под рынок, оформить точки контакта\nПриёмка: Региональная команда обучена; аудит точек проведён; отклонения внесены в план", "Рынок работает по стандарту бренда", ["mkt", "train", "markets", "distr"], []],
+   ["Дать партнёрам брендовые материалы", "Вести библиотеку готового контента и шаблонов; публиковать правила личного бренда партнёра\nПриёмка: Библиотека обновляется по графику; у материалов указаны рынки и срок; использование отслеживается", "Партнёры используют актуальные материалы", ["mkt", "distr", "claims"], []],
+   ["Управлять репутацией", "Вести отношения со СМИ, отслеживать упоминания, готовить позицию компании по инцидентам\nПриёмка: Зафиксированы источник, позиция, согласования и срок реакции; итог разобран", "Репутационный случай отработан по регламенту", ["pr", "legal", "cert", "mkt"], []],
+   ["Оценить эффект и скорректировать", "Сравнивать результаты с планом по показателям и корректировать план\nПриёмка: Зафиксированы причины и ответственные; назначен следующий замер", "Решения по корректировке плана бренда", ["mkt", "fin"], []]
   ]}
 ];
+STREAMS.forEach(s=>{ if(!s.code) s.code = s.id; if(!s.origin) s.origin = ""; });
 const DEFAULTS = {}; const DEFMAP = {};
 STREAMS.forEach(s=>{ DEFAULTS[s.id] = s.steps.map((a,i)=>({id:`${s.id}.${i+1}`, name:a[0], content:a[1], result:a[2], cand:a[3]||[], conf:a[4]||[], gap:a[5]||""})); DEFAULTS[s.id].forEach(x=>DEFMAP[x.id]=x); });
 const SMAP = Object.fromEntries(STREAMS.map(s=>[s.id,s]));
@@ -922,7 +910,7 @@ function rebuildSteps(){
     const doc = streamDocs[s.id];
     const list = (doc && Array.isArray(doc.steps)) ? doc.steps : DEFAULTS[s.id];
     s.steps = list.map((x,i)=>{ const def = DEFMAP[x.id]||{};
-      return {code:x.id, disp:`${s.id}.${i+1}`, name:x.name, content:x.content||"", result:x.result||"", cand:def.cand||[], conf:x.conf||def.conf||[], gap:("gap" in x) ? (x.gap||"") : (def.gap||""), custom:!DEFMAP[x.id], stream:s}; });
+      return {code:x.id, disp:`${s.code}.${i+1}`, name:x.name, content:x.content||"", result:x.result||"", cand:def.cand||[], conf:x.conf||def.conf||[], gap:("gap" in x) ? (x.gap||"") : (def.gap||""), custom:!DEFMAP[x.id], stream:s}; });
   });
   ALLSTEPS = STREAMS.flatMap(s=>s.steps);
   STEPMAP = Object.fromEntries(ALLSTEPS.map(s=>[s.code,s]));
@@ -940,25 +928,28 @@ const XCUT = [
 ];
 const GATE = ["Готовность продукта к продаже на рынке","Выпуск коммерческой партии","Достаточный запас","Утверждённые цена и условия","Разрешённые product и health claims","Готовность сайта, приложения и заказа","Готовность customer support","Готовность логистики и возвратов","Обучение и сертификация партнёров","Настройка PV/BV и compensation plan","Готовность обработки complaints и adverse events"];
 const FEEDBACK = [
-  ["Причины отказа от покупки","VS2",["VS2","VS1"],"Изменить предложение, контент, цену или продукт"],
+  ["Причины отказа от покупки","VS2C",["VS2C","VS1"],"Изменить предложение, контент, цену или продукт"],
+  ["Обратная связь дистрибьюторов","VS2",["VS2","VS6"],"Улучшить предложение и поддержку дистрибьюторов"],
   ["Фактические заказы","VS3",["VS1","X_sc"],"Скорректировать прогноз и пополнение"],
   ["Ошибки комплектации","VS3",["VS3"],"Изменить складской процесс и контроль"],
   ["Жалобы на продукт","VS4",["VS1","X_q"],"Проверить партию, формулу, упаковку, инструкцию"],
   ["Нежелательные события","VS4",["X_q","VS1"],"Safety assessment, corrective action или recall"],
-  ["Вопросы клиентов","VS4",["VS4","VS2"],"Улучшить onboarding и клиентский контент"],
+  ["Вопросы клиентов","VS4",["VS4","VS2C"],"Улучшить onboarding и клиентский контент"],
   ["Ошибки рекомендаций","VS4",["VS5"],"Изменить обучение и сертификацию партнёров"],
-  ["Повторная покупка","VS4",["VS2","VS5"],"Подтвердить ценность предложения и сопровождения"],
-  ["Уход клиента","VS4",["VS1","VS2","VS4"],"Найти продуктовую, ценовую или сервисную причину"],
-  ["Результаты партнёров","VS5",["VS5","X_comp"],"Скорректировать развитие, поддержку, стимулирование"]
+  ["Повторная покупка","VS4",["VS3","VS2C"],"Без изменений — сразу в заказ VS3, новая потребность — в подбор VS2C"],
+  ["Уход клиента","VS4",["VS1","VS2C","VS4"],"Найти продуктовую, ценовую или сервисную причину"],
+  ["Результаты партнёров","VS5",["VS5","VS6","X_comp"],"Скорректировать развитие, поддержку, стимулирование"],
+  ["Сигналы сети партнёров","VS6",["VS1","VS4","VS5"],"Передать продукту, сервису и развитию партнёров"],
+  ["Здоровье бренда","VS7",["VS7","VS2C","VS2"],"Скорректировать план бренда и коммуникации спроса"]
 ];
-const VS5ROLES = [["До VS2","Привлечь, обучить и сертифицировать партнёра"],["VS2 — спрос","Качественное выявление потребности и compliant-рекомендация"],["VS3 — заказ","Помочь оформить заказ, не подменяя корпоративную систему"],["VS4 — успех","Сопровождать применение, check-in, передавать сложные случаи"],["После VS4","Feedback, развитие компетенций, подтверждение результата и вознаграждение"]];
+const VS5ROLES = [["До VS2C","Привлечь, обучить и сертифицировать партнёра"],["VS2C — спрос","Качественное выявление потребности и compliant-рекомендация"],["VS3 — заказ","Помочь оформить заказ, не подменяя корпоративную систему"],["VS4 — успех","Сопровождать применение, check-in, передавать сложные случаи"],["После VS4","Feedback, развитие компетенций, подтверждение результата и вознаграждение"]];
 
 /* ---------------- STATE ---------------- */
 let roles = {};          // code -> doc
 let customFns = [];      // [{id,name}]
 let dlCap = null;
 const LS_KEY = "vs-tool-v1";
-let editMode = false, stepForm = null, confirmDel = null, dragId = null;
+let editMode = false, stepForm = null, confirmDel = null, dragId = null, nameEdit = false;
 let currentStream = "VS1", currentFn = "distr", openStep = null, regFilter = "dispute", mapMode = "run";
 
 let FN_ROWS = null;   // справочник функций: {id,name,name_en,grp,sort,is_custom,active}
@@ -1025,13 +1016,13 @@ const STATUS_TXT = {empty:"Нет владельца", assigned:"Владеле�
 let sb = null;                                 // клиент Supabase
 let me = null;                                 // вошедший пользователь {id,label,stream_id,is_admin}
 let authToken = ""; try{ authToken = localStorage.getItem("vs-token") || ""; }catch(e){}
-const TAB_ADMIN_ONLY = ["raci","functions","register","dict"];   // ролевая матрица: интеграторы и гости эти вкладки не видят
+const TAB_ADMIN_ONLY = ["functions","register","dict"];   // ролевая матрица: интеграторы и гости эти вкладки не видят
 function isAdmin(){ return !sb || !!(me && me.is_admin); }
 function canEdit(sid){ return !sb || !!(me && (me.is_admin || me.stream_id===sid)); }
 function canSeeTab(v){ return !TAB_ADMIN_ONLY.includes(v) || isAdmin(); }
 function denyEdit(sid){
   if(!me) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
-  else toast(`Вы можете редактировать только свой поток ${me.stream_id}`);
+  else toast(`Вы можете редактировать только свой поток ${(SMAP[me.stream_id]||{}).code||me.stream_id}`);
 }
 function saveToken(t){ authToken = t || ""; try{ if(t) localStorage.setItem("vs-token", t); else localStorage.removeItem("vs-token"); }catch(e){} }
 async function whoami(){
@@ -1119,7 +1110,7 @@ function saveFunctions(changed, msg){
   renderAll();
   if(msg) toast(msg);
   if(!sb){ saveLocal(); return; }
-  const rows = changed.map(c=>{ const x = FN_ROWS.find(r=>r.id===c.id); return {id:x.id, name:x.name, name_en:x.name_en||null, grp:x.grp, sort:x.sort, is_custom:!!x.is_custom, active:x.active!==false, fn_type:x.fn_type||null, fn_type_note:x.fn_type_note||null}; });
+  const rows = changed.map(c=>{ const x = FN_ROWS.find(r=>r.id===c.id); return {id:x.id, name:x.name, name_en:x.name_en||null, grp:x.grp, sort:x.sort, is_custom:!!x.is_custom, active:x.active!==false}; });
   enqueue("справочник функций", async ()=>check(await sb.from("vs_functions").upsert(rows, {onConflict:"id"})));
 }
 function addFunction(name, en, grp){
@@ -1133,15 +1124,15 @@ function addFunction(name, en, grp){
   saveFunctions([{id, name, name_en:en, grp, sort, is_custom:true, active:true}], `Функция «${name}» добавлена в справочник`);
   return id;
 }
-function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({roles,customFns,streamDocs,fnRows:FN_ROWS})); }catch(e){} }
-function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(j){ roles=normalizeRoles(j.roles||{}); customFns=j.customFns||[]; streamDocs=j.streamDocs||{}; if(Array.isArray(j.fnRows)) FN_ROWS=j.fnRows; rebuildSteps(); } }catch(e){} }
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({roles,customFns,streamDocs,fnRows:FN_ROWS,streamNames:STREAMS.map(x=>[x.id,x.name,x.short])})); }catch(e){} }
+function loadLocal(){ try{ const j = JSON.parse(localStorage.getItem(LS_KEY)||"null"); if(j){ roles=normalizeRoles(j.roles||{}); customFns=j.customFns||[]; streamDocs=j.streamDocs||{}; if(Array.isArray(j.fnRows)) FN_ROWS=j.fnRows; (j.streamNames||[]).forEach(([id,n,sh])=>{ const x=SMAP[id]; if(x&&n){ x.name=n; if(sh) x.short=sh; } }); rebuildSteps(); } }catch(e){} }
 
 async function loadAll(){
   const sel = t=>sb.from(t).select("*");
   const res = await Promise.all([sel("vs_functions"), sel("vs_streams"), sel("vs_hot_points"),
     ...STREAMS.map(s=>sel(T(s.id)+"_steps").order("position")), ...STREAMS.map(s=>sel(T(s.id)+"_roles"))]);
   const [fns, strs, hps] = res.slice(0,3).map(check);
-  const stepsBy = res.slice(3,8).map(check), rolesBy = res.slice(8,13).map(check);
+  const NS = STREAMS.length, stepsBy = res.slice(3,3+NS).map(check), rolesBy = res.slice(3+NS,3+2*NS).map(check);
   if(!fns.length || !strs.length) throw new Error("таблицы пусты: выполните миграции из папки supabase/migrations");
   // справочник функций
   const groups = [];
@@ -1151,14 +1142,14 @@ async function loadAll(){
   });
   FN_GROUPS.splice(0, FN_GROUPS.length, ...groups);
   customFns = fns.filter(f=>f.is_custom && f.active).sort((a,b)=>a.sort-b.sort).map(f=>({id:f.id, name:f.name}));
-  FN_ROWS = fns.map(f=>({id:f.id, name:f.name, name_en:f.name_en||"", grp:f.grp, sort:f.sort, is_custom:f.is_custom, active:f.active, fn_type:f.fn_type||"", fn_type_note:f.fn_type_note||""}));
+  FN_ROWS = fns.map(f=>({id:f.id, name:f.name, name_en:f.name_en||"", grp:f.grp, sort:f.sort, is_custom:f.is_custom, active:f.active}));
   // точки накала
   hps.forEach(h=>{ CONFLICTS[h.id] = h.description; });
   // потоки, шаги, роли
   const nextDocs = {}, nextRoles = {};
   STREAMS.forEach((s,i)=>{
     const r = strs.find(x=>x.id===s.id);
-    if(r) Object.assign(s, {team:r.team, tier:r.tier, name:r.name, short:r.short_name||s.short, trigger:r.trigger_text||"", out:r.output||"", object:r.flow_object||"", recipient:r.recipient||"", value:r.value||"", kpi:r.kpi||[], fns:r.industry_functions||"", handoff:r.handoff||""});
+    if(r) Object.assign(s, {code:r.code||s.code, origin:r.origin||"", team:r.team, tier:r.tier, name:r.name, short:r.short_name||s.short, trigger:r.trigger_text||"", out:r.output||"", object:r.flow_object||"", recipient:r.recipient||"", value:r.value||"", kpi:r.kpi||[], fns:r.industry_functions||"", handoff:r.handoff||""});
     const steps = stepsBy[i];
     dbSteps[s.id] = new Set(steps.map(x=>x.id));
     nextDocs[s.id] = {steps: steps.filter(x=>x.active).sort((a,b)=>a.position-b.position)
@@ -1233,8 +1224,8 @@ function trCore(c, depth){
   if(/^[ВПСУ]\d+( [ВПСУ]\d+)*$/.test(c)) return c.replace(/[ВПСУ]/g, x=>({"В":"O","П":"H","С":"C","У":"N"})[x]);
   for(const [re, out] of I18N_PATS){ const m = c.match(re); if(m) return out.replace(/\{(\d)\}/g, (_,i)=>trCore(m[+i+1], depth+1)).replace(/№\s?/g, "No. "); }
   if(depth < 4){
-    let m = c.match(/^((?:VS\d(?:\.[\dn][\w]*)?|№\s?\d+)[.,:]?\s+)([\s\S]+)$/);
-    if(m) return m[1].replace("№","No. ") + trCore(m[2], depth+1);
+    let m = c.match(/^((?:VS\d[A-Z]?(?:\.[\dn][\w]*)?|№\s?\d+)[.,:]?\s+)([\s\S]+)$/);
+    if(m){ const t2 = trCore(m[2], depth+1); if(t2 !== m[2]) return m[1].replace("№","No. ") + t2; }
     m = c.match(/^([\s\S]+?)([.:,;!?…]+)$/);
     if(m && (I18N.exact[m[1]]!=null || fnNameMap[m[1]])) return trCore(m[1], depth+1) + m[2];
     for(const sep of [" · ", " → ", " — ", "; ", ": ", ", "]){
@@ -1327,7 +1318,6 @@ function renderView(v){
   if(v==="guide") {}
   if(v==="dict") renderDict();
   if(v==="functions") renderFunctions();
-  if(v==="raci") renderRaci();
   if(v==="register") renderRegister();
 }
 function renderAll(fromSync){
@@ -1341,12 +1331,12 @@ function renderAll(fromSync){
 /* ---------------- PORTFOLIO ---------------- */
 function streamStats(s){
   const st = s.steps.map(x=>status(x.code));
-  return {st, owners: st.filter(x=>x!=="empty" && x!=="dispute").length, disputes: st.filter(x=>x==="dispute").length, fixed: st.filter(x=>x==="fixed").length, hot: s.steps.filter(x=>x.conf.length).length, kpi: s.steps.filter(x=>{ const d=getDoc(x.code); return !!ownerOf(d) && !!d.metric; }).length};
+  return {st, owners: st.filter(x=>x!=="empty" && x!=="dispute").length, disputes: st.filter(x=>x==="dispute").length, fixed: st.filter(x=>x==="fixed").length, hot: s.steps.filter(x=>x.conf.length).length, kpi: s.steps.filter(x=>{ const d=getDoc(x.code); return !!ownerOf(d) && !!d.metric && status(x.code)!=="dispute"; }).length};
 }
 function vcard(s){
   const k = streamStats(s);
   return `<button class="vcard" style="--c:${s.c}" data-open-stream="${s.id}">
-    <span class="vcode">${s.id}. ${esc(s.short)}<span class="team" title="Команда трека">${s.team}</span></span>
+    <span class="vcode">${s.code}. ${esc(s.short)}<span class="team" title="${s.origin?"Поток из предложения v0.4, команда не назначена":"Команда трека"}">${esc(s.team)}</span></span>
     <span class="vname">${esc(s.name)}</span>
     <span class="flowline"><span><b>Триггер</b>${esc(s.trigger)}</span><span class="arr">→</span><span><b>Ценность на выходе</b>${esc(s.out)}</span></span>
     <span class="strip" title="Шаги потока">${k.st.map((x,i)=>`<i class="${x}" title="${s.steps[i].disp} ${esc(s.steps[i].name)}"></i>`).join("")}</span>
@@ -1355,25 +1345,29 @@ function vcard(s){
   </button>`;
 }
 function renderPortfolio(){
-  $("#tier1").innerHTML = ["VS1","VS5"].map(id=>vcard(SMAP[id])).join("");
-  $("#tier2").innerHTML = ["VS2","VS3","VS4"].map(id=>vcard(SMAP[id])).join("");
+  $("#tier1").innerHTML = ["VS1","VS5","VS7"].map(id=>vcard(SMAP[id])).join("");
+  $("#tier2").innerHTML = ["VS2C","VS2","VS3","VS4","VS6"].map(id=>vcard(SMAP[id])).join("");
   $("#xcutList").innerHTML = XCUT.map(([a,b])=>`<span><b>${esc(a)}</b> — ${esc(b)}</span>`).join("");
 }
 
 /* ---------------- STREAM ---------------- */
 let hlFn = "";
 function renderStream(){
-  $("#streamPick").innerHTML = STREAMS.map(s=>`<button style="--c:${s.c}" data-pick="${s.id}" aria-pressed="${s.id===currentStream}">${s.id}. ${esc(s.name)} · ${s.team}</button>`).join("");
+  $("#streamPick").innerHTML = STREAMS.map(s=>`<button style="--c:${s.c}" data-pick="${s.id}" aria-pressed="${s.id===currentStream}">${s.code}. ${esc(s.name)} · ${esc(s.team)}</button>`).join("");
   const s = SMAP[currentStream]; const k = streamStats(s);
   const ro = !canEdit(s.id); if(ro) editMode = false;
   const roNote = !sb ? "" : ro
-    ? `<div class="ro-note">Просмотр. Редактировать поток ${s.id} может интегратор команды ${esc(s.team)}${me?"":" после входа"}. ${me?"":`<button class="help-link" data-login>Войти</button>`}</div>`
+    ? (s.origin ? `<div class="ro-note">Просмотр. Поток ${s.code} добавлен из предложения v0.4, команда пока не назначена: редактирует администратор.` : `<div class="ro-note">Просмотр. Редактировать поток ${s.code} может интегратор команды ${esc(s.team)}${me?"":" после входа"}.`) + ` ${me?"":`<button class="help-link" data-login>Войти</button>`}</div>`
     : `<div class="ro-note mine">${me&&me.is_admin?"Режим администратора: можно редактировать все потоки.":`Это поток вашей команды: вы можете менять шаги, функции и роли.`} <button class="help-link" data-guide>Что означают роли</button></div>`;
   const fnOpts = `<option value="">Подсветить шаги функции…</option>` + allFns().map(f=>`<option value="${f.id}" ${hlFn===f.id?"selected":""}>${esc(f.name)}</option>`).join("");
   let html = `<div class="profile" style="--c:${s.c}">
     <div>
-      <span class="vcode" style="--c:${s.c};color:${s.c}">${s.id}. Уровень ${s.tier===1?"1, создать готовность":"2, реализовать ценность"}<span class="team" style="--c:${s.c};background:${s.c}">Команда ${s.team}</span></span>
-      <h2 style="margin:4px 0 12px">${esc(s.name)}</h2><span class="rainbow" style="width:96px" aria-hidden="true"></span>
+      <span class="vcode" style="--c:${s.c};color:${s.c}">${s.code}. Уровень ${s.tier===1?"1, создать готовность":"2, реализовать ценность"}<span class="team" style="--c:${s.c};background:${s.c}">${s.origin?esc(s.team):"Команда "+esc(s.team)}</span></span>
+      ${nameEdit && !ro ? `<div class="stepform rename" data-rename-form style="margin:6px 0 12px">
+        <div class="field"><label for="sn-name">Название потока <small>как команда называет свой поток</small></label><input id="sn-name" value="${esc(s.name)}" maxlength="90"></div>
+        <div class="field"><label for="sn-short">Короткое название <small>для таблиц и подписей, одно-два слова</small></label><input id="sn-short" value="${esc(s.short)}" maxlength="30"></div>
+        <div class="acts"><button class="btn primary" data-rename-save>Сохранить</button><button class="btn" data-rename-cancel>Отмена</button></div>
+      </div>` : `<h2 style="margin:4px 0 12px">${esc(s.name)}${ro?"":` <button class="help-link rename-btn" data-rename title="Изменить название потока">Изменить название</button>`}</h2>`}<span class="rainbow" style="width:96px" aria-hidden="true"></span>
       <p class="quote" style="--c:${s.c}">${esc(s.value)}</p>
       <div class="kpis">${s.kpi.map(x=>`<span>${esc(x)}</span>`).join("")}</div>
     </div>
@@ -1413,7 +1407,7 @@ function renderStream(){
     const dim = hlFn && !mem.includes(hlFn) ? " dim":"";
     html += `<li><div class="step${dim}" data-step="${st.code}" tabindex="0" role="button" aria-label="${st.disp} ${esc(st.name)}">
       <span class="dot"><b>${i+1}</b></span>
-      <span><span class="t">${esc(st.name)}</span><br><span class="r">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span>
+      <span><span class="t">${esc(st.name)}</span><br><span class="r ct">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span>
         ${st.conf.length?`<div class="flag">Точка накала из свода: №${st.conf.join(", №")}</div>`:""}${st.gap?`<div class="flag">${esc(st.gap)}</div>`:""}</span>
       <span class="roles">${chips}</span>
       <span class="st"><span class="badge ${stt}">${STATUS_TXT[stt]}</span></span>
@@ -1468,7 +1462,7 @@ function renderEditSteps(s){
       out += `<li><div class="erow" draggable="true" data-eid="${st.code}">
         <span class="handle" title="Перетащить" aria-hidden="true">⋮⋮</span>
         <span class="num">${i+1}</span>
-        <span><span class="t">${esc(st.name)}</span>${st.custom?`<span class="tag">добавлен командой</span>`:""}<br><span class="r">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span><br><span class="r">Функций на шаге: ${nFn}</span></span>
+        <span><span class="t">${esc(st.name)}</span>${st.custom?`<span class="tag">добавлен командой</span>`:""}<br><span class="r ct">${esc(st.content)}</span><br><span class="r">Результат: <b style="color:var(--ink);font-weight:500">${esc(st.result)}</b></span><br><span class="r">Функций на шаге: ${nFn}</span></span>
         <span class="eacts">${del?`<span style="font-size:13px;align-self:center">Удалить шаг?</span><button class="btn warn" data-del-yes="${st.code}">Удалить</button><button class="btn" data-del-no>Отмена</button>`:
           `<button class="btn" data-mv="-1" data-mid="${st.code}" ${i===0?"disabled":""} aria-label="Выше">↑</button><button class="btn" data-mv="1" data-mid="${st.code}" ${i===s.steps.length-1?"disabled":""} aria-label="Ниже">↓</button><button class="btn" data-edit="${st.code}">Изменить</button><button class="btn" data-del="${st.code}">Удалить</button>`}</span>
       </div></li>`;
@@ -1525,6 +1519,23 @@ function moveStep(sid, id, targetId, before){
   mutateSteps(sid, arr=>{ const i = arr.findIndex(a=>a.id===id); const [it] = arr.splice(i,1); let t = arr.findIndex(a=>a.id===targetId); if(!before) t+=1; arr.splice(t,0,it); }, null);
   const to = SMAP[sid].steps.findIndex(x=>x.code===id);
   if(to!==from) logStreamOnly(sid, `Шаг «${name}» перемещён с позиции ${from+1} на ${to+1}`);
+}
+function saveStreamName(sid, name, short){
+  if(!canEdit(sid)){ denyEdit(sid); return; }
+  const s = SMAP[sid]; name = (name||"").trim().replace(/\s+/g," "); short = (short||"").trim().replace(/\s+/g," ");
+  if(!name){ toast("Укажите название потока"); return; }
+  const changes = [];
+  if(name !== s.name) changes.push(`Название потока: «${s.name}» → «${name}»`);
+  if(short && short !== s.short) changes.push(`Короткое название: «${s.short}» → «${short}»`);
+  nameEdit = false;
+  if(!changes.length){ renderStream(); return; }
+  s.name = name; if(short) s.short = short;
+  const d = streamDocs[sid] = streamDocs[sid] || {steps: DEFAULTS[sid].map(x=>({id:x.id,name:x.name,content:x.content,result:x.result})), log:[]};
+  d.log = changes.map(text=>({t:stamp(), text})).concat(d.log||[]).slice(0,40);
+  renderAll(); toast("Название потока сохранено");
+  if(!sb){ saveLocal(); return; }
+  const log = JSON.parse(JSON.stringify(d.log));
+  enqueue("название потока", async ()=>check(await sb.from("vs_streams").update({name:s.name, short_name:s.short, change_log:log}).eq("id", sid)));
 }
 function logStreamOnly(sid, text){ const d = streamDocs[sid]; d.log = [{t:stamp(), text}].concat(d.log||[]).slice(0,40); saveStream(sid); if(curView()==="stream") renderStream(); }
 function shiftStep(sid, id, dir){
@@ -1594,10 +1605,10 @@ function renderDrawer(fromSync){
       <span class="badge ${stt}">${STATUS_TXT[stt]}</span>
     </div>
     <div class="d-body">
-      <div class="d-sec"><p>${esc(st.content)}</p><p class="muted">Результат шага: <b style="color:var(--ink)">${esc(st.result)}</b></p></div>
+      <div class="d-sec"><p class="ct">${esc(st.content)}</p><p class="muted">Результат шага: <b style="color:var(--ink)">${esc(st.result)}</b></p></div>
       ${disp}
       <div class="d-sec"><h4>Роли функций на шаге</h4>
-        <p class="faint" style="font-size:13px">${ro?`Просмотр. Роли на этом шаге назначает интегратор команды ${esc(s.team)}.`:"Один владелец отвечает за результат шага. Помощники дают ресурс и экспертизу. Претендент заявляет право на владение, и это фиксируется как спор. Лишнюю функцию уберите крестиком, недостающую добавьте из списка."} <button class="help-link" data-guide>Памятка по ролям</button></p>
+        <p class="faint" style="font-size:13px">${ro?(s.origin?`Просмотр. Поток из предложения v0.4: роли на этом шаге назначает администратор.`:`Просмотр. Роли на этом шаге назначает интегратор команды ${esc(s.team)}.`):"Один владелец отвечает за результат шага. Помощники дают ресурс и экспертизу. Претендент заявляет право на владение, и это фиксируется как спор. Лишнюю функцию уберите крестиком, недостающую добавьте из списка."} <button class="help-link" data-guide>Памятка по ролям</button></p>
         ${rows.length?"":`<p class="faint" style="font-size:13px">На шаге нет функций. Добавьте их ниже.</p>`}
         ${ro ? rows.map(fid=>{ const r=roleOf(d,fid); return `<div class="rolerow"><span class="nm">${esc(fnName(fid))}</span><span class="chip static ${r==="owner"?"owner":r==="claimant"?"claimant":r==="helper"?"":(conf?"member":"hyp")}">${({owner:"Владелец",claimant:"Претендент",helper:"Помощник",none:conf?"Без роли":"Гипотеза"})[r]}</span></div>`; }).join("")
           : rows.map(fid=>`<div class="rolerow"><span class="nm">${esc(fnName(fid))}${!conf&&roleOf(d,fid)==="none"?"<small>гипотеза из свода 17.09</small>":""}</span><span style="display:inline-flex;gap:6px;align-items:center">${seg(fid)}<button class="btn" data-drm="${fid}" aria-label="Убрать с шага" title="Убрать с шага" style="padding:4px 9px">×</button></span></div>`).join("")}
@@ -1634,16 +1645,22 @@ function renderDrawer(fromSync){
 }
 
 /* ---------------- MAP ---------------- */
-const FLOWS = {VS1:"Идея → готовый продукт", VS5:"Кандидат → компетентный партнёр", VS2:"Аудитория → потребность → решение → намерение купить", VS3:"Заказ → оплата → комплектация → доставка", VS4:"Получение → применение → поддержка → результат"};
+const FLOWS = {VS1:"Идея → готовый продукт", VS5:"Кандидат → компетентный партнёр", VS7:"Стратегия бренда → стандарты → кампании → доверие",
+  VS2C:"Задача клиента → предложение → сравнение → корзина", VS2:"Сегмент → предложение → каналы → дистрибьютор",
+  VS3:"Заказ → оплата → комплектация → доставка", VS4:"Получение → применение → поддержка → результат", VS6:"Партнёр → кабинет, начисления, признание → удержание"};
 const NODES = {
-  VS1:{x:60,y:110,w:420,h:124}, VS5:{x:520,y:110,w:420,h:124},
-  GATE:{x:170,y:300,w:660,h:70},
-  VS2:{x:60,y:410,w:880,h:112}, VS3:{x:60,y:562,w:880,h:112}, VS4:{x:60,y:714,w:880,h:112},
-  FB:{x:250,y:866,w:500,h:44}
+  VS1:{x:40,y:110,w:290,h:150}, VS5:{x:350,y:110,w:290,h:150}, VS7:{x:660,y:110,w:290,h:150},
+  GATE:{x:170,y:320,w:660,h:70},
+  VS2C:{x:40,y:430,w:445,h:124}, VS2:{x:505,y:430,w:445,h:124},
+  VS3:{x:40,y:594,w:910,h:112},
+  VS4:{x:40,y:746,w:445,h:124}, VS6:{x:505,y:746,w:445,h:124},
+  FB:{x:250,y:910,w:500,h:44}
 };
-const TARGETS = ["VS1","VS2","VS3","VS4","VS5","X_q","X_sc","X_comp"];
+const TARGETS = ["VS1","VS2C","VS2","VS3","VS4","VS5","VS6","VS7","X_q","X_sc","X_comp"];
 const TLABEL = {X_q:"Quality", X_sc:"Supply Chain", X_comp:"Compensation"};
-TARGETS.forEach((id,i)=>{ NODES["T_"+id] = {x:60+i*112, y:950, w:100, h:40}; });
+const tLabel = id=>TLABEL[id] || (SMAP[id] ? SMAP[id].code : id);
+TARGETS.forEach((id,i)=>{ NODES["T_"+id] = {x:26+i*87, y:994, w:80, h:40}; });
+function wrapText(t, max){ const out = []; let cur = ""; String(t).split(" ").forEach(w=>{ if(cur && (cur+" "+w).length > max){ out.push(cur); cur = w; } else cur = cur ? cur+" "+w : w; }); if(cur) out.push(cur); return out; }
 function ctr(id){ const n=NODES[id]; return [n.x+n.w/2, n.y+n.h/2]; }
 function renderMap(){
   const svg = $("#mapSvg");
@@ -1654,51 +1671,66 @@ function renderMap(){
   const arrow = (x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${muted}" stroke-width="2" marker-end="url(#ah)"/>`;
   const node = id=>{
     const n=NODES[id], s=SMAP[id], k=streamStats(s);
-    const cellW = Math.min((n.w-190)/s.steps.length, 40);
-    return `<g class="node" data-node="${id}" tabindex="0" role="button" aria-label="${s.id} ${esc(s.name)}">
+    const cellW = Math.min((n.w-(n.w>600?190:230))/s.steps.length, 40);
+    const wide = n.w > 600, fs = wide ? 21 : n.w > 400 ? 19 : 18;
+    const title = wrapText(`${s.code}. ${tr(s.name)}`, Math.floor((n.w-60)/(fs*0.53)));
+    const flow = wrapText(tr(FLOWS[id]||""), Math.floor((n.w-60)/7.4));
+    let ty = n.y+36;
+    const tl = title.map((ln,i)=>{ const y = ty + i*(fs+4); const m = i===0 ? ln.match(/^(\S+\.)\s(.*)$/) : null;
+      return `<text x="${n.x+26}" y="${y}" font-size="${fs}" fill="${ink}" data-notr>${m?`<tspan font-weight="700" fill="${col(id)}">${esc(m[1])}</tspan> <tspan font-weight="300">${esc(m[2])}</tspan>`:`<tspan font-weight="300">${esc(ln)}</tspan>`}</text>`; }).join("");
+    ty += title.length*(fs+4) + 2;
+    const fl = flow.map((ln,i)=>`<text x="${n.x+26}" y="${ty + i*19}" font-size="${wide?16:14}" fill="${muted}" data-notr>${esc(ln)}</text>`).join("");
+    return `<g class="node" data-node="${id}" tabindex="0" role="button" aria-label="${s.code} ${esc(s.name)}">
       <rect class="box" x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" fill="${surf}" stroke="${col(id)}" stroke-width="2"/>
       <rect x="${n.x}" y="${n.y}" width="8" height="${n.h}" rx="4" fill="${col(id)}"/>
-      <text x="${n.x+26}" y="${n.y+42}" font-size="21" fill="${ink}"><tspan font-weight="700" fill="${col(id)}">${s.id}.</tspan> <tspan font-weight="300">${esc(s.name)}</tspan></text>
-      <text x="${n.x+26}" y="${n.y+70}" font-size="16" fill="${muted}">${esc(FLOWS[id])}</text>
+      ${tl}${fl}
       ${k.st.map((x,i)=>`<rect x="${n.x+26+i*cellW}" y="${n.y+n.h-30}" width="${Math.max(cellW-4,2)}" height="8" rx="2" fill="${x==="dispute"?v("--coral"):x==="fixed"?v("--ok"):x==="assigned"?v("--ice"):line}"><title>${s.steps[i].disp} ${esc(s.steps[i].name)}</title></rect>`).join("")}
-      <g><rect x="${n.x+26}" y="${n.y-13}" width="${s.team.length*8.6+26}" height="26" rx="7" fill="${col(id)}"/><text x="${n.x+39}" y="${n.y+5}" font-size="14" font-weight="500" fill="${v("--on-c")}">${s.team}</text></g>
+      <g><rect x="${n.x+26}" y="${n.y-13}" width="${tr(s.team).length*8.6+26}" height="26" rx="7" fill="${col(id)}"/><text x="${n.x+39}" y="${n.y+5}" font-size="14" font-weight="500" fill="${v("--on-c")}">${esc(s.team)}</text></g>
       <text x="${n.x+n.w-24}" y="${n.y+n.h-22}" text-anchor="end" font-size="13" fill="${faint}">владельцы ${k.owners}/${s.steps.length}${k.disputes?`, споры ${k.disputes}`:""}</text>
       <g class="seqbadge" data-badge="${id}"></g>
     </g>`;
   };
   let h = `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${muted}"/></marker>
     <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="${v("--coral")}"/></marker></defs>`;
-  // top
+  // top: three streams that create readiness
   h += `<text x="500" y="34" text-anchor="middle" font-size="16" font-weight="600" fill="${ink}" letter-spacing=".5">Потребности рынка и стратегия</text>`;
-  h += `<line x1="500" y1="46" x2="500" y2="72" stroke="${muted}" stroke-width="2"/><line x1="270" y1="72" x2="730" y2="72" stroke="${muted}" stroke-width="2"/>`;
-  h += arrow(270,72,270,106) + arrow(730,72,730,106);
+  h += `<line x1="500" y1="46" x2="500" y2="72" stroke="${muted}" stroke-width="2"/><line x1="185" y1="72" x2="805" y2="72" stroke="${muted}" stroke-width="2"/>`;
+  h += arrow(185,72,185,106) + arrow(495,72,495,106) + arrow(805,72,805,106);
   // bracket to gate
-  h += `<path d="M 270 234 V 262 H 730 V 234" fill="none" stroke="${muted}" stroke-width="2"/>` + arrow(500,262,500,296);
+  h += `<path d="M 185 260 V 288 H 805 V 260" fill="none" stroke="${muted}" stroke-width="2"/>` + arrow(500,288,500,316);
   // gate
-  h += `<g class="node" data-node="GATE" tabindex="0" role="button" aria-label="Коммерческая готовность"><rect class="box" x="${NODES.GATE.x}" y="${NODES.GATE.y}" width="${NODES.GATE.w}" height="${NODES.GATE.h}" rx="10" fill="${surf2}" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4"/>
-    <text x="500" y="330" text-anchor="middle" font-size="17" font-weight="700" fill="${ink}" letter-spacing=".5">Коммерческая готовность</text>
-    <text x="500" y="355" text-anchor="middle" font-size="15" fill="${muted}">Продукт + партнёр + контент + запас</text><g class="seqbadge" data-badge="GATE"></g></g>`;
-  h += arrow(500,372,500,406) + arrow(500,524,500,558) + arrow(500,676,500,710) + arrow(500,828,500,862);
+  const G = NODES.GATE;
+  h += `<g class="node" data-node="GATE" tabindex="0" role="button" aria-label="Коммерческая готовность"><rect class="box" x="${G.x}" y="${G.y}" width="${G.w}" height="${G.h}" rx="10" fill="${surf2}" stroke="${ink}" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="500" y="${G.y+30}" text-anchor="middle" font-size="17" font-weight="700" fill="${ink}" letter-spacing=".5">Коммерческая готовность</text>
+    <text x="500" y="${G.y+55}" text-anchor="middle" font-size="15" fill="${muted}">Продукт + партнёр + контент + запас</text><g class="seqbadge" data-badge="GATE"></g></g>`;
+  // gate → two demand streams → VS3 → VS4 / VS6
+  const L = 262, Rr = 727;
+  h += `<line x1="500" y1="${G.y+G.h+2}" x2="500" y2="408" stroke="${muted}" stroke-width="2"/><line x1="${L}" y1="408" x2="${Rr}" y2="408" stroke="${muted}" stroke-width="2"/>`;
+  h += arrow(L,408,L,426) + arrow(Rr,408,Rr,426);
+  h += arrow(L,556,L,590) + arrow(Rr,556,Rr,590);
+  h += arrow(L,708,L,742) + arrow(Rr,708,Rr,742);
+  h += `<text x="${L-10}" y="404" text-anchor="end" font-size="12" fill="${faint}">клиентский цикл</text><text x="${Rr+10}" y="404" text-anchor="start" font-size="12" fill="${faint}">партнёрский цикл</text>`;
   // repeat & feedback
   const F=NODES.FB;
+  h += `<path d="M ${L} 872 V 888 H ${Rr} V 872" fill="none" stroke="${muted}" stroke-width="2"/>` + arrow(500,888,500,F.y-4);
   h += `<rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" rx="22" fill="${surf2}" stroke="${line}"/><text x="500" y="${F.y+28}" text-anchor="middle" font-size="16" font-weight="600" fill="${ink}" letter-spacing=".5">Повторная покупка и обратная связь</text>`;
-  h += arrow(500,912,500,946);
+  h += arrow(500,F.y+F.h+2,500,990);
   // targets row
   TARGETS.forEach((id,i)=>{
     const n=NODES["T_"+id], isVS=!id.startsWith("X_"), c=isVS?col(id):muted;
-    h += `<g class="xc${isVS?" tnode":""}" data-x="T_${id}" ${isVS?`data-go="${id}" role="button" tabindex="0" style="cursor:pointer"`:""}><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${isVS?surf:surf2}" stroke="${c}" stroke-width="${isVS?2:1}" ${isVS?"":'stroke-dasharray="4 3"'}/><text x="${n.x+n.w/2}" y="${n.y+26}" text-anchor="middle" font-size="${isVS?15:13}" font-weight="${isVS?700:400}" fill="${isVS?c:ink}">${isVS?id:TLABEL[id]}</text></g>`;
+    h += `<g class="xc${isVS?" tnode":""}" data-x="T_${id}" ${isVS?`data-go="${id}" role="button" tabindex="0" style="cursor:pointer"`:""}><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="8" fill="${isVS?surf:surf2}" stroke="${c}" stroke-width="${isVS?2:1}" ${isVS?"":'stroke-dasharray="4 3"'}/><text x="${n.x+n.w/2}" y="${n.y+25}" text-anchor="middle" font-size="${isVS?14:11}" font-weight="${isVS?700:400}" fill="${isVS?c:ink}">${tLabel(id)}</text></g>`;
   });
-  h += `<line x1="60" y1="1004" x2="940" y2="1004" stroke="${line}"/><text x="500" y="1024" text-anchor="middle" font-size="13" fill="${faint}">обратная связь возвращается во все потоки и сквозные механизмы</text>`;
-  // run-mode loop to VS2
-  h += `<g id="loopRun" opacity="0"><path d="M ${F.x} ${F.y+22} H 36 Q 24 ${F.y+22} 24 ${F.y+10} V 478 Q 24 466 36 466 H 56" fill="none" stroke="${col("vs2")}" stroke-width="2.5" marker-end="url(#ahc)"/><text x="16" y="660" font-size="13" fill="${col("vs2")}" transform="rotate(-90 16 660)" text-anchor="middle">повторный VS2</text></g>`;
+  h += `<line x1="40" y1="1048" x2="960" y2="1048" stroke="${line}"/><text x="500" y="1068" text-anchor="middle" font-size="13" fill="${faint}">обратная связь возвращается во все потоки и сквозные механизмы</text>`;
+  // run-mode loop to VS2C
+  h += `<g id="loopRun" opacity="0"><path d="M ${F.x} ${F.y+22} H 30 Q 18 ${F.y+22} 18 ${F.y+10} V 504 Q 18 492 30 492 H 36" fill="none" stroke="${col("vs2c")}" stroke-width="2.5" marker-end="url(#ahc)"/><text x="12" y="700" font-size="13" fill="${col("vs2c")}" transform="rotate(-90 12 700)" text-anchor="middle">повторный VS2C</text></g>`;
   h += `<g id="fbLayer"></g>`;
-  h += ["VS1","VS5","VS2","VS3","VS4"].map(node).join("");
+  h += ["VS1","VS5","VS7","VS2C","VS2","VS3","VS4","VS6"].map(node).join("");
   svg.innerHTML = h;
   const bindGo = (el,id)=>{ const go=()=>{ if(id==="GATE"){ toggleGate(true); return; } currentStream=id; hlFn=""; setView("stream"); }; el.onclick=go; el.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } }; };
   svg.querySelectorAll(".node").forEach(g=>bindGo(g,g.dataset.node));
   svg.querySelectorAll("[data-go]").forEach(g=>bindGo(g,g.dataset.go));
   applyMode();
-  $("#fbList").innerHTML = FEEDBACK.map((f,i)=>`<button class="fb" data-fb="${i}"><span><b>${esc(f[0])}</b><small>из ${f[1]}</small></span><span>${esc(f[3])}<small>в ${f[2].map(x=>TLABEL[x]||x).join(", ")}</small></span></button>`).join("");
+  $("#fbList").innerHTML = FEEDBACK.map((f,i)=>`<button class="fb" data-fb="${i}"><span><b>${esc(f[0])}</b><small>из ${tLabel(f[1])}</small></span><span>${esc(f[3])}<small>в ${f[2].map(tLabel).join(", ")}</small></span></button>`).join("");
   $("#fbList").querySelectorAll(".fb").forEach(b=>{
     b.onmouseenter = ()=>showFb(+b.dataset.fb); b.onfocus = ()=>showFb(+b.dataset.fb);
     b.onclick = ()=>showFb(+b.dataset.fb, true);
@@ -1715,13 +1747,16 @@ function showFb(i, pin){
   svg.classList.add("focus");
   document.querySelector(`.fb[data-fb="${i}"]`).classList.add("on");
   const src = svg.querySelector(`[data-node="${f[1]}"]`); src && src.classList.add("hl");
-  const S = NODES[f[1]]; const sx = S.x+S.w, sy = S.y+S.h/2;
+  const S = NODES[f[1]]; const leftSide = S.x < 100 && S.x+S.w < 600;
+  const sx = leftSide ? S.x : S.x+S.w, sy = S.y+S.h/2;
   let paths = "";
   f[2].forEach((t,k)=>{
     const el = svg.querySelector(`[data-x="T_${t}"]`); el && el.classList.add("hl");
     const T = NODES["T_"+t]; const tx = T.x+T.w/2, ty = T.y-2;
-    const rx = 975 - k*9;
-    paths += `<path d="M ${sx+2} ${sy} H ${rx-12} Q ${rx} ${sy} ${rx} ${sy+12} V ${T.y-38} Q ${rx} ${T.y-26} ${rx-12} ${T.y-26} H ${tx+10} Q ${tx} ${T.y-26} ${tx} ${T.y-16} V ${ty}" fill="none" stroke="${coral}" stroke-width="2.5" marker-end="url(#ahc)"/>`;
+    const rx = leftSide ? 22 + k*8 : 985 - k*8;
+    paths += leftSide
+      ? `<path d="M ${sx-2} ${sy} H ${rx+12} Q ${rx} ${sy} ${rx} ${sy+12} V ${T.y-38} Q ${rx} ${T.y-26} ${rx+12} ${T.y-26} H ${tx-10} Q ${tx} ${T.y-26} ${tx} ${T.y-16} V ${ty}" fill="none" stroke="${coral}" stroke-width="2.5" marker-end="url(#ahc)"/>`
+      : `<path d="M ${sx+2} ${sy} H ${rx-12} Q ${rx} ${sy} ${rx} ${sy+12} V ${T.y-38} Q ${rx} ${T.y-26} ${rx-12} ${T.y-26} H ${tx+10} Q ${tx} ${T.y-26} ${tx} ${T.y-16} V ${ty}" fill="none" stroke="${coral}" stroke-width="2.5" marker-end="url(#ahc)"/>`;
   });
   $("#fbLayer").innerHTML = paths;
 }
@@ -1729,7 +1764,7 @@ function toggleGate(show){ const b=$("#gateBox"); b.hidden = show===undefined ? 
 function applyMode(){
   document.querySelectorAll("#modeSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===mapMode));
   const svg=$("#mapSvg"); const cs=getComputedStyle(document.documentElement); const navy=cs.getPropertyValue("--navy").trim();
-  const order = mapMode==="launch" ? {VS1:"1",VS5:"2",GATE:"3",VS2:"4",VS3:"5",VS4:"6"} : {VS1:"∞",VS5:"∞",VS2:"1",VS3:"2",VS4:"3"};
+  const order = mapMode==="launch" ? {VS1:"1",VS5:"2",VS7:"2",GATE:"3",VS2C:"4",VS2:"4",VS3:"5",VS4:"6",VS6:"6"} : {VS1:"∞",VS5:"∞",VS7:"∞",VS2C:"1",VS2:"1",VS3:"2",VS4:"3",VS6:"3"};
   svg.querySelectorAll(".seqbadge").forEach(g=>{
     const id=g.dataset.badge; const t=order[id]; if(!t){ g.innerHTML=""; return; }
     const n = NODES[id];
@@ -1737,8 +1772,8 @@ function applyMode(){
   });
   const loop = $("#loopRun"); if(loop) loop.setAttribute("opacity", mapMode==="run"?"1":"0");
   $("#seqLine").textContent = mapMode==="launch"
-    ? "Запуск нового продукта: потребность рынка → VS1 продуктовая концепция → подключение VS5, подготовка партнёров → коммерческая готовность → VS2 спрос → VS3 первые заказы → VS4 сопровождение первых клиентов → анализ результатов → корректировка VS1 и VS5 → масштабирование."
-    : "Действующий бизнес: VS1 и VS5 работают постоянно, клиентский цикл VS2 → VS3 → VS4 замыкается повторным VS2, а обратная связь идёт в продукт, сеть и supply chain. Единой стартовой точки нет.";
+    ? "Запуск нового продукта: потребность рынка → VS1 продуктовая концепция → VS5 подготовка партнёров и VS7 брендовые материалы → коммерческая готовность → VS2C спрос потребителя и VS2D работа дистрибьюторов → VS3 первые заказы → VS4 сопровождение клиентов и VS6 сопровождение партнёров → анализ результатов → корректировка VS1, VS5 и VS7 → масштабирование."
+    : "Действующий бизнес: VS1, VS5 и VS7 работают постоянно. Клиентский цикл VS2C → VS3 → VS4 замыкается повторной покупкой: без изменений — сразу в VS3, новая потребность — в VS2C. Партнёрский цикл VS2D → VS3 → VS6: лидеры приходят из VS5, начисления, признание и работа с лидерами — в VS6. Обратная связь идёт в продукт, сеть и supply chain.";
 }
 
 /* ---------------- CHAIN ---------------- */
@@ -1765,7 +1800,7 @@ function chevs(s){
   }).join("")}</ol>`;
 }
 function band(s){
-  return `<button class="band" style="--c:${s.c}" data-band="${s.id}"><span class="bc">${s.id}</span> ${esc(s.name)}<span class="team" style="--c:${s.c};background:${s.c}">${s.team}</span></button>`;
+  return `<button class="band" style="--c:${s.c}" data-band="${s.id}"><span class="bc">${s.code}</span> ${esc(s.name)}<span class="team" style="--c:${s.c};background:${s.c}">${esc(s.team)}</span></button>`;
 }
 function renderChain(){
   const sel = $("#chainHl"); sel.value = chainHl;
@@ -1775,7 +1810,7 @@ function renderChain(){
   $("#chainOwner").checked = chainOwner;
   const S = SMAP;
   const cs = $("#chainStream");
-  cs.innerHTML = `<option value="">Все потоки</option>` + STREAMS.map(s=>`<option value="${s.id}" ${s.id===chainStream?"selected":""}>${s.id} · ${esc(s.team)}</option>`).join("");
+  cs.innerHTML = `<option value="">Все потоки</option>` + STREAMS.map(s=>`<option value="${s.id}" ${s.id===chainStream?"selected":""}>${s.code} · ${esc(s.team)}</option>`).join("");
   if(chainStream && SMAP[chainStream]){
     const s = SMAP[chainStream]; const k = streamStats(s);
     const cnt = s.steps.filter(chainMatch).length;
@@ -1785,13 +1820,15 @@ function renderChain(){
   }
   const count = ALLSTEPS.filter(chainMatch).length;
   let html = `<p class="faint" id="chainCount" style="font-size:13px;margin:-10px 0 18px">${chainHl==="none"?"":`Выделено шагов: ${count} из ${ALLSTEPS.length}`}</p>`;
+  const row = id=>`<div style="margin-bottom:18px">${band(S[id])}${chevs(S[id])}</div>`;
+  const cols = (a,b,la,lb)=>`<div class="chain-cols">${[[a,la],[b,lb]].map(([id,l])=>`<div>${l?`<p class="cycle-tag">${l}</p>`:""}${band(S[id])}${chevs(S[id])}</div>`).join("")}</div>`;
   html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 1.</b> Создать готовность</span>
-    <div class="chain-cols"><div>${band(S.VS1)}${chevs(S.VS1)}</div><div>${band(S.VS5)}${chevs(S.VS5)}</div></div></div>`;
+    ${cols("VS1","VS5")}<div style="margin-top:18px">${band(S.VS7)}${chevs(S.VS7)}</div></div>`;
   html += `<div class="gate-band" role="button" tabindex="0" data-gate><b>Коммерческая готовность</b><span class="muted">Продукт + партнёр + контент + запас</span></div>`;
   html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 2.</b> Реализовать ценность</span>
-    ${["VS2","VS3","VS4"].map(id=>`<div style="margin-bottom:18px">${band(S[id])}${chevs(S[id])}</div>`).join("")}</div>`;
+    ${cols("VS2C","VS2","Клиентский цикл","Партнёрский цикл")}<div style="margin:18px 0">${band(S.VS3)}${chevs(S.VS3)}</div>${cols("VS4","VS6")}</div>`;
   html += `<div class="chain-frame"><span class="chain-tag"><b>Уровень 3.</b> Обновить систему</span>
-    <div class="fb-band"><span>Повторная покупка и обратная связь возвращаются в</span>${["VS1 продукт","VS2 спрос","VS4 сопровождение","VS5 обучение партнёров","Quality","Supply Chain","Compensation"].map(x=>`<span class="pill">${x}</span>`).join("")}</div></div>`;
+    <div class="fb-band"><span>Повторная покупка и обратная связь возвращаются в</span>${["VS1 продукт","VS2C спрос","VS4 сопровождение","VS5 обучение партнёров","VS6 партнёрский бизнес","VS7 бренд","Quality","Supply Chain","Compensation"].map(x=>`<span class="pill">${x}</span>`).join("")}</div></div>`;
   $("#chainBody").innerHTML = html;
 }
 
@@ -1802,7 +1839,7 @@ function fnInvolvement(fid){
 }
 function renderFunctions(){
   const fns = allFns();
-  let rows = `<thead><tr><th>Функция</th>${STREAMS.map(s=>`<th style="color:${s.c}">${s.id}</th>`).join("")}</tr></thead><tbody>`;
+  let rows = `<thead><tr><th>Функция</th>${STREAMS.map(s=>`<th style="color:${s.c}">${s.code}</th>`).join("")}</tr></thead><tbody>`;
   let grp = "";
   fns.forEach(f=>{
     if(f.group!==grp){ grp=f.group; rows += `<tr class="grp"><td colspan="6">${esc(grp)}</td></tr>`; }
@@ -1852,7 +1889,7 @@ function renderDict(){
   const rows = sortFnRows(FN_ROWS), usage = fnUsage();
   const groups = [...new Set(rows.map(x=>x.grp))];
   $("#dictGroups").innerHTML = groups.map(g=>`<option value="${esc(g)}">`).join("");
-  let html = `<table class="dict"><thead><tr><th>Название</th><th>English</th><th>Группа</th><th>Тип (анкета)</th><th>Обоснование типа</th><th style="text-align:center">На шагах</th><th></th></tr></thead><tbody>`;
+  let html = `<table class="dict"><thead><tr><th>Название</th><th>English</th><th>Группа</th><th style="text-align:center">На шагах</th><th></th></tr></thead><tbody>`;
   let grp = null;
   const active = rows.filter(x=>x.active!==false), hidden = rows.filter(x=>x.active===false);
   const row = (x, i, list)=>{
@@ -1861,21 +1898,19 @@ function renderDict(){
       <td><input data-dk="name" value="${esc(x.name)}" aria-label="Название" maxlength="90"></td>
       <td><input data-dk="name_en" value="${esc(x.name_en||"")}" aria-label="English" maxlength="90"></td>
       <td><input data-dk="grp" value="${esc(x.grp)}" list="dictGroups" aria-label="Группа" maxlength="60"></td>
-      <td style="min-width:150px">${fnTypeTag(x.id)}<select data-dk="fn_type" aria-label="Тип функции" style="width:calc(100% - 14px)"><option value="">не определён</option>${Object.keys(FN_TYPES).map(k=>`<option value="${k}" ${x.fn_type===k?"selected":""}>${FN_TYPES[k][0]}</option>`).join("")}</select></td>
-      <td><input data-dk="fn_type_note" value="${esc(x.fn_type_note||"")}" aria-label="Обоснование типа" maxlength="400" placeholder="из анкеты"></td>
       <td class="num">${n}</td>
       <td class="acts">${x.active===false ? `<button class="btn" data-dshow="${x.id}">Вернуть</button>` :
         `<button class="btn" data-dmv="-1" data-did="${x.id}" ${k<=0?"disabled":""} aria-label="Выше">↑</button> <button class="btn" data-dmv="1" data-did="${x.id}" ${k>=sib.length-1?"disabled":""} aria-label="Ниже">↓</button> <button class="btn" data-dhide="${x.id}" ${n?`disabled title="Функция стоит на ${n} шаг., сначала уберите её с шагов"`:""}>Скрыть</button>`}</td></tr>`;
   };
-  active.forEach((x,i)=>{ if(x.grp!==grp){ grp = x.grp; html += `<tr class="grp"><td colspan="7">${esc(grp)}</td></tr>`; } html += row(x,i,active); });
-  if(hidden.length){ html += `<tr class="grp"><td colspan="7">Скрытые функции: не предлагаются при выборе на шагах</td></tr>`; hidden.forEach((x,i)=>{ html += row(x,i,hidden); }); }
+  active.forEach((x,i)=>{ if(x.grp!==grp){ grp = x.grp; html += `<tr class="grp"><td colspan="5">${esc(grp)}</td></tr>`; } html += row(x,i,active); });
+  if(hidden.length){ html += `<tr class="grp"><td colspan="5">Скрытые функции: не предлагаются при выборе на шагах</td></tr>`; hidden.forEach((x,i)=>{ html += row(x,i,hidden); }); }
   html += `</tbody></table>`;
   $("#dictBody").innerHTML = html;
-  $("#dictBody").querySelectorAll("input[data-dk],select[data-dk]").forEach(inp=>{
+  $("#dictBody").querySelectorAll("input[data-dk]").forEach(inp=>{
     inp.onchange = ()=>{
       const fid = inp.closest("tr").dataset.fid, key = inp.dataset.dk, val = inp.value.trim(), cur = FN_ROWS.find(x=>x.id===fid);
       if(!cur || (cur[key]||"")===val) return;
-      if(key!=="name_en" && key!=="fn_type" && key!=="fn_type_note" && !val){ toast("Поле не может быть пустым"); inp.value = cur[key]; return; }
+      if(key!=="name_en" && !val){ toast("Поле не может быть пустым"); inp.value = cur[key]; return; }
       if(key==="name" && FN_ROWS.some(x=>x.id!==fid && x.name.trim().toLowerCase()===val.toLowerCase())){ toast("Функция с таким названием уже есть"); inp.value = cur.name; return; }
       const ch = {id:fid}; ch[key] = val;
       if(key==="grp"){ const inGrp = FN_ROWS.filter(x=>x.grp===val); if(inGrp.length) ch.sort = Math.max(...inGrp.map(x=>x.sort)) + 1; }
@@ -1915,257 +1950,9 @@ async function exportCsv(){
   if(!dlCap) return;
   const q = v=>`"${String(v||"").replace(/"/g,'""')}"`;
   const rows = [["Поток","Код","Шаг","Статус","Владелец","Помощники","Претенденты","Метрика","Цель","Закреплено до","Сменщик","Условие смены","Заметка"].map(tr)];
-  ALLSTEPS.forEach(st=>{ const d=getDoc(st.code); rows.push([st.stream.id+" "+st.stream.name, st.disp, st.name, tr(STATUS_TXT[status(st.code)]), fnName(ownerOf(d)), byRole(d,"helper").map(fnName).join(", "), byRole(d,"claimant").map(fnName).join(", "), d.metric, d.target, d.until, d.successor?fnName(d.successor):"", d.rule, d.note]); });
+  ALLSTEPS.forEach(st=>{ const d=getDoc(st.code); rows.push([st.stream.code+" "+st.stream.name, st.disp, st.name, tr(STATUS_TXT[status(st.code)]), fnName(ownerOf(d)), byRole(d,"helper").map(fnName).join(", "), byRole(d,"claimant").map(fnName).join(", "), d.metric, d.target, d.until, d.successor?fnName(d.successor):"", d.rule, d.note]); });
   const csv = "\ufeff" + rows.map(r=>r.map(q).join(";")).join("\r\n");
   try{ await dlCap.save({filename:`роли_в_потоках_${today()}.csv`, data:new Blob([csv],{type:"text/csv"})}); }
-  catch(e){ toast("Файл не сохранён"); }
-}
-
-/* ---------------- МАТРИЦА ОТВЕТСТВЕННОСТИ ----------------
-   Поток → шаги → владелец / помощники / претенденты / метрика.
-   Два вида: «По шагам» (список) и «Сетка» (шаг × функция). Правки идут через setRole / mutate,
-   то есть в те же таблицы vsN_roles / vsN_steps. Выгрузка в Excel — exportXlsx(). */
-const FN_TYPES = {income:["Центр дохода","зелёный","#20927B","D6E9B4"], service:["Центр сервиса","жёлтый","#C1905C","FBE7C6"], expert:["Центр экспертизы","красный","#B8325A","F6DCE4"]};
-const ROLE_LETTER = {owner:"В", helper:"П", claimant:"Пр", none:"У"};
-const ROLE_FULL = {owner:"Владелец", helper:"Помощник", claimant:"Претендент", none:"Участвует без роли"};
-let raciStream = "all", raciMode = "list", raciGaps = false;
-const raciExtra = {};   // sid -> [fid] колонки, добавленные в сетку до назначения роли
-function fnRow(id){ initFnRows(); return FN_ROWS.find(r=>r.id===id) || null; }
-function fnTypeOf(id){ const x = fnRow(id); return x && x.fn_type ? x.fn_type : ""; }
-function fnTypeTag(id){ const t = fnTypeOf(id); return t ? `<i class="ftype" style="--ft:${FN_TYPES[t][2]}" title="${FN_TYPES[t][0]} (анкета)"></i>` : ""; }
-function fnOrder(){ initFnRows(); const m = {}; sortFnRows(FN_ROWS).forEach((x,i)=>m[x.id]=i); return m; }
-function raciStreams(){ return raciStream==="all" ? STREAMS : STREAMS.filter(s=>s.id===raciStream); }
-function stepGap(code){
-  const d = getDoc(code), o = ownerOf(d), st = status(code);
-  if(st==="dispute") return "Спор за владение";
-  if(!o) return "Нет владельца";
-  if(!d.metric) return "Нет метрики владельца";
-  if(!d.target) return "Нет целевого значения";
-  return "";
-}
-function raciChip(code, fid, role, ed){
-  const cls = role==="none" ? "member" : role;
-  const inner = `${fnTypeTag(fid)}${esc(fnName(fid))}`;
-  return ed ? `<button type="button" class="chip ${cls} rchip" data-menu="${fid}" data-code="${code}" title="Сменить роль">${inner}</button>`
-            : `<span class="chip ${cls} rchip">${inner}</span>`;
-}
-function raciAdd(code, role, label){ return `<span class="raci-add" data-raciwrap="${code}|${role}"><button type="button" class="linkbtn" data-raciadd="${code}|${role}">${label}</button></span>`; }
-function renderRaci(){
-  const sw = $("#raciStreamSeg"); if(!sw) return;
-  sw.innerHTML = [["all","Все потоки"]].concat(STREAMS.map(s=>[s.id, s.id+" "+s.short])).map(([v,t])=>`<button type="button" data-rs="${v}" aria-pressed="${raciStream===v}">${esc(t)}</button>`).join("");
-  document.querySelectorAll("#raciModeSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.rm===raciMode));
-  $("#raciGaps").checked = raciGaps;
-  const list = raciStreams(); const all = list.flatMap(s=>s.steps);
-  const nOwn = all.filter(x=>ownerOf(getDoc(x.code))).length, nDis = all.filter(x=>status(x.code)==="dispute").length;
-  const nMet = all.filter(x=>{ const d=getDoc(x.code); return ownerOf(d) && d.metric; }).length;
-  const pct = (a,b)=>b?Math.round(a*100/b):0;
-  $("#raciSum").innerHTML = `
-    <div class="rs"><b>${all.length}</b><span>шагов</span></div>
-    <div class="rs"><b>${nOwn}</b><span>с владельцем · ${pct(nOwn,all.length)}%</span><i style="--p:${pct(nOwn,all.length)}%"></i></div>
-    <div class="rs"><b>${nMet}</b><span>владелец с метрикой · ${pct(nMet,all.length)}%</span><i style="--p:${pct(nMet,all.length)}%"></i></div>
-    <div class="rs ${nDis?"alert":""}"><b>${nDis}</b><span>споров на дорешение</span></div>`;
-  let h = "";
-  list.forEach(s=>{
-    const steps = raciGaps ? s.steps.filter(x=>stepGap(x.code)) : s.steps;
-    const ed = canEdit(s.id);
-    const own = s.steps.filter(x=>ownerOf(getDoc(x.code))).length;
-    h += `<section class="raci-block" style="--c:${s.c}">
-      <header class="raci-h"><span class="rid">${s.id}</span><span class="rname">${esc(s.name)}</span><span class="rteam">${esc(s.team)}</span>
-        <span class="rstat">владельцы ${own}/${s.steps.length}</span></header>`;
-    if(!steps.length){ h += `<p class="raci-empty">${raciGaps?"Пробелов нет: у всех шагов есть владелец, метрика и цель.":"В потоке нет шагов."}</p></section>`; return; }
-    h += raciMode==="grid" ? raciGrid(s, steps, ed) : raciList(s, steps, ed);
-    h += `</section>`;
-  });
-  $("#raciBody").innerHTML = h;
-}
-function raciList(s, steps, ed){
-  let h = `<div class="raci-wrap"><table class="raci"><thead><tr><th class="n">№</th><th>Шаг и результат</th><th>Владелец</th><th>Помощники</th><th>Претенденты</th><th>Метрика владельца</th><th>Статус</th></tr></thead><tbody>`;
-  steps.forEach(st=>{
-    const d = getDoc(st.code), o = ownerOf(d), stt = status(st.code), gap = stepGap(st.code);
-    const helpers = byRole(d,"helper"), cl = byRole(d,"claimant");
-    const idle = memberList(st.code, d).filter(f=>!d.fns[f] || d.fns[f]==="none");
-    const k = kpiParts(d);
-    h += `<tr class="${stt}">
-      <td class="n">${st.disp.split(".")[1]}</td>
-      <td class="stp"><button type="button" class="linkbtn strong" data-open-step="${st.code}">${esc(st.name)}</button>${st.result?`<div class="res">${esc(st.result)}</div>`:""}</td>
-      <td>${o?raciChip(st.code,o,"owner",ed):(ed?raciAdd(st.code,"owner","+ назначить"):'<span class="faint">нет</span>')}</td>
-      <td>${helpers.map(f=>raciChip(st.code,f,"helper",ed)).join("")}${idle.length?`<div class="idle">${idle.map(f=>raciChip(st.code,f,"none",ed)).join("")}</div>`:""}${ed?raciAdd(st.code,"helper","+"):""}</td>
-      <td>${cl.map(f=>raciChip(st.code,f,"claimant",ed)).join("")}${ed?raciAdd(st.code,"claimant","+"):""}</td>
-      <td class="met">${k?`<button type="button" class="linkbtn" data-open-step="${st.code}"><b>${esc(k.metric)}</b>${k.target?` → ${esc(k.target)}`:""}</button>${k.until?`<div class="due${k.over?" over":""}">${k.over?"пересмотр просрочен ":"пересмотр до "}${k.until}</div>`:""}${d.successor?`<div class="due">сменщик: ${esc(fnName(d.successor))}</div>`:""}`:(o&&ed?`<button type="button" class="linkbtn warnlink" data-open-step="${st.code}">+ задать метрику</button>`:'<span class="faint">—</span>')}</td>
-      <td><span class="badge ${stt}">${STATUS_TXT[stt]}</span>${gap&&gap!==STATUS_TXT[stt]&&stt!=="dispute"&&stt!=="empty"?`<div class="gapn">${gap}</div>`:""}</td></tr>`;
-  });
-  return h + `</tbody></table></div>`;
-}
-function raciGrid(s, steps, ed){
-  const ord = fnOrder();
-  const set = new Set(raciExtra[s.id]||[]);
-  s.steps.forEach(st=>memberList(st.code).forEach(f=>set.add(f)));
-  const fns = [...set].filter(f=>fnRow(f)).sort((a,b)=>(ord[a]??999)-(ord[b]??999));
-  const addOpts = allFns().filter(f=>!set.has(f.id));
-  let h = `<div class="raci-wrap"><table class="raci rgrid"><thead><tr><th class="n">№</th><th class="gstep">Шаг</th>${fns.map(f=>`<th class="vf"><span>${fnTypeTag(f)}${esc(fnName(f))}</span></th>`).join("")}<th class="gmet">Метрика владельца</th></tr></thead><tbody>`;
-  steps.forEach(st=>{
-    const d = getDoc(st.code), k = kpiParts(d), mem = memberList(st.code, d);
-    h += `<tr class="${status(st.code)}"><td class="n">${st.disp.split(".")[1]}</td><td class="gstep"><button type="button" class="linkbtn" data-open-step="${st.code}">${esc(st.name)}</button></td>`;
-    fns.forEach(f=>{
-      const r = d.fns[f] || (mem.includes(f) ? "none" : "");
-      const lab = r ? ROLE_LETTER[r] : "";
-      const title = `${fnName(f)}: ${r?ROLE_FULL[r]:"не участвует"}`;
-      h += ed ? `<td class="gc ${r||"off"}"><button type="button" data-menu="${f}" data-code="${st.code}" title="${esc(title)}">${lab||"·"}</button></td>`
-              : `<td class="gc ${r||"off"}" title="${esc(title)}"><span>${lab}</span></td>`;
-    });
-    h += `<td class="gmet">${k?`<b>${esc(k.metric)}</b>${k.target?` → ${esc(k.target)}`:""}`:'<span class="faint">—</span>'}</td></tr>`;
-  });
-  h += `</tbody></table></div>`;
-  if(ed && addOpts.length){
-    let grp = "", o = `<option value="">+ Колонка: добавить функцию в сетку…</option>`;
-    addOpts.forEach(f=>{ if(f.group!==grp){ if(grp) o+="</optgroup>"; grp=f.group; o+=`<optgroup label="${esc(grp)}">`; } o+=`<option value="${f.id}">${esc(f.name)}</option>`; });
-    h += `<div class="grid-add"><select data-gridcol="${s.id}" aria-label="Добавить функцию в сетку">${o}</optgroup></select><span class="faint">В ячейке выберите роль. Функция без роли ни на одном шаге исчезнет из сетки после обновления.</span></div>`;
-  }
-  return h;
-}
-function showRaciAdd(code, role){
-  const wrap = document.querySelector(`[data-raciwrap="${code}|${role}"]`); if(!wrap) return;
-  const d = getDoc(code);
-  const fns = allFns().filter(f=>d.fns[f.id]!==role);
-  let grp = "", opts = `<option value="">Выберите функцию…</option>`;
-  fns.forEach(f=>{ if(f.group!==grp){ if(grp) opts+="</optgroup>"; grp=f.group; opts+=`<optgroup label="${esc(grp)}">`; } opts+=`<option value="${f.id}">${esc(f.name)}</option>`; });
-  wrap.innerHTML = `<select class="addsel" aria-label="${ROLE_FULL[role]}">${opts}</optgroup></select>`;
-  const sel = wrap.querySelector("select"); sel.focus();
-  sel.onchange = ()=>{ if(sel.value) setRole(code, sel.value, role); };
-  sel.onblur = ()=>{ setTimeout(()=>{ if(document.activeElement!==sel && curView()==="raci") renderRaci(); }, 150); };
-}
-
-/* ---------------- ВЫГРУЗКА В EXCEL ---------------- */
-let excelLib = null;
-function loadExcel(){
-  if(window.ExcelJS) return Promise.resolve(window.ExcelJS);
-  if(excelLib) return excelLib;
-  excelLib = new Promise((res, rej)=>{ const s = document.createElement("script"); s.src = "vendor/exceljs.min.js"; s.onload = ()=>res(window.ExcelJS); s.onerror = ()=>{ excelLib = null; rej(new Error("не загрузилась библиотека Excel")); }; document.head.appendChild(s); });
-  return excelLib;
-}
-const XL = {navy:"FF004643", line:"FFBFD1D0", head:"FFE5ECEC", owner:"FF004643", helper:"FFDEF1FF", claimant:"FFF6DCE4", none:"FFF2F6F6", ok:"FFD6E9B4", warn:"FFFBE7C6"};
-const VSHEX = {VS1:"20927B", VS2:"264FD6", VS3:"C1905C", VS4:"2C1492", VS5:"004643"};
-function xlHead(ws, row){
-  row.eachCell(c=>{ c.font = {bold:true, color:{argb:"FFFFFFFF"}, size:11}; c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:XL.navy}}; c.alignment = {vertical:"middle", wrapText:true}; c.border = {bottom:{style:"thin", color:{argb:XL.line}}}; });
-  row.height = 32;
-}
-function xlBorders(ws){ ws.eachRow({includeEmpty:false}, r=>r.eachCell(c=>{ c.border = Object.assign({}, c.border, {bottom:{style:"hair", color:{argb:XL.line}}}); if(!c.alignment) c.alignment = {vertical:"top", wrapText:true}; })); }
-function typeName(fid){ const t = fnTypeOf(fid); return t ? FN_TYPES[t][0] : ""; }
-async function exportXlsx(){
-  let ExcelJS;
-  try{ toast("Готовлю файл Excel…"); ExcelJS = await loadExcel(); }catch(e){ toast("Не удалось загрузить модуль Excel. Скачиваю CSV"); return exportCsv(); }
-  const wb = new ExcelJS.Workbook(); wb.creator = "Coral Club · Потоки создания ценности"; wb.created = new Date();
-  const dt = new Date().toLocaleDateString("ru-RU");
-  const ord = fnOrder();
-
-  // 1. Матрица по шагам
-  const ws = wb.addWorksheet("Матрица по шагам", {views:[{state:"frozen", ySplit:2, xSplit:4}]});
-  ws.mergeCells("A1:Q1");
-  ws.getCell("A1").value = `Матрица зон ответственности по потокам создания ценности · выгрузка ${dt}`;
-  ws.getCell("A1").font = {bold:true, size:14, color:{argb:XL.navy}}; ws.getRow(1).height = 24;
-  const cols = [["Поток",13],["Команда",13],["№",6],["Шаг",34],["Результат шага",38],["Владелец",26],["Тип владельца (анкета)",16],["Помощники",34],["Претенденты",26],["Участвуют без роли",26],["Метрика владельца",30],["Целевое значение",18],["Пересмотр до",13],["Сменщик",22],["Условие смены",26],["Статус",17],["Пробел / заметка",30]];
-  ws.columns = cols.map(([h,w])=>({width:w}));
-  const hr = ws.getRow(2); hr.values = cols.map(c=>c[0]); xlHead(ws, hr);
-  STREAMS.forEach(s=>s.steps.forEach(st=>{
-    const d = getDoc(st.code), o = ownerOf(d), stt = status(st.code);
-    const idle = memberList(st.code, d).filter(f=>!d.fns[f] || d.fns[f]==="none");
-    const r = ws.addRow([s.id+" "+s.short, s.team, st.disp, st.name, st.result, o?fnName(o):"", o?typeName(o):"",
-      byRole(d,"helper").map(fnName).join("\n"), byRole(d,"claimant").map(fnName).join("\n"), idle.map(fnName).join("\n"),
-      d.metric||"", d.target||"", d.until?new Date(d.until+"T00:00:00"):"", d.successor?fnName(d.successor):"", d.rule||"",
-      STATUS_TXT[stt], [stepGap(st.code), d.note].filter(Boolean).join("\n")]);
-    r.alignment = {vertical:"top", wrapText:true};
-    r.getCell(1).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+VSHEX[s.id]}}; r.getCell(1).font = {bold:true, color:{argb:"FFFFFFFF"}};
-    r.getCell(6).font = {bold:true};
-    if(o && fnTypeOf(o)) r.getCell(7).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+FN_TYPES[fnTypeOf(o)][3]}};
-    r.getCell(13).numFmt = "dd.mm.yyyy";
-    const sf = {dispute:XL.claimant, empty:XL.none, assigned:XL.helper, fixed:XL.ok}[stt];
-    r.getCell(16).fill = {type:"pattern", pattern:"solid", fgColor:{argb:sf}};
-    if(!o) r.getCell(6).fill = {type:"pattern", pattern:"solid", fgColor:{argb:XL.warn}};
-    if(o && !d.metric) r.getCell(11).fill = {type:"pattern", pattern:"solid", fgColor:{argb:XL.warn}};
-  }));
-  ws.autoFilter = {from:{row:2, column:1}, to:{row:2, column:cols.length}};
-  xlBorders(ws);
-
-  // 2. Сетка «шаг × функция»
-  const used = new Set(); ALLSTEPS.forEach(st=>memberList(st.code).forEach(f=>used.add(f)));
-  const fns = [...used].filter(f=>fnRow(f)).sort((a,b)=>(ord[a]??999)-(ord[b]??999));
-  const wg = wb.addWorksheet("Сетка шаг × функция", {views:[{state:"frozen", ySplit:3, xSplit:3}]});
-  wg.getCell("A1").value = "В — владелец · П — помощник · Пр — претендент (спор) · У — участвует без роли";
-  wg.getCell("A1").font = {italic:true, color:{argb:"FF4F7472"}};
-  const g2 = wg.getRow(2), g3 = wg.getRow(3);
-  g3.values = ["Поток","№","Шаг"].concat(fns.map(fnName)).concat(["Метрика владельца","Цель"]);
-  let c0 = 4, prev = null;
-  fns.forEach((f,i)=>{ const grp = fnRow(f).grp; if(grp!==prev){ if(prev!==null && c0 < 4+i) wg.mergeCells(2, c0, 2, 3+i); c0 = 4+i; prev = grp; g2.getCell(4+i).value = grp; } });
-  if(fns.length && c0 < 3+fns.length) wg.mergeCells(2, c0, 2, 3+fns.length);
-  g2.eachCell(c=>{ c.font = {bold:true, size:9, color:{argb:XL.navy}}; c.alignment = {horizontal:"center", vertical:"middle", wrapText:true}; c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:XL.head}}; });
-  g2.height = 30;
-  xlHead(wg, g3); g3.height = 150;
-  fns.forEach((f,i)=>{ const c = g3.getCell(4+i); c.alignment = {textRotation:90, vertical:"bottom", horizontal:"center", wrapText:true};
-    const t = fnTypeOf(f); if(t){ c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+FN_TYPES[t][2].slice(1)}}; } });
-  wg.getColumn(1).width = 9; wg.getColumn(2).width = 6; wg.getColumn(3).width = 36;
-  fns.forEach((f,i)=>wg.getColumn(4+i).width = 5.5);
-  wg.getColumn(4+fns.length).width = 30; wg.getColumn(5+fns.length).width = 16;
-  const RF = {owner:[XL.owner,"FFFFFFFF"], helper:[XL.helper,"FF004643"], claimant:[XL.claimant,"FFB8325A"], none:[XL.none,"FF7FA2A1"]};
-  STREAMS.forEach(s=>s.steps.forEach(st=>{
-    const d = getDoc(st.code), mem = memberList(st.code, d);
-    const vals = fns.map(f=>{ const r = d.fns[f] || (mem.includes(f)?"none":""); return r?ROLE_LETTER[r]:""; });
-    const r = wg.addRow([s.id, st.disp, st.name].concat(vals).concat([d.metric||"", d.target||""]));
-    r.getCell(1).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+VSHEX[s.id]}}; r.getCell(1).font = {bold:true, color:{argb:"FFFFFFFF"}};
-    r.getCell(3).alignment = {wrapText:true, vertical:"middle"};
-    fns.forEach((f,i)=>{ const rr = d.fns[f] || (mem.includes(f)?"none":""); const c = r.getCell(4+i); c.alignment = {horizontal:"center", vertical:"middle"};
-      c.border = {top:{style:"hair",color:{argb:XL.line}}, left:{style:"hair",color:{argb:XL.line}}, bottom:{style:"hair",color:{argb:XL.line}}, right:{style:"hair",color:{argb:XL.line}}};
-      if(rr){ c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:RF[rr][0]}}; c.font = {bold:rr==="owner"||rr==="claimant", color:{argb:RF[rr][1]}}; } });
-  }));
-
-  // 3. Функции × потоки
-  const wf = wb.addWorksheet("Функции × потоки", {views:[{state:"frozen", ySplit:2, xSplit:1}]});
-  const fhead1 = ["Функция","Группа","Тип (анкета)"]; const fhead2 = ["","",""];
-  STREAMS.forEach(s=>{ fhead1.push(s.id+" "+s.short,"",""); fhead2.push("В","П","Пр"); });
-  fhead1.push("Итого","","","Шагов как владелец с метрикой","Владеет шагами"); fhead2.push("В","П","Пр","","");
-  wf.getRow(1).values = fhead1; wf.getRow(2).values = fhead2;
-  STREAMS.forEach((s,i)=>wf.mergeCells(1, 4+i*3, 1, 6+i*3));
-  const tc = 4+STREAMS.length*3; wf.mergeCells(1, tc, 1, tc+2);
-  [1,2,3,tc+3,tc+4].forEach(c=>wf.mergeCells(1,c,2,c));
-  xlHead(wf, wf.getRow(1)); xlHead(wf, wf.getRow(2)); wf.getRow(2).height = 18;
-  STREAMS.forEach((s,i)=>{ wf.getRow(1).getCell(4+i*3).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+VSHEX[s.id]}}; });
-  [1,2,3].forEach(i=>wf.getRow(1).getCell(i).alignment = {vertical:"middle"});
-  wf.getColumn(1).width = 36; wf.getColumn(2).width = 26; wf.getColumn(3).width = 16;
-  for(let c=4;c<tc+3;c++){ wf.getColumn(c).width = 5; wf.getRow(2).getCell(c).alignment = {horizontal:"center"}; }
-  wf.getColumn(tc+3).width = 14; wf.getColumn(tc+4).width = 60;
-  sortFnRows(FN_ROWS.filter(x=>x.active!==false)).forEach(fr=>{
-    const row = [fr.name, fr.grp, fr.fn_type?FN_TYPES[fr.fn_type][0]:""]; const tot = {owner:0, helper:0, claimant:0}; let kpi = 0; const ownList = [];
-    STREAMS.forEach(s=>{ const c = {owner:0, helper:0, claimant:0};
-      s.steps.forEach(st=>{ const d = getDoc(st.code), r = d.fns[fr.id]; if(c[r]!=null){ c[r]++; tot[r]++; } if(r==="owner"){ ownList.push(st.disp); if(d.metric) kpi++; } });
-      row.push(c.owner||"", c.helper||"", c.claimant||""); });
-    row.push(tot.owner||"", tot.helper||"", tot.claimant||"", kpi||"", ownList.join(", "));
-    const r = wf.addRow(row);
-    for(let c=4;c<tc+3;c++){ const cell = r.getCell(c); cell.alignment = {horizontal:"center"}; if(cell.value!==""){ const k = (c-4)%3; cell.fill = {type:"pattern", pattern:"solid", fgColor:{argb:[XL.owner,XL.helper,XL.claimant][k]}}; if(k===0) cell.font = {bold:true, color:{argb:"FFFFFFFF"}}; } }
-    if(fr.fn_type) r.getCell(3).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+FN_TYPES[fr.fn_type][3]}};
-  });
-  xlBorders(wf);
-
-  // 4. Пробелы
-  const wp = wb.addWorksheet("Пробелы", {views:[{state:"frozen", ySplit:1}]});
-  wp.columns = [{header:"Что не так", width:26},{header:"Поток", width:10},{header:"№", width:7},{header:"Шаг", width:40},{header:"Владелец", width:26},{header:"Претенденты", width:34},{header:"Что сделать", width:48}];
-  xlHead(wp, wp.getRow(1));
-  const TODO = {"Спор за владение":"Решить, кто владелец: остальные претенденты станут помощниками", "Нет владельца":"Назначить владельца: чья функция первой почувствует последствия, если результата не будет", "Нет метрики владельца":"Задать метрику, по которой владелец отвечает за шаг", "Нет целевого значения":"Задать целевое значение метрики и дату пересмотра"};
-  STREAMS.forEach(s=>s.steps.forEach(st=>{ const g = stepGap(st.code); if(!g) return; const d = getDoc(st.code), o = ownerOf(d);
-    const r = wp.addRow([g, s.id, st.disp, st.name, o?fnName(o):"", byRole(d,"claimant").map(fnName).join(", "), TODO[g]]);
-    r.getCell(1).fill = {type:"pattern", pattern:"solid", fgColor:{argb: g==="Спор за владение"?XL.claimant:XL.warn}}; }));
-  wp.autoFilter = {from:"A1", to:"G1"}; xlBorders(wp);
-
-  // 5. Справочник функций
-  const wd = wb.addWorksheet("Справочник функций");
-  wd.columns = [{header:"Код", width:12},{header:"Функция", width:40},{header:"English", width:34},{header:"Группа", width:30},{header:"Тип (анкета)", width:18},{header:"Цвет", width:10},{header:"Обоснование типа", width:50},{header:"Добавлена на сессии", width:12},{header:"Активна", width:10}];
-  xlHead(wd, wd.getRow(1));
-  sortFnRows(FN_ROWS).forEach(x=>{ const r = wd.addRow([x.id, x.name, x.name_en||"", x.grp, x.fn_type?FN_TYPES[x.fn_type][0]:"", x.fn_type?FN_TYPES[x.fn_type][1]:"", x.fn_type_note||"", x.is_custom?"да":"", x.active===false?"нет":"да"]);
-    if(x.fn_type) r.getCell(5).fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF"+FN_TYPES[x.fn_type][3]}}; });
-  xlBorders(wd);
-
-  wb.eachSheet(w=>{ w.pageSetup = {paperSize:9, orientation:"landscape", fitToPage:true, fitToWidth:1, fitToHeight:0, margins:{left:0.3, right:0.3, top:0.4, bottom:0.4, header:0.2, footer:0.2}}; });
-  ws.pageSetup.printTitlesRow = "2:2"; wg.pageSetup.printTitlesRow = "2:3"; wf.pageSetup.printTitlesRow = "1:2"; wp.pageSetup.printTitlesRow = "1:1";
-  const buf = await wb.xlsx.writeBuffer();
-  try{ await (dlCap||browserDownloads).save({filename:`Матрица_ответственности_${today()}.xlsx`, data:new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}); toast("Файл Excel скачан"); }
   catch(e){ toast("Файл не сохранён"); }
 }
 
@@ -2179,10 +1966,13 @@ document.addEventListener("click", e=>{
   const dshow = e.target.closest("[data-dshow]"); if(dshow){ const x = FN_ROWS.find(r=>r.id===dshow.dataset.dshow); saveFunctions([{id:x.id, active:true}], `Функция «${x.name}» снова доступна`); return; }
   if(e.target.closest("[data-guide]")){ closeDrawer(); setView("guide"); return; }
   const c = e.target.closest("[data-open-stream]"); if(c){ currentStream=c.dataset.openStream; hlFn=""; setView("stream"); return; }
-  const p = e.target.closest("[data-pick]"); if(p){ currentStream=p.dataset.pick; stepForm=null; confirmDel=null; renderStream(); return; }
+  const p = e.target.closest("[data-pick]"); if(p){ currentStream=p.dataset.pick; stepForm=null; nameEdit=false; confirmDel=null; renderStream(); return; }
   const cv = e.target.closest("[data-chev]"); if(cv){ openDrawer(cv.dataset.chev); return; }
   const bd = e.target.closest("[data-band]"); if(bd){ currentStream = bd.dataset.band; hlFn=""; setView("stream"); return; }
   const gt = e.target.closest("[data-gate]"); if(gt){ setView("map"); toggleGate(true); return; }
+  if(e.target.closest("[data-rename]")){ nameEdit = true; renderStream(); const i = $("#sn-name"); if(i){ i.focus({preventScroll:true}); i.select(); } return; }
+  if(e.target.closest("[data-rename-cancel]")){ nameEdit = false; renderStream(); return; }
+  if(e.target.closest("[data-rename-save]")){ saveStreamName(currentStream, $("#sn-name").value, $("#sn-short").value); return; }
   const em = e.target.closest("[data-emode]"); if(em){ editMode = em.dataset.emode==="edit"; stepForm=null; confirmDel=null; renderStream(); return; }
   const insB = e.target.closest("[data-ins]"); if(insB){ stepForm={mode:"add", pos:+insB.dataset.ins}; confirmDel=null; renderStream(); return; }
   const edB = e.target.closest("[data-edit]"); if(edB){ stepForm={mode:"edit", id:edB.dataset.edit}; confirmDel=null; renderStream(); return; }
@@ -2192,8 +1982,6 @@ document.addEventListener("click", e=>{
   if(e.target.closest("[data-del-no]")){ confirmDel=null; renderStream(); return; }
   const rs = e.target.closest("[data-reset]"); if(rs){ confirmDel="__reset"; renderStream(); return; }
   const rsY = e.target.closest("[data-reset-yes]"); if(rsY){ confirmDel=null; const sid=rsY.dataset.resetYes; mutateSteps(sid, arr=>{ arr.splice(0, arr.length, ...DEFAULTS[sid].map(x=>({id:x.id,name:x.name,content:x.content,result:x.result}))); }, "Шаги возвращены к отраслевой модели"); return; }
-  const os = e.target.closest("[data-open-step]"); if(os){ openDrawer(os.dataset.openStep); return; }
-  const ra = e.target.closest("[data-raciadd]"); if(ra){ const [c, r] = ra.dataset.raciadd.split("|"); showRaciAdd(c, r); return; }
   const mn = e.target.closest("[data-menu]"); if(mn){ e.stopPropagation(); openRoleMenu(mn.dataset.code, mn.dataset.menu, mn); return; }
   if(!e.target.closest("#roleMenu")) closeRoleMenu();
   const rm = e.target.closest("[data-rm]"); if(rm){ removeMember(rm.dataset.code, rm.dataset.rm); return; }
@@ -2204,6 +1992,10 @@ document.addEventListener("click", e=>{
 });
 $("#scrim").onclick = closeDrawer;
 document.addEventListener("keydown", e=>{
+  if(e.target && e.target.closest && e.target.closest("[data-rename-form]")){
+    if(e.key==="Enter"){ e.preventDefault(); saveStreamName(currentStream, $("#sn-name").value, $("#sn-short").value); return; }
+    if(e.key==="Escape"){ nameEdit = false; renderStream(); return; }
+  }
   if(e.key==="Escape"){ if($("#roleMenu").classList.contains("on")) { closeRoleMenu(); return; } if(openStep) closeDrawer(); }
   if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches(".step[data-step]")){ e.preventDefault(); openDrawer(e.target.dataset.step); }
   if((e.key==="Enter"||e.key===" ") && e.target.matches && e.target.matches("[data-chev],[data-gate]")){ e.preventDefault(); e.target.click(); }
@@ -2239,12 +2031,7 @@ function showAddSelect(code){
 document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ mapMode=b.dataset.mode; applyMode(); });
 $("#gateBtn").onclick = ()=>toggleGate();
 document.querySelectorAll("#regSeg button").forEach(b=>b.onclick=()=>{ regFilter=b.dataset.f; renderRegister(); });
-$("#exportBtn").onclick = exportXlsx;
-$("#raciXlsx").onclick = exportXlsx;
-$("#raciModeSeg").onclick = e=>{ const b = e.target.closest("[data-rm]"); if(b){ raciMode = b.dataset.rm; renderRaci(); } };
-$("#raciStreamSeg").onclick = e=>{ const b = e.target.closest("[data-rs]"); if(b){ raciStream = b.dataset.rs; renderRaci(); } };
-$("#raciGaps").onchange = e=>{ raciGaps = e.target.checked; renderRaci(); };
-$("#raciBody").addEventListener("change", e=>{ const g = e.target.closest("[data-gridcol]"); if(g && g.value){ const sid = g.dataset.gridcol; (raciExtra[sid] = raciExtra[sid]||[]).push(g.value); renderRaci(); } });
+$("#exportBtn").onclick = exportCsv;
 $("#chainHl").onchange = e=>{ chainHl = e.target.value; renderChain(); };
 $("#chainFn").onchange = e=>{ chainFnId = e.target.value; renderChain(); };
 $("#chainOwner").onchange = e=>{ chainOwner = e.target.checked; renderChain(); };
