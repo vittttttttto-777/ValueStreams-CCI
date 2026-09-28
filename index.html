@@ -80,6 +80,28 @@ em.acc{font-family:var(--accent); font-style:italic; font-weight:400; font-size:
 .who b{font-weight:500;}
 .who button{border:1px solid #7FA2A1; background:transparent; color:#E5ECEC; padding:4px 10px; font-size:13px; border-radius:0;}
 .who button:hover{background:#013634;}
+/* Заставка стратсессии с паролем */
+body.locked{overflow:hidden;}
+body.locked > :not(#gate){visibility:hidden !important;}
+.gate{position:fixed; inset:0; z-index:200; background:#004643; color:#E5ECEC; display:flex; align-items:center; justify-content:center; padding:24px 16px; overflow:auto;}
+.gate[hidden]{display:none;}
+.gate-in{width:min(560px,100%);}
+.gate-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:44px;}
+.gate-logo svg{height:26px; width:auto; color:#FFFFFF; display:block;}
+.gate-eyebrow{margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#BFD1D0;}
+.gate-title{margin:0 0 14px; font-weight:300; font-size:clamp(34px,6vw,52px); line-height:1.05; letter-spacing:-0.02em; color:#FFFFFF;}
+.gate-title em{font-family:var(--accent); font-style:italic; font-weight:400;}
+.gate-sub{margin:0 0 30px; font-size:16px; line-height:1.5; color:#BFD1D0;}
+.gate-form label{display:block; font-size:13px; color:#BFD1D0; margin-bottom:6px;}
+.gate-row{display:flex; gap:0;}
+.gate-row input{flex:1; min-width:0; font-size:17px; padding:12px 14px; border:1px solid #7FA2A1; border-right:0; background:#013634; color:#FFFFFF; border-radius:0;}
+.gate-row input:focus{outline:2px solid #7FA9D0; outline-offset:0;}
+.gate-row button{padding:12px 22px; font-size:16px; font-weight:500; border:1px solid #E5ECEC; background:#E5ECEC; color:#004643; border-radius:0;}
+.gate-row button:hover{background:#FFFFFF;}
+.gate-row button:disabled{opacity:.6; cursor:wait;}
+.gate-err{min-height:20px; margin:8px 0 6px; font-size:14px; color:#F6A9BE;}
+.gate-note{margin:0; font-size:13px; line-height:1.5; color:#7FA2A1;}
+.gate-rb{position:fixed; left:0; right:0; bottom:0; height:4px;}
 .login-dlg{border:1px solid var(--line); padding:0; width:min(420px, calc(100% - 32px)); background:var(--surface); color:var(--ink); border-radius:0;}
 .login-dlg::backdrop{background:rgba(0,43,41,.55);}
 .login-dlg form{padding:24px;}
@@ -485,7 +507,22 @@ table.matrix td.fnname{cursor:pointer;}
 }
 </style>
 </head>
-<body>
+<body class="locked">
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="gate-in">
+    <div class="gate-top"><span class="gate-logo" id="gateLogo" aria-label="Coral Club"></span><button class="lang-btn" id="gateLang" type="button" data-notr>EN</button></div>
+    <p class="gate-eyebrow">Стратегическая сессия №3 · Сентябрь 2026</p>
+    <h1 class="gate-title" id="gateTitle" data-notr data-en="Value <em>streams</em>">Потоки <em>создания ценности</em></h1>
+    <p class="gate-sub">Кто владелец шага, кто помощник. Рабочее пространство участников стратсессии.</p>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <label for="gatePass">Пароль участника</label>
+      <div class="gate-row"><input id="gatePass" type="password" autocomplete="current-password" required><button type="submit" id="gateGo">Войти</button></div>
+      <p class="gate-err" id="gateErr" role="alert"></p>
+      <p class="gate-note">Пароль выдают организаторы сессии. Интеграторы команд и администратор входят своим паролем.</p>
+    </form>
+  </div>
+  <span class="rainbow gate-rb" aria-hidden="true"></span>
+</div>
 <header class="top">
   <div class="top-in">
     <div class="brand">
@@ -1080,8 +1117,9 @@ const TAB_ADMIN_ONLY = ["functions","register","dict"];   // ролевая ма
 function isAdmin(){ return !sb || !!(me && me.is_admin); }
 function canEdit(sid){ return !sb || !!(me && (me.is_admin || me.stream_id===sid)); }
 function canSeeTab(v){ return !TAB_ADMIN_ONLY.includes(v) || isAdmin(); }
+function isViewer(){ return !me || (!me.is_admin && !me.stream_id); }
 function denyEdit(sid){
-  if(!me) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
+  if(isViewer()) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
   else toast(`Вы можете редактировать только свой поток ${(SMAP[me.stream_id]||{}).code||me.stream_id}`);
 }
 function saveToken(t){ authToken = t || ""; try{ if(t) localStorage.setItem("vs-token", t); else localStorage.removeItem("vs-token"); }catch(e){} }
@@ -1102,7 +1140,9 @@ async function logout(){ try{ if(sb && authToken) await sb.rpc("vs_logout"); }ca
 function renderWho(){
   const w = document.getElementById("who"); if(!w) return;
   if(!sb){ w.innerHTML = ""; return; }
-  w.innerHTML = me ? `<span><b>${esc(me.label)}</b></span><button type="button" id="logoutBtn">Выйти</button>` : `<span>Просмотр</span><button type="button" id="loginBtn">Войти</button>`;
+  w.innerHTML = !me ? `<span>Просмотр</span><button type="button" id="loginBtn">Войти</button>`
+    : isViewer() ? `<span><b>${esc(me.label)}</b></span><button type="button" id="loginBtn" title="Вход интегратора команды или администратора">Войти для правок</button><button type="button" id="logoutBtn">Выйти</button>`
+    : `<span><b>${esc(me.label)}</b></span><button type="button" id="logoutBtn">Выйти</button>`;
 }
 function applyTabAccess(){
   document.querySelectorAll(".tabs button").forEach(b=>{ b.hidden = !canSeeTab(b.dataset.view); });
@@ -1239,28 +1279,49 @@ function scheduleReload(delay){
 function setSync(live, txt){ const s=document.getElementById("sync"); s.classList.toggle("live",live); document.getElementById("syncTxt").textContent=txt; }
 const browserDownloads = { save: async ({filename, data})=>{ const url = URL.createObjectURL(data); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 2000); } };
 function goLocal(msg){ setSync(false, msg||"Локальный режим"); document.getElementById("localNote").classList.add("on"); }
-async function initCaps(){
-  dlCap = browserDownloads; document.getElementById("exportBtn").hidden = false;
-  const cfg = window.APP_CONFIG || {};
-  if(!cfg.supabaseUrl || !cfg.supabaseKey || !window.supabase || !window.supabase.createClient){ loadLocal(); renderAll(); goLocal(); return; }
-  renderAll(); setSync(false, "Подключение к базе…");
-  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}, global:{fetch:(u, o={})=>{ const hd = new Headers(o.headers||{}); if(authToken) hd.set("x-vs-token", authToken); return fetch(u, Object.assign({}, o, {headers:hd})); }}});
-  try{ await loadAll(); await whoami(); }
-  catch(e){ console.error(e); sb = null; loadLocal(); renderAll(); goLocal("Нет связи с базой, локальный режим"); toast("Supabase недоступен: " + (e.message||e)); return; }
+function lockApp(msg){
+  document.body.classList.add("locked"); $("#gate").hidden = false;
+  $("#gateErr").textContent = msg || "";
+  setTimeout(()=>{ const i = $("#gatePass"); if(i) i.focus(); }, 60);
+}
+function unlockApp(){ document.body.classList.remove("locked"); $("#gate").hidden = true; }
+let appStarted = false;
+async function startApp(){
+  try{ await loadAll(); }
+  catch(e){
+    console.error(e);
+    if(/пусты/.test(String(e.message||e))){ saveToken(""); me = null; lockApp("Сессия закончилась, войдите снова"); }
+    else lockApp("Нет связи с базой: " + (e.message||e));
+    return false;
+  }
+  unlockApp();
   document.getElementById("localNote").classList.remove("on");
   setSync(true, "Общая доска, изменения видны всем");
   renderWho(); applyTabAccess();
   if(me && me.stream_id){ currentStream = me.stream_id; chainStream = me.stream_id; }
   renderAll(true);
+  if(appStarted) return true;
+  appStarted = true;
+  // Сами таблицы закрыты паролем, поэтому живое обновление слушает сигнал vs_changes (без данных)
   const ch = sb.channel("vs-sync");
-  ["vs_functions","vs_streams","vs_i18n", ...STREAMS.flatMap(s=>[T(s.id)+"_steps", T(s.id)+"_roles"])].forEach(t=>{
-    ch.on("postgres_changes", {event:"*", schema:"public", table:t}, ()=>scheduleReload());
-  });
+  ch.on("postgres_changes", {event:"*", schema:"public", table:"vs_changes"}, ()=>scheduleReload());
   ch.subscribe(status=>{
     if(status==="SUBSCRIBED") setSync(true, "Общая доска, изменения видны всем");
     if(status==="CHANNEL_ERROR" || status==="TIMED_OUT" || status==="CLOSED") setSync(false, "Нет живой синхронизации, обновите страницу");
   });
-  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden) scheduleReload(0); });
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && me) scheduleReload(0); });
+  return true;
+}
+async function initCaps(){
+  dlCap = browserDownloads; document.getElementById("exportBtn").hidden = false;
+  const lg = document.querySelector("header .logo"); if(lg) $("#gateLogo").appendChild(lg.cloneNode(true));
+  const cfg = window.APP_CONFIG || {};
+  if(!cfg.supabaseUrl || !cfg.supabaseKey || !window.supabase || !window.supabase.createClient){ unlockApp(); loadLocal(); renderAll(); goLocal(); return; }
+  setSync(false, "Подключение к базе…");
+  sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}, global:{fetch:(u, o={})=>{ const hd = new Headers(o.headers||{}); if(authToken) hd.set("x-vs-token", authToken); return fetch(u, Object.assign({}, o, {headers:hd})); }}});
+  try{ await whoami(); }catch(e){ console.error(e); me = null; }
+  if(!me){ lockApp(); return; }
+  await startApp();
 }
 
 /* ---------------- I18N ----------------
@@ -1360,6 +1421,7 @@ function startTranslator(){
 function applyLang(){
   document.documentElement.lang = LANG;
   document.title = LANG==="en" ? "Value Streams · Coral Club" : "Потоки создания ценности · Coral Club";
+  const gl = document.getElementById("gateLang"); if(gl) gl.textContent = LANG==="en" ? "RU" : "EN";
   const b = document.getElementById("langBtn"); if(b){ b.textContent = LANG==="en" ? "RU" : "EN"; b.setAttribute("aria-label", LANG==="en" ? "Переключить на русский" : "Switch to English"); b.dataset.notr = ""; }
   rebuildFnNameMap();
   document.querySelectorAll("[data-en]").forEach(el=>{ if(el.__ruHTML===undefined) el.__ruHTML = el.innerHTML; el.innerHTML = LANG==="en" ? el.dataset.en : el.__ruHTML; });
@@ -1434,7 +1496,7 @@ function renderStream(){
   const s = SMAP[currentStream]; const k = streamStats(s);
   const ro = !canEdit(s.id); if(ro) editMode = false;
   const roNote = !sb ? "" : ro
-    ? (s.origin ? `<div class="ro-note">Просмотр. Поток ${s.code} добавлен из предложения v0.4, команда пока не назначена: редактирует администратор.` : `<div class="ro-note">Просмотр. Редактировать поток ${s.code} может интегратор команды ${esc(s.team)}${me?"":" после входа"}.`) + ` ${me?"":`<button class="help-link" data-login>Войти</button>`}</div>`
+    ? (s.origin ? `<div class="ro-note">Просмотр. Поток ${s.code} добавлен из предложения v0.4, команда пока не назначена: редактирует администратор.` : `<div class="ro-note">Просмотр. Редактировать поток ${s.code} может интегратор команды ${esc(s.team)}${isViewer()?" после входа":""}.`) + ` ${isViewer()?`<button class="help-link" data-login>Войти</button>`:""}</div>`
     : `<div class="ro-note mine">${me&&me.is_admin?"Режим администратора: можно редактировать все потоки.":`Это поток вашей команды: вы можете менять шаги, функции и роли.`} <button class="help-link" data-guide>Что означают роли</button></div>`;
   const fnOpts = `<option value="">Подсветить шаги функции…</option>` + allFns().map(f=>`<option value="${f.id}" ${hlFn===f.id?"selected":""}>${esc(f.name)}</option>`).join("");
   let html = `<div class="profile" style="--c:${s.c}">
@@ -2086,7 +2148,7 @@ async function exportCsv(){
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.addEventListener("click", e=>{
   if(e.target.closest("#loginBtn") || e.target.closest("[data-login]")){ openLogin(); return; }
-  if(e.target.closest("#logoutBtn")){ (async()=>{ await logout(); editMode=false; applyTabAccess(); renderAll(); toast("Вы вышли. Доска открыта для просмотра"); })(); return; }
+  if(e.target.closest("#logoutBtn")){ (async()=>{ await logout(); location.reload(); })(); return; }
   const dmv = e.target.closest("[data-dmv]"); if(dmv){ moveFunction(dmv.dataset.did, +dmv.dataset.dmv); return; }
   const dhide = e.target.closest("[data-dhide]"); if(dhide){ const x = FN_ROWS.find(r=>r.id===dhide.dataset.dhide); saveFunctions([{id:x.id, active:false}], `Функция «${x.name}» скрыта`); return; }
   const dshow = e.target.closest("[data-dshow]"); if(dshow){ const x = FN_ROWS.find(r=>r.id===dshow.dataset.dshow); saveFunctions([{id:x.id, active:true}], `Функция «${x.name}» снова доступна`); return; }
@@ -2178,6 +2240,23 @@ function openLogin(){
   setTimeout(()=>$("#loginPass").focus(), 30);
 }
 $("#loginCancel").onclick = ()=>$("#loginDlg").close();
+$("#gateLang").onclick = ()=>setLang(LANG==="en" ? "ru" : "en");
+$("#gateForm").onsubmit = async e=>{
+  e.preventDefault();
+  const p = $("#gatePass").value; if(!p.trim() || !sb) return;
+  $("#gateGo").disabled = true; $("#gateErr").textContent = "";
+  try{
+    const ok = await login(p);
+    if(!ok){ $("#gateErr").textContent = "Пароль не подошёл. Проверьте раскладку клавиатуры."; $("#gatePass").select(); return; }
+    $("#gatePass").value = "";
+    if(await startApp()){
+      if(me.stream_id){ hlFn = ""; setView("stream"); }
+      else setView("portfolio");
+      toast(me.is_admin ? "Вы вошли как администратор" : `Вы вошли: ${me.label}`);
+    }
+  }catch(err){ $("#gateErr").textContent = "Нет связи с базой: " + (err.message||err); }
+  finally{ $("#gateGo").disabled = false; }
+};
 $("#loginForm").onsubmit = async e=>{
   e.preventDefault();
   const p = $("#loginPass").value; if(!p.trim()) return;

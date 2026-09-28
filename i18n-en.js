@@ -865,7 +865,15 @@ window.I18N_EN = {
 "Решения по корректировке плана бренда": "Decisions on adjusting the brand plan",
 "Выполнение плановых показателей здоровья бренда": "Achievement of planned brand health indicators",
 "После первого цикла": "After the first cycle",
-"Предложение v0.4 (черновик), пересмотр до 15.12.2026. Полномочия: Корректирует план в пределах бюджета. Уровень: Центр — платформа и стандарты; адаптация — регионы. Арбитр: директор по маркетингу; спор — CEO. Также участвуют (нет в справочнике): Маркетинговая аналитика и CDP.": "Proposal v0.4 (draft), review by 15.12.2026. Authority: Adjusts the plan within the budget. Level: Centre — platform and standards; adaptation — regions. Arbiter: marketing director; disputes go to the CEO. Also involved (not in the directory): Marketing Analytics and CDP."
+"Предложение v0.4 (черновик), пересмотр до 15.12.2026. Полномочия: Корректирует план в пределах бюджета. Уровень: Центр — платформа и стандарты; адаптация — регионы. Арбитр: директор по маркетингу; спор — CEO. Также участвуют (нет в справочнике): Маркетинговая аналитика и CDP.": "Proposal v0.4 (draft), review by 15.12.2026. Authority: Adjusts the plan within the budget. Level: Centre — platform and standards; adaptation — regions. Arbiter: marketing director; disputes go to the CEO. Also involved (not in the directory): Marketing Analytics and CDP.",
+"Стратегическая сессия №3 · Сентябрь 2026": "Strategy session #3 · September 2026",
+"Кто владелец шага, кто помощник. Рабочее пространство участников стратсессии.": "Who owns a step, who helps. The workspace for strategy session participants.",
+"Пароль участника": "Participant password",
+"Пароль выдают организаторы сессии. Интеграторы команд и администратор входят своим паролем.": "The session organisers give out the password. Team integrators and the administrator sign in with their own password.",
+"Сессия закончилась, войдите снова": "Your session has expired, please sign in again",
+"Войти для правок": "Sign in to edit",
+"Вход интегратора команды или администратора": "Sign in as a team integrator or the administrator",
+"Участник стратсессии": "Strategy session participant"
 },
 "patterns": [
 [
