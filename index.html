@@ -475,6 +475,61 @@ table.matrix td.fnname{cursor:pointer;}
 
 /* ---------- Печать: только текущий раздел, светлая тема, альбомный A4 ---------- */
 #printHead{display:none;}
+
+/* ---------- Комментарии ---------- */
+:root{ --cmt:#B07A00; --cmt-soft:#FFF1C7; --cmt-ink:#5C3F00; }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --cmt:#E6C766; --cmt-soft:#3F3514; --cmt-ink:#F4E3A6; } }
+:root[data-theme="dark"]{ --cmt:#E6C766; --cmt-soft:#3F3514; --cmt-ink:#F4E3A6; }
+.cbadge{display:inline-flex; align-items:center; gap:3px; margin-left:6px; padding:1px 6px; font-size:11.5px; font-weight:600; line-height:1.5; background:#F2C94C; color:#3A2A00; vertical-align:1px; font-variant-numeric:tabular-nums;}
+.cbadge svg{width:11px; height:11px; flex:none;}
+.tabs button.has-cmt{color:#FFFFFF;}
+.vcard.has-cmt, .step.has-cmt{box-shadow:inset 3px 0 0 #F2C94C, var(--shadow);}
+.step .cmark, .vcard .cmark{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--cmt-ink); background:var(--cmt-soft); padding:2px 7px; margin-top:6px; width:max-content;}
+.step .cmark svg, .vcard .cmark svg, .cmt-fab svg, .d-cmt svg{width:13px; height:13px; flex:none;}
+.cmt-banner{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--cmt-soft); color:var(--cmt-ink); padding:10px 14px; margin:0 0 18px; font-size:14px; border-left:3px solid #F2C94C;}
+.cmt-banner button{border:1px solid currentColor; background:transparent; color:inherit; padding:4px 10px; font-size:13px; border-radius:0;}
+.cmt-fab{position:fixed; right:calc(20px + env(safe-area-inset-right,0px)); bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:55; display:inline-flex; align-items:center; gap:8px; padding:12px 18px; font-size:15px; font-weight:500; border:0; border-radius:0; background:#F2C94C; color:#3A2A00; box-shadow:0 6px 18px rgba(0,43,41,.25);}
+.cmt-fab:hover{background:#F5D56E;}
+.cmt-fab[hidden]{display:none;}
+body:has(.drawer.on) .cmt-fab, body:has(.cmt-dlg[open]) .cmt-fab{display:none;}
+@media (max-width:640px){ .cmt-fab{padding:12px 14px;} }
+.d-cmt{display:inline-flex; align-items:center; gap:6px;}
+.cmt-dlg{border:1px solid var(--line); padding:0; width:min(560px, calc(100% - 32px)); max-height:calc(100vh - 32px); background:var(--surface); color:var(--ink); border-radius:0;}
+.cmt-dlg::backdrop{background:rgba(0,43,41,.55);}
+.cmt-dlg form{padding:24px;}
+.cmt-dlg h3{font-weight:300; font-size:24px; letter-spacing:-0.02em; margin:0 0 6px;}
+.cmt-dlg .err{color:var(--coral); font-size:13px; min-height:18px; margin:2px 0 8px;}
+.cmt-dlg .count{font-size:12px; color:var(--faint); text-align:right; margin-top:-6px;}
+.cmt-mine{margin-top:18px; border-top:1px solid var(--line); padding-top:12px;}
+.cmt-mine h4{margin:0 0 8px; font-size:13px; font-weight:600; color:var(--muted);}
+.cmt-mine ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; max-height:220px; overflow:auto;}
+.cmt-mine li{background:var(--surface-2); padding:8px 10px; font-size:13.5px;}
+.cmt-mine li small{display:block; color:var(--faint); font-size:12px; margin-bottom:2px;}
+.cmt-mine li p{margin:0; white-space:pre-wrap;}
+.gate-name[hidden], .gate-form[hidden]{display:none;}
+.gate-hello{margin:0 0 18px; font-size:15px; color:#E5ECEC;}
+.cm-head{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+.cm-stats{display:flex; gap:22px; margin:0 0 16px; font-variant-numeric:tabular-nums;}
+.cm-stats div{display:flex; flex-direction:column;}
+.cm-stats b{font-size:26px; font-weight:300; letter-spacing:-0.02em;}
+.cm-stats span{font-size:12px; color:var(--muted);}
+.cm-table table{min-width:860px; width:100%; border-collapse:collapse;}
+.cm-table th, .cm-table td{padding:10px 12px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); font-size:14px;}
+.cm-table th{font-size:12px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); background:var(--surface-2);}
+.cm-table tr:last-child td{border-bottom:0;}
+.cm-table tr{cursor:default;}
+.cm-table td.body{white-space:pre-wrap; max-width:420px;}
+.cm-table td.when{white-space:nowrap; font-variant-numeric:tabular-nums; color:var(--muted); font-size:13px;}
+.cm-table tr.done td{opacity:.6;}
+.cm-table .go{border:0; background:none; padding:0; color:var(--ink); text-decoration:underline; text-underline-offset:2px; text-align:left; font-size:14px;}
+.cm-table .acts{white-space:nowrap;}
+.cm-table .acts .btn{padding:4px 9px; font-size:13px;}
+.cm-new{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 6px; background:#F2C94C; color:#3A2A00;}
+.cm-ok{display:inline-block; font-size:11.5px; font-weight:600; padding:1px 6px; background:var(--ok-soft); color:var(--ok);}
+.cm-empty{padding:28px 16px; color:var(--muted);}
+body.ro-dict #dictAdd, body.ro-dict #v-functions .addrow{display:none;}
+@media print{ .cmt-fab, .cmt-banner, .cmt-dlg{display:none !important;} }
+
 @media print{
   @page{ size:A4 landscape; margin:10mm; }
   :root, :root[data-theme="dark"], :root:not([data-theme="light"]){
@@ -520,6 +575,13 @@ table.matrix td.fnname{cursor:pointer;}
       <p class="gate-err" id="gateErr" role="alert"></p>
       <p class="gate-note">Пароль выдают организаторы сессии. Интеграторы команд и администратор входят своим паролем.</p>
     </form>
+    <form class="gate-form gate-name" id="gateNameForm" autocomplete="off" hidden>
+      <p class="gate-hello">Вы входите как комментатор: можно смотреть все разделы и оставлять комментарии.</p>
+      <label for="gateName">Ваши имя и фамилия</label>
+      <div class="gate-row"><input id="gateName" type="text" autocomplete="name" maxlength="80" required placeholder="Например, Анна Смирнова"><button type="submit" id="gateNameGo">Продолжить</button></div>
+      <p class="gate-err" id="gateNameErr" role="alert"></p>
+      <p class="gate-note">Имя увидит администратор рядом с вашими комментариями. Изменить данные нельзя.</p>
+    </form>
   </div>
   <span class="rainbow gate-rb" aria-hidden="true"></span>
 </div>
@@ -543,6 +605,7 @@ table.matrix td.fnname{cursor:pointer;}
       <button role="tab" data-view="functions" aria-selected="false">Функции в потоках</button>
       <button role="tab" data-view="dict" aria-selected="false">Справочник функций</button>
       <button role="tab" data-view="register" aria-selected="false">Споры и закрепления</button>
+      <button role="tab" data-view="comments" aria-selected="false">Комментарии</button>
     </nav>
   </div>
   <span class="rainbow" aria-hidden="true"></span>
@@ -721,6 +784,23 @@ table.matrix td.fnname{cursor:pointer;}
     </div>
   </section>
 
+  <!-- COMMENTS (администратор) -->
+  <section class="view" id="v-comments">
+    <h2 data-notr data-en="Reviewer <em class=&quot;acc&quot;>comments</em>">Комментарии <em class="acc">участников</em></h2>
+    <p class="lede">Что написали комментаторы в каждом разделе. Новые комментарии подсвечивают раздел, поток и шаг у всех участников, пока вы не отметите их «Учтено».</p>
+    <div class="cm-stats" id="cmStats"></div>
+    <div class="cm-head">
+      <div class="seg" id="cmSeg">
+        <button data-cf="new" aria-pressed="true">Новые</button>
+        <button data-cf="done" aria-pressed="false">Учтённые</button>
+        <button data-cf="all" aria-pressed="false">Все</button>
+      </div>
+      <select id="cmModule" aria-label="Раздел"></select>
+      <button class="btn" id="cmExport">Скачать CSV для Excel</button>
+    </div>
+    <div class="reg-table cm-table" id="cmTable"></div>
+  </section>
+
   <!-- REGISTER -->
   <section class="view" id="v-register">
     <h2>Споры и закреплённые роли</h2>
@@ -739,6 +819,19 @@ table.matrix td.fnname{cursor:pointer;}
 </main>
 
 <div class="scrim" id="scrim"></div>
+<button class="cmt-fab" id="cmtFab" type="button" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v8.5H6.5L3 14v-3H2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Комментарий</button>
+<dialog class="cmt-dlg" id="cmtDlg">
+  <form method="dialog" id="cmtForm">
+    <h3>Комментарий</h3>
+    <p class="muted" style="font-size:14px;margin:0 0 14px">Комментарий увидит администратор. Раздел подсветится у всех участников, пока администратор его не учтёт.</p>
+    <div class="field"><label for="cmtWhere">К чему комментарий</label><select id="cmtWhere"></select></div>
+    <div class="field"><label for="cmtBody">Текст</label><textarea id="cmtBody" maxlength="2000" rows="5" required placeholder="Что стоит поправить, уточнить или обсудить"></textarea></div>
+    <div class="count" id="cmtCount" data-notr>0 / 2000</div>
+    <div class="err" id="cmtErr" role="alert"></div>
+    <div style="display:flex; gap:8px"><button class="btn primary" type="submit" id="cmtGo">Отправить</button><button class="btn" type="button" id="cmtCancel">Закрыть</button></div>
+    <div class="cmt-mine" id="cmtMine" hidden><h4>Ваши комментарии в этом входе</h4><ol id="cmtMineList"></ol></div>
+  </form>
+</dialog>
 <aside class="drawer" id="drawer" aria-hidden="true"></aside>
 <div class="toast" id="toast"></div>
 <dialog class="login-dlg" id="loginDlg">
@@ -1113,13 +1206,19 @@ const STATUS_TXT = {empty:"Нет владельца", assigned:"Владеле�
 let sb = null;                                 // клиент Supabase
 let me = null;                                 // вошедший пользователь {id,label,stream_id,is_admin}
 let authToken = ""; try{ authToken = localStorage.getItem("vs-token") || ""; }catch(e){}
-const TAB_ADMIN_ONLY = ["functions","register","dict"];   // ролевая матрица: интеграторы и гости эти вкладки не видят
+const TAB_ADMIN_ONLY = ["functions","register","dict","comments"];   // ролевая матрица: интеграторы и гости эти вкладки не видят
+const TAB_COMMENTER_SEES = ["functions","register","dict"];             // комментатор видит все разделы, кроме самих комментариев
 function isAdmin(){ return !sb || !!(me && me.is_admin); }
 function canEdit(sid){ return !sb || !!(me && (me.is_admin || me.stream_id===sid)); }
-function canSeeTab(v){ return !TAB_ADMIN_ONLY.includes(v) || isAdmin(); }
+function isCommenter(){ return !!(sb && me && me.is_commenter); }
+function canSeeTab(v){
+  if(v==="comments") return !!sb && isAdmin();
+  return !TAB_ADMIN_ONLY.includes(v) || isAdmin() || (isCommenter() && TAB_COMMENTER_SEES.includes(v));
+}
 function isViewer(){ return !me || (!me.is_admin && !me.stream_id); }
 function denyEdit(sid){
-  if(isViewer()) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
+  if(isCommenter()) toast("Комментатор только смотрит. Чтобы предложить правку, оставьте комментарий");
+  else if(isViewer()) toast("Просмотр. Чтобы редактировать, войдите как интегратор команды");
   else toast(`Вы можете редактировать только свой поток ${(SMAP[me.stream_id]||{}).code||me.stream_id}`);
 }
 function saveToken(t){ authToken = t || ""; try{ if(t) localStorage.setItem("vs-token", t); else localStorage.removeItem("vs-token"); }catch(e){} }
@@ -1133,13 +1232,16 @@ async function login(pass){
   const {data, error} = await sb.rpc("vs_login", {p_pass: pass});
   if(error) throw error;
   if(!data || !data[0]) return false;
-  const r = data[0]; saveToken(r.token); me = {id:r.id, label:r.label, stream_id:r.stream_id, is_admin:r.is_admin};
+  const r = data[0]; saveToken(r.token); me = {id:r.id, label:r.label, stream_id:r.stream_id, is_admin:r.is_admin, is_commenter:!!r.is_commenter, display_name:r.display_name||""};
   return true;
 }
 async function logout(){ try{ if(sb && authToken) await sb.rpc("vs_logout"); }catch(e){} saveToken(""); me = null; }
 function renderWho(){
   const w = document.getElementById("who"); if(!w) return;
   if(!sb){ w.innerHTML = ""; return; }
+  document.body.classList.toggle("ro-dict", !isAdmin());
+  const fab = document.getElementById("cmtFab"); if(fab) fab.hidden = !(isCommenter() && me.display_name);
+  if(isCommenter()){ w.innerHTML = `<span>Комментатор: <b>${esc(me.display_name||"")}</b></span><button type="button" id="logoutBtn">Выйти</button>`; return; }
   w.innerHTML = !me ? `<span>Просмотр</span><button type="button" id="loginBtn">Войти</button>`
     : isViewer() ? `<span><b>${esc(me.label)}</b></span><button type="button" id="loginBtn" title="Вход интегратора команды или администратора">Войти для правок</button><button type="button" id="logoutBtn">Выйти</button>`
     : `<span><b>${esc(me.label)}</b></span><button type="button" id="logoutBtn">Выйти</button>`;
@@ -1267,6 +1369,7 @@ async function loadAll(){
   });
   streamDocs = nextDocs; roles = nextRoles; rebuildSteps(); rebuildFnNameMap();
   if(openStep && !STEPMAP[openStep]) closeDrawer();
+  await loadComments();
 }
 function scheduleReload(delay){
   clearTimeout(reloadTimer);
@@ -1321,6 +1424,7 @@ async function initCaps(){
   sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, {auth:{persistSession:false}, global:{fetch:(u, o={})=>{ const hd = new Headers(o.headers||{}); if(authToken) hd.set("x-vs-token", authToken); return fetch(u, Object.assign({}, o, {headers:hd})); }}});
   try{ await whoami(); }catch(e){ console.error(e); me = null; }
   if(!me){ lockApp(); return; }
+  if(isCommenter() && !me.display_name){ lockApp(); showNameStep(); return; }
   await startApp();
 }
 
@@ -1458,6 +1562,8 @@ function renderView(v){
   if(v==="dict") renderDict();
   if(v==="functions") renderFunctions();
   if(v==="register") renderRegister();
+  if(v==="comments") renderComments();
+  paintComments();
 }
 function renderAll(fromSync){
   renderWho();
@@ -1465,6 +1571,7 @@ function renderAll(fromSync){
   const busy = fromSync && ae && ((ae.closest && ae.closest("#v-dict") && ae.tagName==="INPUT") || (ae.classList && ae.classList.contains("addsel")) || $("#roleMenu").classList.contains("on") || (ae.closest && ae.closest(".stepform")));
   if(!busy) renderView(curView());
   if(openStep) renderDrawer(fromSync);
+  paintComments();
 }
 
 /* ---------------- PORTFOLIO ---------------- */
@@ -1741,7 +1848,8 @@ function renderDrawer(fromSync){
       <button class="close" aria-label="Закрыть">×</button>
       <span class="code">${st.disp}, ${esc(s.name)}</span>
       <h3>${esc(st.name)}</h3>
-      <span class="badge ${stt}">${STATUS_TXT[stt]}</span>
+      <span class="badge ${stt}">${STATUS_TXT[stt]}</span>${cmtStepCount(st.code)?` <span class="cbadge" title="Новые комментарии к шагу">${CMT_ICON}${cmtStepCount(st.code)}</span>`:""}
+      ${isCommenter()?`<div style="margin-top:10px"><button class="btn d-cmt" type="button" data-cmt-step="${st.code}">${CMT_ICON}Комментировать шаг</button></div>`:""}
     </div>
     <div class="d-body">
       <div class="d-sec"><p class="ct">${esc(st.content)}</p><p class="muted">Результат шага: <b style="color:var(--ink)">${esc(st.result)}</b></p></div>
@@ -2106,6 +2214,7 @@ function renderDict(){
     };
     inp.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); inp.blur(); } };
   });
+  if(!isAdmin()) $("#dictBody").querySelectorAll("input, button").forEach(x=>{ if(x.tagName==="INPUT") x.readOnly = true; else x.disabled = true; });
 }
 function moveFunction(fid, dir){
   const list = sortFnRows(FN_ROWS.filter(x=>x.active!==false)); const x = list.find(r=>r.id===fid); if(!x) return;
@@ -2143,6 +2252,182 @@ async function exportCsv(){
   try{ await dlCap.save({filename:`роли_в_потоках_${today()}.csv`, data:new Blob([csv],{type:"text/csv"})}); }
   catch(e){ toast("Файл не сохранён"); }
 }
+
+
+/* ---------------- COMMENTS ----------------
+   Комментатор (учётная запись commenter) смотрит всё и оставляет комментарии через rpc vs_add_comment.
+   Текст читает только администратор (таблица vs_comments, RLS). Остальным rpc vs_comment_counts
+   отдаёт, где есть новые комментарии, — по этим счётчикам подсвечиваются вкладки, потоки и шаги. */
+const CMT_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v8.5H6.5L3 14v-3H2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const MODULE_TXT = {portfolio:"Портфель потоков", stream:"Профиль потока", map:"Карта связей", chain:"Цепочка ценности", guide:"Памятка по ролям", functions:"Функции в потоках", dict:"Справочник функций", register:"Споры и закрепления"};
+let CMT = {counts:[], list:[], mine:[]}, cmFilter = "new", cmModule = "", cmDelConfirm = null;
+async function loadComments(){
+  if(!sb || !me){ CMT = {counts:[], list:[], mine:[]}; return; }
+  const jobs = [sb.rpc("vs_comment_counts")];
+  jobs.push(isAdmin() ? sb.from("vs_comments").select("*").order("created_at", {ascending:false}) : Promise.resolve({data:[]}));
+  jobs.push(isCommenter() ? sb.rpc("vs_my_comments") : Promise.resolve({data:[]}));
+  const [c, l, m] = await Promise.all(jobs);
+  CMT = {counts: (c && !c.error && c.data) || [], list: (l && !l.error && l.data) || [], mine: (m && !m.error && m.data) || []};
+}
+const cmtSum = f=>CMT.counts.filter(f).reduce((a,x)=>a + (x.n||0), 0);
+function cmtModuleCount(v){ return cmtSum(x=>x.module===v); }
+function cmtStreamCount(sid){ return cmtSum(x=>x.stream_id===sid); }
+function cmtStepCount(code){ return cmtSum(x=>x.step_id===code); }
+function cmtNewTotal(){ return cmtSum(()=>true); }
+function paintComments(){
+  document.querySelectorAll(".tabs button").forEach(b=>{
+    const v = b.dataset.view, n = v==="comments" ? cmtNewTotal() : cmtModuleCount(v);
+    let el = b.querySelector(".cbadge");
+    if(n){ if(!el){ el = document.createElement("span"); el.className = "cbadge"; b.appendChild(el); } el.innerHTML = CMT_ICON + n; el.title = v==="comments" ? "Новых комментариев" : "Новые комментарии в разделе"; b.classList.add("has-cmt"); }
+    else { if(el) el.remove(); b.classList.remove("has-cmt"); }
+  });
+  document.querySelectorAll(".vcard[data-open-stream]").forEach(c=>{
+    const n = cmtStreamCount(c.dataset.openStream); let el = c.querySelector(".cmark");
+    c.classList.toggle("has-cmt", !!n);
+    if(n){ if(!el){ el = document.createElement("span"); el.className = "cmark"; c.appendChild(el); } el.innerHTML = CMT_ICON + `Комментарии: ${n}`; }
+    else if(el) el.remove();
+  });
+  document.querySelectorAll("#v-stream .step[data-step]").forEach(c=>{
+    const n = cmtStepCount(c.dataset.step); let el = c.querySelector(".cmark");
+    c.classList.toggle("has-cmt", !!n);
+    const host = c.children[1];
+    if(n && host){ if(!el){ el = document.createElement("span"); el.className = "cmark"; host.appendChild(el); } el.innerHTML = CMT_ICON + `Комментарии: ${n}`; }
+    else if(el) el.remove();
+  });
+  // баннер в разделе: администратору — переход к комментариям, остальным — пометка
+  const v = curView(), sec = document.getElementById("v-" + v);
+  document.querySelectorAll(".cmt-banner").forEach(x=>{ if(!sec || !sec.contains(x)) x.remove(); });
+  if(sec && v!=="comments"){
+    const n = cmtModuleCount(v); let bn = sec.querySelector(".cmt-banner");
+    if(n){
+      if(!bn){ bn = document.createElement("div"); bn.className = "cmt-banner"; const h = sec.querySelector("h2"); if(h) h.after(bn); else sec.prepend(bn); }
+      bn.innerHTML = `${CMT_ICON}<span>В этом разделе новых комментариев: <b>${n}</b></span>` + (isAdmin() && sb ? `<button type="button" data-cmt-open="${v}">Открыть комментарии</button>` : "");
+    } else if(bn) bn.remove();
+  }
+}
+function cmtContexts(){
+  const v = curView(), opts = [];
+  const sid = v==="stream" ? currentStream : (v==="chain" ? chainStream : "");
+  if(openStep && STEPMAP[openStep]){ const st = STEPMAP[openStep]; opts.push({v, sid:st.stream.id, step:st.code, label:`Шаг ${st.disp}. ${st.name}`}); }
+  if(sid && SMAP[sid]){ const s = SMAP[sid]; opts.push({v, sid, step:"", label:`Поток ${s.code}. ${s.name}`}); }
+  opts.push({v, sid:"", step:"", label:`Раздел «${MODULE_TXT[v]||v}» целиком`});
+  return opts;
+}
+let cmtOpts = [];
+function openComment(stepCode){
+  if(!isCommenter()) return;
+  if(stepCode && STEPMAP[stepCode]) openStep = stepCode;
+  cmtOpts = cmtContexts();
+  $("#cmtWhere").innerHTML = cmtOpts.map((o,i)=>`<option value="${i}">${esc(o.label)}</option>`).join("");
+  $("#cmtErr").textContent = ""; $("#cmtBody").value = ""; $("#cmtCount").textContent = "0 / 2000";
+  renderMine();
+  const d = $("#cmtDlg"); if(d.showModal) d.showModal(); else d.setAttribute("open","");
+  setTimeout(()=>$("#cmtBody").focus(), 30);
+}
+function renderMine(){
+  const box = $("#cmtMine"); box.hidden = !CMT.mine.length;
+  $("#cmtMineList").innerHTML = CMT.mine.map(c=>`<li><small>${esc(fmtWhen(c.created_at))} · ${esc(c.context||MODULE_TXT[c.module]||c.module)}${c.status==="done"?" · учтено":""}</small><p>${esc(c.body)}</p></li>`).join("");
+}
+function fmtWhen(t){ const d = new Date(t); return d.toLocaleDateString(LANG==="en"?"en-GB":"ru-RU", {day:"2-digit", month:"2-digit"}) + " " + d.toLocaleTimeString("ru-RU", {hour:"2-digit", minute:"2-digit"}); }
+async function sendComment(){
+  const o = cmtOpts[+$("#cmtWhere").value] || cmtOpts[0], body = $("#cmtBody").value.trim();
+  if(!body){ $("#cmtErr").textContent = "Напишите текст комментария"; return; }
+  $("#cmtGo").disabled = true; $("#cmtErr").textContent = "";
+  try{
+    const {error} = await sb.rpc("vs_add_comment", {p_module:o.v, p_stream:o.sid||"", p_step:o.step||"", p_context:o.label, p_body:body});
+    if(error) throw error;
+    await loadComments(); paintComments(); if(openStep) renderDrawer();
+    $("#cmtBody").value = ""; $("#cmtCount").textContent = "0 / 2000"; renderMine();
+    toast("Комментарий отправлен администратору");
+  }catch(e){ $("#cmtErr").textContent = "Не отправлено: " + (e.message||e); }
+  finally{ $("#cmtGo").disabled = false; }
+}
+function cmtGo(c){
+  if(c.stream_id && SMAP[c.stream_id]){ currentStream = c.stream_id; if(c.module==="chain") chainStream = c.stream_id; }
+  setView(canSeeTab(c.module) ? c.module : "portfolio");
+  if(c.step_id && STEPMAP[c.step_id]) openDrawer(c.step_id);
+}
+function renderComments(){
+  if(!isAdmin() || !sb) return;
+  const all = CMT.list, nNew = all.filter(c=>c.status==="new").length;
+  $("#cmStats").innerHTML = `<div><b>${nNew}</b><span>новых</span></div><div><b>${all.length - nNew}</b><span>учтённых</span></div><div><b>${new Set(all.map(c=>c.author)).size}</b><span>авторов</span></div>`;
+  document.querySelectorAll("#cmSeg button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.cf===cmFilter)));
+  const mods = Object.keys(MODULE_TXT);
+  $("#cmModule").innerHTML = `<option value="">Все разделы</option>` + mods.map(m=>{ const n = all.filter(c=>c.module===m).length; return `<option value="${m}" ${m===cmModule?"selected":""}>${esc(MODULE_TXT[m])}${n?` (${n})`:""}</option>`; }).join("");
+  let list = all.filter(c=>cmFilter==="all" || c.status===cmFilter);
+  if(cmModule) list = list.filter(c=>c.module===cmModule);
+  if(!list.length){ $("#cmTable").innerHTML = `<div class="cm-empty">${cmFilter==="new" ? "Новых комментариев нет." : "Комментариев нет."}</div>`; return; }
+  $("#cmTable").innerHTML = `<table><thead><tr><th>Когда</th><th>Автор</th><th>Раздел</th><th>К чему</th><th>Комментарий</th><th>Статус</th><th></th></tr></thead><tbody>` +
+    list.map(c=>`<tr class="${c.status==="done"?"done":""}">
+      <td class="when">${esc(fmtWhen(c.created_at))}</td>
+      <td>${esc(c.author)}<br><small class="faint">${esc((c.user_id||"").replace("commenter","Комментатор "))}</small></td>
+      <td>${esc(MODULE_TXT[c.module]||c.module)}</td>
+      <td><button type="button" class="go" data-cgo="${cuid(c)}" title="Открыть место комментария">${esc(c.context || (c.step_id ? "Шаг " + c.step_id : c.stream_id ? "Поток " + ((SMAP[c.stream_id]||{}).code||c.stream_id) : "Раздел целиком"))}</button></td>
+      <td class="body">${esc(c.body)}</td>
+      <td>${c.status==="new" ? `<span class="cm-new">Новый</span>` : `<span class="cm-ok">Учтено</span>`}</td>
+      <td class="acts">${c.status==="new" ? `<button class="btn" data-cdone="${cuid(c)}">Учтено</button>` : `<button class="btn" data-creopen="${cuid(c)}">Вернуть</button>`}
+        ${cmDelConfirm===cuid(c) ? `<button class="btn warn" data-cdelyes="${cuid(c)}">Удалить?</button>` : `<button class="btn" data-cdel="${cuid(c)}" aria-label="Удалить комментарий">×</button>`}</td>
+    </tr>`).join("") + `</tbody></table>`;
+}
+// каждый комментатор пишет в свою таблицу vs_cN_comments; общая таблица vs_comments — их объединение
+const cuid = c=>`${c.src}-${c.id}`;
+function cTable(uid){ const [src, id] = uid.split("-"); return {t:`vs_${src}_comments`, id:+id}; }
+async function setCommentStatus(uid, st){
+  const ch = st==="done" ? {status:"done", done_at:new Date().toISOString(), done_by:(me&&me.label)||"admin"} : {status:"new", done_at:null, done_by:null};
+  const {t, id} = cTable(uid);
+  const {error} = await sb.from(t).update(ch).eq("id", id);
+  if(error){ toast("Не сохранено: " + error.message); return; }
+  await loadComments(); renderComments(); paintComments();
+}
+async function deleteComment(uid){
+  const {t, id} = cTable(uid);
+  const {error} = await sb.from(t).delete().eq("id", id);
+  cmDelConfirm = null;
+  if(error){ toast("Не удалено: " + error.message); return; }
+  await loadComments(); renderComments(); paintComments(); toast("Комментарий удалён");
+}
+async function exportComments(){
+  const q = v=>`"${String(v==null?"":v).replace(/"/g,'""')}"`;
+  const rows = [["Когда","Автор","Вход","Раздел","Поток","Шаг","К чему","Комментарий","Статус","Учтено когда","Учёл"]].concat(
+    CMT.list.map(c=>[fmtWhen(c.created_at), c.author, (c.user_id||"").replace("commenter","Комментатор "), MODULE_TXT[c.module]||c.module, c.stream_id ? ((SMAP[c.stream_id]||{}).code||c.stream_id) : "", c.step_id||"", c.context||"", c.body, c.status==="new"?"Новый":"Учтено", c.done_at?fmtWhen(c.done_at):"", c.done_by||""]));
+  const csv = "﻿" + rows.map(r=>r.map(q).join(";")).join("\r\n");
+  try{ await (dlCap||browserDownloads).save({filename:`Комментарии_${today()}.csv`, data:new Blob([csv],{type:"text/csv;charset=utf-8"})}); }
+  catch(e){ toast("Файл не сохранён"); }
+}
+function showNameStep(){
+  $("#gateForm").hidden = true; $("#gateNameForm").hidden = false; $("#gateNameErr").textContent = "";
+  setTimeout(()=>$("#gateName").focus(), 60);
+}
+$("#gateNameForm").onsubmit = async e=>{
+  e.preventDefault();
+  const n = $("#gateName").value.replace(/\s+/g, " ").trim();
+  if(n.split(" ").length < 2 || n.length < 3){ $("#gateNameErr").textContent = "Укажите имя и фамилию через пробел"; return; }
+  $("#gateNameGo").disabled = true; $("#gateNameErr").textContent = "";
+  try{
+    const {data, error} = await sb.rpc("vs_set_display_name", {p_name:n});
+    if(error) throw error;
+    me.display_name = data || n;
+    $("#gateNameForm").hidden = true; $("#gateForm").hidden = false;
+    if(await startApp()){ setView("portfolio"); toast(`Здравствуйте, ${me.display_name}! Вы можете оставлять комментарии`); }
+  }catch(err){ $("#gateNameErr").textContent = (err.message||String(err)); }
+  finally{ $("#gateNameGo").disabled = false; }
+};
+$("#cmtFab").onclick = ()=>openComment();
+$("#cmtCancel").onclick = ()=>$("#cmtDlg").close();
+$("#cmtForm").onsubmit = e=>{ e.preventDefault(); sendComment(); };
+$("#cmtBody").oninput = e=>{ $("#cmtCount").textContent = `${e.target.value.length} / 2000`; };
+$("#cmModule").onchange = e=>{ cmModule = e.target.value; renderComments(); };
+$("#cmExport").onclick = exportComments;
+document.addEventListener("click", e=>{
+  const cs = e.target.closest("[data-cmt-step]"); if(cs){ openComment(cs.dataset.cmtStep); return; }
+  const co = e.target.closest("[data-cmt-open]"); if(co){ cmModule = co.dataset.cmtOpen; cmFilter = "new"; setView("comments"); return; }
+  const cf = e.target.closest("#cmSeg [data-cf]"); if(cf){ cmFilter = cf.dataset.cf; renderComments(); return; }
+  const cg = e.target.closest("[data-cgo]"); if(cg){ const c = CMT.list.find(x=>cuid(x)===cg.dataset.cgo); if(c) cmtGo(c); return; }
+  const cd = e.target.closest("[data-cdone]"); if(cd){ setCommentStatus(cd.dataset.cdone, "done"); return; }
+  const cr = e.target.closest("[data-creopen]"); if(cr){ setCommentStatus(cr.dataset.creopen, "new"); return; }
+  const cx = e.target.closest("[data-cdel]"); if(cx){ cmDelConfirm = cx.dataset.cdel; renderComments(); return; }
+  const cy = e.target.closest("[data-cdelyes]"); if(cy){ deleteComment(cy.dataset.cdelyes); return; }
+});
 
 /* ---------------- EVENTS ---------------- */
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
@@ -2249,6 +2534,7 @@ $("#gateForm").onsubmit = async e=>{
     const ok = await login(p);
     if(!ok){ $("#gateErr").textContent = "Пароль не подошёл. Проверьте раскладку клавиатуры."; $("#gatePass").select(); return; }
     $("#gatePass").value = "";
+    if(isCommenter() && !me.display_name){ showNameStep(); return; }
     if(await startApp()){
       if(me.stream_id){ hlFn = ""; setView("stream"); }
       else setView("portfolio");
