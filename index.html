@@ -487,6 +487,13 @@ table.matrix td.fnname{cursor:pointer;}
 .step .cmark, .vcard .cmark{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:var(--cmt-ink); background:var(--cmt-soft); padding:2px 7px; margin-top:6px; width:max-content;}
 .step .cmark svg, .vcard .cmark svg, .cmt-fab svg, .d-cmt svg{width:13px; height:13px; flex:none;}
 .cmt-banner{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--cmt-soft); color:var(--cmt-ink); padding:10px 14px; margin:0 0 18px; font-size:14px; border-left:3px solid #F2C94C;}
+.cmt-banner svg{width:14px; height:14px; flex:none;}
+.step .st{display:flex; flex-direction:column; align-items:flex-start; gap:8px;}
+.cmt-step{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--line); background:var(--surface); color:var(--ink); padding:4px 8px; font-size:12.5px; border-radius:0; cursor:pointer;}
+.cmt-step:hover{border-color:#F2C94C; background:var(--cmt-soft); color:var(--cmt-ink);}
+.cmt-step svg{width:13px; height:13px; flex:none;}
+.cmt-step.has{background:#F2C94C; border-color:#F2C94C; color:#3A2A00;}
+@media print{ .cmt-step{display:none !important;} }
 .cmt-banner button{border:1px solid currentColor; background:transparent; color:inherit; padding:4px 10px; font-size:13px; border-radius:0;}
 .cmt-fab{position:fixed; right:calc(20px + env(safe-area-inset-right,0px)); bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:55; display:inline-flex; align-items:center; gap:8px; padding:12px 18px; font-size:15px; font-weight:500; border:0; border-radius:0; background:#F2C94C; color:#3A2A00; box-shadow:0 6px 18px rgba(0,43,41,.25);}
 .cmt-fab:hover{background:#F5D56E;}
@@ -2258,7 +2265,7 @@ async function exportCsv(){
    Комментатор (учётная запись commenter) смотрит всё и оставляет комментарии через rpc vs_add_comment.
    Текст читает только администратор (таблица vs_comments, RLS). Остальным rpc vs_comment_counts
    отдаёт, где есть новые комментарии, — по этим счётчикам подсвечиваются вкладки, потоки и шаги. */
-const CMT_ICON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2.5h12v8.5H6.5L3 14v-3H2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const CMT_ICON = `<svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M2 2.5h12v8.5H6.5L3 14v-3H2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
 const MODULE_TXT = {portfolio:"Портфель потоков", stream:"Профиль потока", map:"Карта связей", chain:"Цепочка ценности", guide:"Памятка по ролям", functions:"Функции в потоках", dict:"Справочник функций", register:"Споры и закрепления"};
 let CMT = {counts:[], list:[], mine:[]}, cmFilter = "new", cmModule = "", cmDelConfirm = null;
 async function loadComments(){
@@ -2293,6 +2300,13 @@ function paintComments(){
     const host = c.children[1];
     if(n && host){ if(!el){ el = document.createElement("span"); el.className = "cmark"; host.appendChild(el); } el.innerHTML = CMT_ICON + `Комментарии: ${n}`; }
     else if(el) el.remove();
+    const stc = c.querySelector(".st"); let btn = c.querySelector(".cmt-step");
+    if(isCommenter() && stc){
+      if(!btn){ btn = document.createElement("button"); btn.type = "button"; btn.className = "cmt-step"; btn.dataset.cmtStep = c.dataset.step; stc.appendChild(btn); }
+      btn.classList.toggle("has", !!n);
+      btn.title = "Комментировать шаг"; btn.setAttribute("aria-label", "Комментировать шаг " + c.dataset.step);
+      btn.innerHTML = CMT_ICON + (n ? String(n) : "Комментарий");
+    } else if(btn) btn.remove();
   });
   // баннер в разделе: администратору — переход к комментариям, остальным — пометка
   const v = curView(), sec = document.getElementById("v-" + v);
@@ -2300,15 +2314,16 @@ function paintComments(){
   if(sec && v!=="comments"){
     const n = cmtModuleCount(v); let bn = sec.querySelector(".cmt-banner");
     if(n){
-      if(!bn){ bn = document.createElement("div"); bn.className = "cmt-banner"; const h = sec.querySelector("h2"); if(h) h.after(bn); else sec.prepend(bn); }
+      if(!bn){ bn = document.createElement("div"); bn.className = "cmt-banner"; sec.prepend(bn); }
       bn.innerHTML = `${CMT_ICON}<span>В этом разделе новых комментариев: <b>${n}</b></span>` + (isAdmin() && sb ? `<button type="button" data-cmt-open="${v}">Открыть комментарии</button>` : "");
     } else if(bn) bn.remove();
   }
 }
-function cmtContexts(){
+function cmtContexts(stepCode){
   const v = curView(), opts = [];
   const sid = v==="stream" ? currentStream : (v==="chain" ? chainStream : "");
-  if(openStep && STEPMAP[openStep]){ const st = STEPMAP[openStep]; opts.push({v, sid:st.stream.id, step:st.code, label:`Шаг ${st.disp}. ${st.name}`}); }
+  const sc = (stepCode && STEPMAP[stepCode]) ? stepCode : openStep;
+  if(sc && STEPMAP[sc]){ const st = STEPMAP[sc]; opts.push({v, sid:st.stream.id, step:st.code, label:`Шаг ${st.disp}. ${st.name}`}); }
   if(sid && SMAP[sid]){ const s = SMAP[sid]; opts.push({v, sid, step:"", label:`Поток ${s.code}. ${s.name}`}); }
   opts.push({v, sid:"", step:"", label:`Раздел «${MODULE_TXT[v]||v}» целиком`});
   return opts;
@@ -2316,8 +2331,7 @@ function cmtContexts(){
 let cmtOpts = [];
 function openComment(stepCode){
   if(!isCommenter()) return;
-  if(stepCode && STEPMAP[stepCode]) openStep = stepCode;
-  cmtOpts = cmtContexts();
+  cmtOpts = cmtContexts(stepCode);
   $("#cmtWhere").innerHTML = cmtOpts.map((o,i)=>`<option value="${i}">${esc(o.label)}</option>`).join("");
   $("#cmtErr").textContent = ""; $("#cmtBody").value = ""; $("#cmtCount").textContent = "0 / 2000";
   renderMine();
@@ -2419,7 +2433,7 @@ $("#cmtBody").oninput = e=>{ $("#cmtCount").textContent = `${e.target.value.leng
 $("#cmModule").onchange = e=>{ cmModule = e.target.value; renderComments(); };
 $("#cmExport").onclick = exportComments;
 document.addEventListener("click", e=>{
-  const cs = e.target.closest("[data-cmt-step]"); if(cs){ openComment(cs.dataset.cmtStep); return; }
+  const cs = e.target.closest("[data-cmt-step]"); if(cs){ e.preventDefault(); e.stopImmediatePropagation(); openComment(cs.dataset.cmtStep); return; }
   const co = e.target.closest("[data-cmt-open]"); if(co){ cmModule = co.dataset.cmtOpen; cmFilter = "new"; setView("comments"); return; }
   const cf = e.target.closest("#cmSeg [data-cf]"); if(cf){ cmFilter = cf.dataset.cf; renderComments(); return; }
   const cg = e.target.closest("[data-cgo]"); if(cg){ const c = CMT.list.find(x=>cuid(x)===cg.dataset.cgo); if(c) cmtGo(c); return; }
